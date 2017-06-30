@@ -1,2 +1,2 @@
-# jupytepide
+# JupyTEP IDE
 JupyTEP IDE 
