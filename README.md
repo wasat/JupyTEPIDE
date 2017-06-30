@@ -1,2 +1,2 @@
 # JupyTEP IDE
-JupyTEP IDE 
+JupyTEP IDE project description
