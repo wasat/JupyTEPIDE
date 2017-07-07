@@ -13,3 +13,4 @@ test 11
 test 12
 !'C:\Users\Daniel\AppData\Roaming\GitCredStore\git-credential-winstore.exe'
 test 13
+test 14
