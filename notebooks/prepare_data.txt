@@ -1,0 +1,112 @@
+:: echo off
+echo ------------------------------- 
+echo START PRZETWARZANIA DANYCH
+echo ------------------------------- 
+@set CSVFIX_PATH="c:\Program Files (x86)\CSVfix\csvfix.exe"
+
+@set UNRAR="C:\Program Files\WinRAR\winrar.exe"
+@set PYTHON="c:\Users\Daniel\Anaconda3\python.exe"
+@set PYTHON27="c:\Users\Daniel\Anaconda3\envs\Fiona\python.exe"
+::@set UNRAR="C:\Program Files (x86)\WinRAR\winrar.exe"
+::@set PYTHON="c:\ProgramData\Anaconda3\python.exe"
+::@set PYTHON27="C:\ProgramData\Anaconda3\envs\Python2_7_GIS\python.exe"
+
+@set RAW_DATA_PATH=_rawdata
+@set TEMP_PATH=_tmp
+
+@set SITE=%1
+@set YYYY-MM-DD=%2
+@set PROCESS_TYPE=%3
+@set DAY_OF_WEEK=%4
+
+For /f "tokens=1-3 delims=/-" %%a in ("%YYYY-MM-DD%") do (@set PREV_DAY=%%a_%%b_%%c)
+
+IF NOT "%2"=="last" GOTO _PREPARE_PATHS
+
+For /f "tokens=1-3 delims=/-" %%a in ("%DATE%") do (@set yyyy_mm=%%a_%%b)
+For /f "tokens=1-3 delims=/-" %%a in ("%DATE%") do (@set yyyy-mm=%%a-%%b)
+For /f "tokens=1-3 delims=/-" %%a in ("%DATE%") do (@set dd=%%c)
+@set /a dn=%dd%-1
+@set YYYY-MM-DD=%yyyy-mm%-%dn%
+@set PREV_DAY=%yyyy_mm%_%dn%
+
+:_PREPARE_PATHS
+@set FILE_PREFIX=%SITE%_%PREV_DAY%
+@set DIR_PATH=%SITE%\%PREV_DAY%
+@set TMP_DIR_PATH=%TEMP_PATH%\%FILE_PREFIX%
+@set SHP_BUFFER=%SITE%\_shp\STORE_WALLS_buffer_1_5_4326.shp
+@set SHP_WALLS=%SITE%\_shp\STORE_WALLS_polygon_4326.shp
+@set SHP_STOREFRONT=%SITE%\_shp\STORE_FRONT_OUTSIDE_4326.shp
+
+mkdir %DIR_PATH%
+mkdir %TMP_DIR_PATH%
+
+IF "%3"=="reprocess" GOTO _PROCESSING
+
+@set JSON_URL="https://analytics.navizon.com/api/v1/sites/%SITE%/logs/%YYYY-MM-DD%/"
+@set JSON_FILE=%FILE_PREFIX%.json
+curl -u daniel.zinkiewicz@wasat.pl: %JSON_URL% > %TMP_DIR_PATH%/%JSON_FILE%
+set /p JSON=<%TMP_DIR_PATH%\%JSON_FILE%
+SET URL_TMP="%JSON:~8%"
+SET URL=%URL_TMP:~0,-2%
+curl -o ./_rawdata/%FILE_PREFIX%.csv.gz %URL%
+
+:_PROCESSING
+%UNRAR% x -ibck -o+ %RAW_DATA_PATH%\%FILE_PREFIX%.csv.gz *.* %TMP_DIR_PATH%\
+
+%CSVFIX_PATH% sort -f 1:AN -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_sort_time.csv %TMP_DIR_PATH%\%FILE_PREFIX%.csv
+%CSVFIX_PATH% head -n 1 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_first_line.csv %TMP_DIR_PATH%\%FILE_PREFIX%_sort_time.csv
+For /f "tokens=1-2 delims=, " %%a in (%TMP_DIR_PATH%\%FILE_PREFIX%_first_line.csv) do (@set TS_FIRST=%%a)
+@set CLOSE_DIFF=0
+@set SUNDAY_DIFF=0
+IF %SITE%==1738 @set CLOSE_DIFF=3600
+IF %DAY_OF_WEEK%=="Sunday" @set SUNDAY_DIFF=3600
+@set /a TS_OPEN=%TS_FIRST%+28500+%SUNDAY_DIFF%
+@set /a TS_CLOSE=%TS_FIRST%+72300+%CLOSE_DIFF%-%SUNDAY_DIFF%
+
+::CLEAN NOISE START
+%CSVFIX_PATH% remove -if "$1 > %TS_OPEN% && $1 < %TS_CLOSE%" -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_night.csv %TMP_DIR_PATH%\%FILE_PREFIX%_sort_time.csv
+%CSVFIX_PATH% remove -if "$1 < %TS_OPEN% || $1 > %TS_CLOSE%" -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_day.csv %TMP_DIR_PATH%\%FILE_PREFIX%_sort_time.csv
+%CSVFIX_PATH% unique -f 2 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_unique_night_mac.csv %TMP_DIR_PATH%\%FILE_PREFIX%_night.csv
+%CSVFIX_PATH% join -f 2:2 -inv -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_no_noise.csv %TMP_DIR_PATH%\%FILE_PREFIX%_day.csv %TMP_DIR_PATH%\%FILE_PREFIX%_unique_night_mac.csv
+::CLEAN NOISE END
+
+::CLEAN BAD ACCURACY START
+%CSVFIX_PATH% remove -fc 1:11 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_5macs.csv %TMP_DIR_PATH%\%FILE_PREFIX%_no_noise.csv
+%CSVFIX_PATH% pad -n 25 -p -63 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_padded.csv %TMP_DIR_PATH%\%FILE_PREFIX%_5macs.csv
+%CSVFIX_PATH% remove -if "$7+$9+$11+$13+$15+$17+$19+$21+$23+$25 < -631" -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_without_bad_acc.csv %TMP_DIR_PATH%\%FILE_PREFIX%_padded.csv
+::CLEAN BAD ACCURACY END
+
+::CLEAN FOR USER PATHS START
+%PYTHON% scripts\pointsinpolygon.py --shp %SHP_BUFFER% --input %TMP_DIR_PATH%\%FILE_PREFIX%_without_bad_acc.csv --output %TMP_DIR_PATH%\%FILE_PREFIX%_croped_to_buffer.csv
+%CSVFIX_PATH% summary -frq 2 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_with_count.csv %TMP_DIR_PATH%\%FILE_PREFIX%_croped_to_buffer.csv
+%CSVFIX_PATH% unique -f 3 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_unique_inside_count.csv %TMP_DIR_PATH%\%FILE_PREFIX%_with_count.csv
+%CSVFIX_PATH% sort -f 1:DN -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_unique_inside_count_sorted.csv %TMP_DIR_PATH%\%FILE_PREFIX%_unique_inside_count.csv
+%CSVFIX_PATH% remove -if "$1 > 1200 || $1 < 2" -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_without_wrong_occ.csv %TMP_DIR_PATH%\%FILE_PREFIX%_with_count.csv
+%CSVFIX_PATH% exclude -f 1 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_clean_inside.csv %TMP_DIR_PATH%\%FILE_PREFIX%_without_wrong_occ.csv
+%CSVFIX_PATH% unique -f 2 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_unique_inside.csv %TMP_DIR_PATH%\%FILE_PREFIX%_clean_inside.csv
+::CLEAN FOR USER PATHS END
+
+%PYTHON% scripts\pointsinpolygon.py --shp %SHP_STOREFRONT% --input %TMP_DIR_PATH%\%FILE_PREFIX%_no_noise.csv --output %TMP_DIR_PATH%\%FILE_PREFIX%_croped_to_storefront.csv
+%CSVFIX_PATH% join -f 2:2 -inv -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_storefront_to_remove.csv %TMP_DIR_PATH%\%FILE_PREFIX%_croped_to_storefront.csv %TMP_DIR_PATH%\%FILE_PREFIX%_unique_inside.csv
+%CSVFIX_PATH% unique -f 2 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_storefront_to_remove_unique.csv %TMP_DIR_PATH%\%FILE_PREFIX%_storefront_to_remove.csv
+%CSVFIX_PATH% join -f 2:2 -inv -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_clean_storefront.csv %TMP_DIR_PATH%\%FILE_PREFIX%_croped_to_storefront.csv %TMP_DIR_PATH%\%FILE_PREFIX%_storefront_to_remove_unique.csv
+%CSVFIX_PATH% file_merge -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_final_for_path_draw.csv %TMP_DIR_PATH%\%FILE_PREFIX%_clean_inside.csv %TMP_DIR_PATH%\%FILE_PREFIX%_clean_storefront.csv
+%CSVFIX_PATH% unique -f 2 -smq -o %TMP_DIR_PATH%\%FILE_PREFIX%_unique_clean.csv %TMP_DIR_PATH%\%FILE_PREFIX%_final_for_path_draw.csv
+
+%PYTHON% scripts\pointsinpolygon.py --shp %SHP_WALLS% --input %TMP_DIR_PATH%\%FILE_PREFIX%_final_for_path_draw.csv --output %TMP_DIR_PATH%\%FILE_PREFIX%_final_for_heatmaps.csv
+@set STORE_NAME=MORENA
+IF %SITE%==1738 @set STORE_NAME=KRAKOW
+%PYTHON27% scripts\routing.py --lokal %STORE_NAME% --plik %TMP_DIR_PATH%\%FILE_PREFIX%_final_for_path_draw.csv
+
+::copy %TMP_DIR_PATH%\%FILE_PREFIX%_sort_time.csv %DIR_PATH%
+::copy %TMP_DIR_PATH%\%FILE_PREFIX%_no_noise.csv %DIR_PATH%
+::copy %TMP_DIR_PATH%\%FILE_PREFIX%_without_bad_acc.csv %DIR_PATH%
+copy %TMP_DIR_PATH%\%FILE_PREFIX%_unique_inside_count_sorted.csv %DIR_PATH%
+copy %TMP_DIR_PATH%\%FILE_PREFIX%_final_for_path_draw.csv %DIR_PATH%
+copy %TMP_DIR_PATH%\%FILE_PREFIX%_final_for_heatmaps.csv %DIR_PATH%
+copy %TMP_DIR_PATH%\%FILE_PREFIX%_final_for_path_draw.csv.tmp %DIR_PATH%\%FILE_PREFIX%_path_occ_wkt.csv 
+
+RD /S /Q %TMP_DIR_PATH%\
+::del  /Q %TMP_DIR_PATH%\*.*
+::rmdir  /Q %TMP_DIR_PATH%\
