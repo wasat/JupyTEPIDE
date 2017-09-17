@@ -1,9 +1,11 @@
-// file moj_jupyter_extension/main.js
+// file source_UI/toolbar_items.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //
 //  Distributed under the terms of the BSD License.
 // ---------------------------------------------------------------------------
+// Toobar icons adding
+//
 //- Przykład załadowania guzika do paska narzędzi
 //- przykład wyświetlenia komunikatu
 // zmiana jeszcze

@@ -1,9 +1,11 @@
-// file moj_panel/main.js
+// file source_UI/panel_browser.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //
 //  Distributed under the terms of the BSD License.
 // ---------------------------------------------------------------------------
+//Side panel for file/notebook/etc. browser displaying
+//
 //Przyklad zaladowania panelu bocznego
 //przyklad podlinkowania stylu CSS
 //przykład tworzenia linków do dokumentów Jupytera

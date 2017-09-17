@@ -1,3 +1,12 @@
+// file source_UI/main.js
+// Edited by: Michał Bednarczyk
+// Copyright (C) 2017 .....
+//
+//  Distributed under the terms of the BSD License.
+// ---------------------------------------------------------------------------
+//Extension for User Interface JupytepIDE
+//Main file
+
 define([
     './menu',
     './toolbar_items',

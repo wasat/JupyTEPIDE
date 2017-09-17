@@ -1,9 +1,10 @@
-// file moje_menu/main.js
+// file source_UI/menu.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //
 //  Distributed under the terms of the BSD License.
 // ---------------------------------------------------------------------------
+// Main menu positions adding
 //
 // - Przykład tworzenia menu głównego
 // - Przyklad otwierania pliku
