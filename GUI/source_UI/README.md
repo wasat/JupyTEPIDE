@@ -1,7 +1,7 @@
 # source_UI
 Extensions for JupytepIDE User Interface<br>
 ----------------------------------------<br>
-#Instalation
+# Instalation
 To install manually: <br>
 Place the "source_UI" directory into your server's extension dir. For example <local user>:<br>
 /home/user/.local/share/jupyter/nbextensions<br>
