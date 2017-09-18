@@ -10,10 +10,6 @@
 // ---------------------------------------------------------------------------
 // Toobar icons adding
 //
-//- Przykład załadowania guzika do paska narzędzi
-//- przykład wyświetlenia komunikatu
-// zmiana jeszcze
-// zmiana
 
 define([
     'base/js/namespace'
