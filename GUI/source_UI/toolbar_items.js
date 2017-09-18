@@ -59,6 +59,7 @@ define([
         //Prepare actions for tool-buttons
         var komunikat = make_action('komunikat1', 'my_ext','fa-comment-o','Pokaz komunikat1','to jest komunikat1',komunikat_handler);
         var komunikat2 = make_action('komunikat2', 'my_ext2','fa-comment-o','Pokaz komunikat2','to jest komunikat2',komunikat2_handler);
+
         //Load buttons to UI
         Jupyter.toolbar.add_buttons_group([komunikat, komunikat2]);
 
