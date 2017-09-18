@@ -29,12 +29,22 @@ define([
 
     //*** make_action ***
     //Function for action preparing
+    //In: Parameters to perform action.
+    // action_name:string,
+    // prefix:string,
+    // icon_:string - icon name (font-awesome class used on buttons by Jupyter)
+    // help_:string,
+    // help_index_:string,
+    // handler_: jscript function object to be performed by action
+    //
+    //Out: action_made
+    // Jupyter registered action object
     function make_action(action_name,prefix,icon_,help_,help_index_,handler_){
         var action = {
-            icon: icon_,//'fa-comment-o', // a font-awesome class used on buttons, etc
-            help: help_,//'Pokaz komunikatttttt',
-            help_index : help_index_,//'to by mogla byc pomoc',
-            handler : handler_//handler
+            icon: icon_,
+            help: help_,
+            help_index : help_index_,
+            handler : handler_
         };
         var action_made = Jupyter.actions.register(action, action_name, prefix);
         return action_made;
