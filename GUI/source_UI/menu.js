@@ -53,10 +53,6 @@ define([
         this.itemHref=href;
         this.itemText=text;
     }
-//albo użyć kodu poniżej i przystosować go tylko do możliwości dodawania pozycji menu i nazywania
-// ich (mam tu 2 rodzaje menu, dodać jeszcze jedną)
-//Dodać do jupytePYDE to co już mam działające. Potem się będzie zmieniać kod, ale dodatek i plik startowy będzie ten sam
-//zacząć od rozbicia create_menu() na oddzielne funkcje tworzące różne rodzaje pozycji menu. Potem ustalić parametry wejściowe.
 
     //***
     function add_submenu(name,appendToItemName){
@@ -94,20 +90,20 @@ define([
     function create_menu () {
         //elementy dodane do istniejacej pozycji "Help"
         moje_submenu = add_submenu('Moje menu 1','#help_menu')
-        add_menu_item('Element 1 moj','Opis elementu 1 moj','#',moje_submenu,function (evt){
+        add_menu_item('Element 1','Opis elementu 1','#',moje_submenu,function (evt){
             evt.preventDefault();
             open_notebook('moj_probny.ipynb');
         });
 
-        add_menu_item('Element 2 moj','Opis elementu 2 moj','#',moje_submenu,function (evt){
+        add_menu_item('Element 2','Opis elementu 2','#',moje_submenu,function (evt){
             evt.preventDefault();
         });
 
-        add_menu_item('Element 3 moj','Opis elementu 3 moj','#',moje_submenu,function (evt){
+        add_menu_item('Element 3','Opis elementu 3','#',moje_submenu,function (evt){
             evt.preventDefault();
         });
 
-        add_menu_item('Element 4 moj','Opis elementu 4 moj','#',moje_submenu,function (evt){
+        add_menu_item('Element 4','Opis elementu 4','#',moje_submenu,function (evt){
             evt.preventDefault();
         });
 
