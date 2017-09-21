@@ -76,11 +76,11 @@ define([
         return submenu;
     }
 
-    function add_menu_item(name,desc,appendToMenu,onClickFn){
+    function add_menu_item(name,desc,href_,appendToMenu,onClickFn){
         $('<li/>')
             .attr('title', desc)
             .append(
-                $('<a href="#">')
+                $('<a href='+href_+'>')
                     .text(name)
                     .on('click', onClickFn)
             )
@@ -94,20 +94,20 @@ define([
     function create_menu () {
         //elementy dodane do istniejacej pozycji "Help"
         moje_submenu = add_submenu('Moje menu 1','#help_menu')
-        add_menu_item('Element 1 moj','Opis elementu 1 moj',moje_submenu,function (evt){
+        add_menu_item('Element 1 moj','Opis elementu 1 moj','#',moje_submenu,function (evt){
             evt.preventDefault();
             open_notebook('moj_probny.ipynb');
         });
 
-        add_menu_item('Element 2 moj','Opis elementu 2 moj',moje_submenu,function (evt){
+        add_menu_item('Element 2 moj','Opis elementu 2 moj','#',moje_submenu,function (evt){
             evt.preventDefault();
         });
 
-        add_menu_item('Element 3 moj','Opis elementu 3 moj',moje_submenu,function (evt){
+        add_menu_item('Element 3 moj','Opis elementu 3 moj','#',moje_submenu,function (evt){
             evt.preventDefault();
         });
 
-        add_menu_item('Element 4 moj','Opis elementu 4 moj',moje_submenu,function (evt){
+        add_menu_item('Element 4 moj','Opis elementu 4 moj','#',moje_submenu,function (evt){
             evt.preventDefault();
         });
 
