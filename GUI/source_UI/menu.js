@@ -40,12 +40,6 @@ define([
             , IPython._target);
     }
 
-    //tymczasowo, do testowania
-    function onClickEmpty() {
-        //evt.preventDefault(); //to jest animacja samego menu
-        //W tym miejscu umieszczamy wywołanie funkcji robiacej cos w Jupyterze notebook;
-        //open_notebook('moj_probny.ipynb');
-    }
 
 //albo zrobić sobie menu item definiowany w ten sposób jako obiekt - może on być parametrem wejściowym dla funkcji tworzącej menu:
     function menu_item(klasa,href,text){
@@ -54,8 +48,43 @@ define([
         this.itemText=text;
     }
 
-    //***
+    //*** add_menu ***
+    // Adds new position in main menu. Creates empty dropdown list for it.
+    //In:
+    // name:string - main menu item name
+    //Out:
+    //Jquery DOM object to which the menu items will be added
+    function add_menu(name){
+        //new item in existing menu bar
+        var main_menu_item = $('<li/>')
+            .addClass('dropdown')
+            .append(
+                $('<a href="#">')
+                    .text(name)
+                    .addClass('dropdown-toggle')
+                    .attr('data-toggle','dropdown')
+                    .on('click', function (evt) { evt.preventDefault(); })
+            )
+            .appendTo($('.navbar-nav'));
+        // empty dropdown list for new main menu item
+        var menu = $('<ul/>')
+            .addClass('dropdown-menu')
+            .appendTo($(main_menu_item)); //id elementu w istniejacym menu glownym
+
+        return menu;
+    }
+
+
+    //*** add_submenu ***
+    // Creates and adds a submenu item in existing menu.
+    //In:
+    //name:string - name of submenu (item) to be displayed in existing menu dropdown
+    //appendToItemName:string - jquery CSS identifier of DOM object representing the main menu item
+    //                           into which the submenu is added.
+    //Out:
+    //Jquery DOM object to which the menu items will be added
     function add_submenu(name,appendToItemName){
+        //new expandable menu item (submenu) in existing 'appendToItemName' dropdown main menu
         var menu_item = $('<li/>')
             .addClass('dropdown-submenu')
             .append(
@@ -64,7 +93,7 @@ define([
                     .on('click', function (evt) { evt.preventDefault(); })
             )
             .appendTo($(appendToItemName));
-
+        //empty dropdown list for new submenu
         var submenu = $('<ul/>')
             .addClass('dropdown-menu')
             .appendTo(menu_item);
@@ -72,6 +101,13 @@ define([
         return submenu;
     }
 
+    //*** add_menu_item ***
+    //Adds a menu item into menu or submenu dropdown list
+    //In:
+    // name:string - item name
+    // desc:string - item description (hint) shown on mouseover
+    // href_:string - URL string. When empty, use:"#"
+    // appendToMenu: Jquery DOM object representing menu or submenu dropdown list, into which the menu item is added
     function add_menu_item(name,desc,href_,appendToMenu,onClickFn){
         $('<li/>')
             .attr('title', desc)
@@ -84,11 +120,10 @@ define([
     }
 
     //***
-//CZY MOŻNA PRZEKAZAĆ DOWOLNĄ FUNKCJĘ JAKO PARAMETR?
     //tworzenie pozycji w menu głownym, przypisanie akcji
 
     function create_menu () {
-        //elementy dodane do istniejacej pozycji "Help"
+        //elementy dodane do istniejacej pozycji w main menu - "Help"
         moje_submenu = add_submenu('Moje menu 1','#help_menu')
         add_menu_item('Element 1','Opis elementu 1','#',moje_submenu,function (evt){
             evt.preventDefault();
@@ -112,41 +147,16 @@ define([
         });
 
         //Nowa pozycja na pasku Menu o nazwie "Nowe menu"
-        var nowe_menu_item = $('<li/>')
-            .addClass('dropdown')
-            .append(
-                $('<a href="#">')
-                    .text('Nowe menu')
-                    .addClass('dropdown-toggle')
-                    .attr('data-toggle','dropdown')
-                    .on('click', function (evt) { evt.preventDefault(); })
-            )
-            .appendTo($('.navbar-nav'));
+        moje_menu = add_menu('Nowe menu');
 
-        var moje_menu_item1 = $('<ul/>')
-            .addClass('dropdown-menu')
-            .appendTo($(nowe_menu_item)); //id elementu w istniejacym menu glownym
+        add_menu_item('Otworz probny notebook','Otworz probny notebook','#',moje_menu,function (evt){
+            evt.preventDefault();
+            open_notebook('moj_probny.ipynb');
+        });
 
-        $('<li/>')
-            .attr('title','opis opis')
-            .append(
-                $('<a href="#">')
-                    .text('Moj probny notebook')
-                    .on('click', function (evt) {
-                        evt.preventDefault();
-                        open_notebook('moj_probny.ipynb');
-                    })
-            )
-            .appendTo(moje_menu_item1);
-
-        $('<li/>')
-            .attr('title','opis opis')
-            .append(
-                $('<a href="#">')
-                    .text('Element 2')
-                    .on('click', function (evt) { evt.preventDefault(); })
-            )
-            .appendTo(moje_menu_item1);
+        add_menu_item('Element 1','Opis elementu 1','#',moje_menu,function (evt){
+            evt.preventDefault();
+        });
 
     }
 
