@@ -5,7 +5,7 @@
 //  Distributed under the terms of the BSD License.
 // To see where are all extensions loaded use:
 // 'jupyter notebook list'
-// look also:
+// look also (example dir):
 // '/home/michal/.local/share/jupyter/nbextensions/'
 // ---------------------------------------------------------------------------
 // Toobar icons adding
