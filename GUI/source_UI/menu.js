@@ -111,18 +111,9 @@ define([
             evt.preventDefault();
         });
 
-        hr="http://www.wp.pl";
-        $('<li/>')
-            .attr('title', 'Idz do wp.pl')
-            .append(
-                $('<a href='+hr+'>')
-                    .text('www.wp.pl')
-                    .on('click', function (evt) {
-                        //evt.preventDefault();
-                        //jak chcemy odpalić href, to onclick musi być pusty, jak tu;
-                    })
-            )
-            .appendTo(moje_submenu);
+        add_menu_item('www.wp.pl','Idz do wp.pl','http://www.wp.pl',moje_submenu,function (evt){
+            //jak chcemy odpalić href, to onclick musi być pusty, jak tu;
+        });
 
         //Nowa pozycja na pasku Menu o nazwie "Nowe menu"
         var nowe_menu_item = $('<li/>')
