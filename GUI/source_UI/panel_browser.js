@@ -180,7 +180,8 @@ define([
         qh.force_rebuild = true;
     };
 
-    //tworzy dowolny link
+    //tworzy dowolny link w podanym elemencie
+    //
     var make_link = function(element,href_,text_){
         $(element).append(
             $('<a/>', {
@@ -189,7 +190,7 @@ define([
         );
     };
 
-    //tworzy link relatywny do katalogu roboczego
+    //tworzy link w podanym elemencie, relatywny do katalogu roboczego
     var make_parent_link = function(element,document_,text_){
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
         $(element).append(
@@ -199,7 +200,10 @@ define([
         );
     };
 
-    //proste wstawianie
+    //proste wstawianie do panelu
+    // w tej metodzie dodać tworzenie całej zawartości panelu - czyli zakładki tu
+    //spr: http://kursjs.pl/kurs/jquery/tabs.php#tab-3xxx
+    //albo użyć BOOTSTRAP
     var insert_into_side_panel = function(side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
 
