@@ -13,7 +13,7 @@
 //TODO: zrobic ladowanie stylu
 //TODO: zrobic panel z filemanagerem
 //TODO: spr. oprzeć panel na właściwościach jquery, może wyjść prostszy w implementacji
-
+//<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 define([
     'require',
     'jqueryui',
@@ -181,13 +181,12 @@ define([
     };
 
     //tworzy dowolny link w podanym elemencie
-    //
+    //zwraca obiekt skonfigurowany link <a> jako obiekt jquery
     var make_link = function(element,href_,text_){
-        $(element).append(
-            $('<a/>', {
-                href: href_
-            }).html(text_).append($('<br>'))
-        );
+        var elA = $('<a/>', {href: href_}).html(text_)
+        $(element).append(elA);
+        $(element).append($('<br/>'));
+        return elA;
     };
 
     //tworzy link w podanym elemencie, relatywny do katalogu roboczego
@@ -200,23 +199,56 @@ define([
         );
     };
 
+    //robi sam odnośnik
+    var make_tab_a = function(href_,text,expanded){
+        var tab_link=$('<a/>',{href:href_}).html(text);
+        tab_link.attr('data-toggle','tab');
+        tab_link.attr('aria-expanded',expanded);
+        return tab_link;
+    };
+
+    var make_tab_li = function(){
+        var tabsLi=$('<li/>');
+        return tabsLi;
+    };
+
+    var make_tab_div = function(class_,id_){
+        var tab_div = $('<div/>',{id:id_}).addClass(class_);
+        return tab_div;
+    };
+
     //proste wstawianie do panelu
     // w tej metodzie dodać tworzenie całej zawartości panelu - czyli zakładki tu
-    //spr: http://kursjs.pl/kurs/jquery/tabs.php#tab-3xxx
-    //albo użyć BOOTSTRAP
     var insert_into_side_panel = function(side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
 
-        $("<p href=#>Dostepne notebooki</p>").appendTo(side_panel_inner);
-        //$("<a href=#>Pokaz notebook 1</a><br>").appendTo(side_panel_inner);
-        //$("<a href=#>Pokaz notebook 2</a><br>").appendTo(side_panel_inner);
-        //$("<a href=#>Pokaz notebook 3</a><br>").appendTo(side_panel_inner);
+   //**zakładki w bootstrap
+   //przy budowie filemanagera opierać się na strukturze filemanagera jupytera
+    //nagłówki zakładek
+        var tabsUl=$('<ul/>',{id:'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
+        var tabsLiActive=$('<li/>').addClass('active');
 
-        make_link(side_panel_inner,'#','Link dowolny');
-        make_link(side_panel_inner,Jupyter.notebook.base_url,'Katalog główny');
-        make_parent_link(side_panel_inner,'moj_probny.ipynb','Pokaz notebook 1');
-        make_parent_link(side_panel_inner,'moj_probny.ipynb','Pokaz notebook 2');
-        make_parent_link(side_panel_inner,'moj_probny.ipynb','Pokaz notebook 3');
+        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta','karta1','true')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#2karta','karta2','false')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#3karta','karta3','false')));
+        //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
+
+        side_panel_inner.append(tabsUl);
+    // zawartość zakładek
+        var tabContDiv = $('<div/>').addClass('tab-content');
+        make_tab_div('tab-pane active','1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
+        make_tab_div('tab-pane','2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
+        make_tab_div('tab-pane','3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
+        //make_tab_div('tab-pane','4karta').append($('<p/>').html('Tresc zakladki 4')).appendTo(tabContDiv);
+        side_panel_inner.append(tabContDiv);
+
+   //**koniec zakładek w bootstrap
+
+        make_link($('#1karta'),'#','Link dowolny');
+        make_link($('#1karta'),Jupyter.notebook.base_url,'Katalog główny');
+        make_parent_link($('#2karta'),'moj_probny.ipynb','Pokaz notebook 1');
+        make_parent_link($('#2karta'),'moj_probny.ipynb','Pokaz notebook 2');
+        make_parent_link($('#3karta'),'moj_probny.ipynb','Pokaz notebook 3');
 
     };
 
@@ -243,7 +275,7 @@ define([
 
     function load_ipython_extension() {
 
-        //podlinkowanie stylu
+        //podlinkowanie stylu wlasnego panelu
         $('head').append(
             $('<link/>', {
                 rel: 'stylesheet',
@@ -251,6 +283,16 @@ define([
                 href: require.toUrl('./css/panel_browser.css')
             })
         );
+
+        //podlinkowanie stylu bootstrap
+      //  $('head').append(
+      //      $('<link/>', {
+      //          rel: 'stylesheet',
+      //          type:'text/css',
+      //          href: require.toUrl('https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+      //      })
+      //  );
+
 
         var action = {
             icon: 'fa-film', // a font-awesome class used on buttons, etc
