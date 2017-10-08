@@ -13,21 +13,35 @@
 //TODO: zrobic ladowanie stylu
 //TODO: zrobic panel z filemanagerem
 //TODO: spr. oprzeć panel na właściwościach jquery, może wyjść prostszy w implementacji
+//TODO: zrobić z każdego elementu wizualnego (menu, panel itp.) obiekt, uprości sie kod w pliku głównym
 //<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+//wczytanie filebrowsera Jupytera w ten sposób:
+//$('#1karta').load('http://localhost:8888/tree #notebooks');
+//nic nie daje, bo nie odpala się skrypt odpowiedzialny za załadowanie zawartości katalogu
+//
+
 define([
     'require',
-    'jqueryui',
+    'jquery',
     'base/js/namespace',
     'base/js/events',
     'base/js/utils',
-    'services/config'
+    'services/config',
+    'tree/js/notebooklist',
+    'tree/js/sessionlist',
+    'contents',
+    'base/js/page'
 ], function (
     require,
     $,
     IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
     events,
     utils,
-    configmod
+    config,
+    notebooklist,
+    sesssionlist,
+    contents_service,
+    page
 ) {
     'use strict';
 // create config object to load parameters
@@ -37,7 +51,7 @@ define([
 //****
     var side_panel_min_rel_width = 10;
     var side_panel_max_rel_width = 90;
-    var side_panel_start_width = 15;
+    var side_panel_start_width = 18;
 
     var build_side_panel = function (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
@@ -195,7 +209,7 @@ define([
         $(element).append(
             $('<a/>', {
                 href: utils.url_path_join(Jupyter.notebook.base_url,'tree', utils.encode_uri_components(parent), document_)
-            }).html(text_).append($('<br>'))
+            }).html(text_).attr('target','#notebook').append($('<br>')) //target niekoniecznie potrzebny....
         );
     };
 
@@ -217,38 +231,76 @@ define([
         return tab_div;
     };
 
+    //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
+    //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
+
+    var show_files = function(){
+      var item_row = $('<div/>').addClass('list_item_row');
+      var colDiv = $('<div/>').addClass('col-md-12');
+
+      item_row.append(colDiv);
+
+    };
+
+    //funkcja ładująca gotowe notebooki
+    var show_notebooks = function(){
+
+    };
+
+    //funkcja ładująca snippety kodu
+    var show_snippets = function(){
+
+    };
+
     //proste wstawianie do panelu
     // w tej metodzie dodać tworzenie całej zawartości panelu - czyli zakładki tu
-    var insert_into_side_panel = function(side_panel) {
+    var insert_into_side_panel;
+    insert_into_side_panel = function (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
 
-   //**zakładki w bootstrap
-   //przy budowie filemanagera opierać się na strukturze filemanagera jupytera
-    //nagłówki zakładek
-        var tabsUl=$('<ul/>',{id:'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
-        var tabsLiActive=$('<li/>').addClass('active');
+        //**zakładki w bootstrap
+        //przy budowie filemanagera opierać się na strukturze filemanagera jupytera
+        //nagłówki zakładek
+        var tabsUl = $('<ul/>', {id: 'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
+        var tabsLiActive = $('<li/>').addClass('active');
 
-        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta','karta1','true')));
-        tabsUl.append(make_tab_li().append(make_tab_a('#2karta','karta2','false')));
-        tabsUl.append(make_tab_li().append(make_tab_a('#3karta','karta3','false')));
+        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta', 'Files', 'true')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#2karta', 'Notebooks', 'false')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#3karta', 'Snippets', 'false')));
         //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
 
         side_panel_inner.append(tabsUl);
-    // zawartość zakładek
+        // zawartość zakładek
         var tabContDiv = $('<div/>').addClass('tab-content');
-        make_tab_div('tab-pane active','1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
-        make_tab_div('tab-pane','2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
-        make_tab_div('tab-pane','3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
+        make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
+        make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
+        make_tab_div('tab-pane', '3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
         //make_tab_div('tab-pane','4karta').append($('<p/>').html('Tresc zakladki 4')).appendTo(tabContDiv);
         side_panel_inner.append(tabContDiv);
 
-   //**koniec zakładek w bootstrap
+        //**koniec zakładek w bootstrap
 
-        make_link($('#1karta'),'#','Link dowolny');
-        make_link($('#1karta'),Jupyter.notebook.base_url,'Katalog główny');
-        make_parent_link($('#2karta'),'moj_probny.ipynb','Pokaz notebook 1');
-        make_parent_link($('#2karta'),'moj_probny.ipynb','Pokaz notebook 2');
-        make_parent_link($('#3karta'),'moj_probny.ipynb','Pokaz notebook 3');
+        //** treść zakładek - przygotować w oparciu o filemanagera jupytera. Niech to będzie lista / tabelka
+        //a tu własne stylowanie bootstrapa:
+        //https://kursbootstrap.pl/examples/navs.html
+        //https://kursbootstrap.pl/zakladki-nav-tabs/
+        //$('#1karta').load("readme.md");
+        make_link($('#1karta'), '#', 'Link dowolny');
+        make_link($('#1karta'), Jupyter.notebook.base_url, 'Katalog główny');
+        make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
+        make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 2');
+        make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
+
+        var akapit = $('<p/>').load('http://localhost:8888/tree #notebook_list');
+        $('#1karta').append(akapit);
+        akapit = $('<p/>').load('./item_row.html'); //taka sciezka jest relatywna do katalogu głownego serwera (u mnie /anaconda3/)
+        $('#1karta').append(akapit);
+
+//!@!@!@!@!@!@!@!lista notebooków, którą można spr. wykorzystać do zburowania filemanagera jest w pliku:
+        ///home/michal/anaconda3/lib/python3.6/site-packages/notebook/static/tree/js/notebooklist.js
+        //a wywołanie obiektu, który znajduje się w tym module jest w skrypcie main.js - studiować
+        //spr od napisania własnego, oddzielnego filemanagera.....
+
 
     };
 
@@ -304,6 +356,8 @@ define([
         var action_name = 'pokaz-panel';
         var full_action_name = Jupyter.actions.register(action, action_name, prefix);
         Jupyter.toolbar.add_buttons_group([full_action_name]);
+
+        togglePanel();
     }
     return {
         load_ipython_extension: load_ipython_extension
