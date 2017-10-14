@@ -233,13 +233,44 @@ define([
 
     //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
     //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
-
-    var show_files = function(){
-      var item_row = $('<div/>').addClass('list_item_row');
+    //patrsz item_row.html
+    var make_row_item = function(){
+      var item_row = $('<div/>').addClass('list_item row');
       var colDiv = $('<div/>').addClass('col-md-12');
+      colDiv.append(
+          $('<input>',
+              {title:'Click here to rename, delete, etc.',
+              type:'checkbox'
+              }));
+      colDiv.append(
+          $('<i/>').addClass('item_icon folder_icon icon-fixed-width')
+      );
+      var itemName=$('<span/>').addClass('item_name').html('bin');
+
+      colDiv.append(
+          $('<a/>',
+              {href:'/tree/anaconda3/bin'
+              }).addClass('item_link').append(itemName)
+      );
+
+      colDiv.append(
+          $('<span/>',{
+              title:'017-08-24 13:35'
+          }).addClass('item_modified pull-right').html('a month ago')
+      );
+
+
+      var DivLast = $('<div/>').addClass('item_buttons pull-right');
+      var DivLast1 = $('<div/>',{style:'visibility: hidden;'}).addClass('running-indicator').html('Running');
+      colDiv.append(
+          $('<div/>').addClass('item_buttons pull-right'
+          ).append(DivLast1)
+      );
+
+      DivLast.append();
 
       item_row.append(colDiv);
-
+      return item_row;
     };
 
     //funkcja ładująca gotowe notebooki
@@ -272,9 +303,14 @@ define([
         side_panel_inner.append(tabsUl);
         // zawartość zakładek
         var tabContDiv = $('<div/>').addClass('tab-content');
-        make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
-        make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
-        make_tab_div('tab-pane', '3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
+        //make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
+        //make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
+        //make_tab_div('tab-pane', '3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
+
+        make_tab_div('tab-pane active', '1karta').appendTo(tabContDiv);
+        make_tab_div('tab-pane', '2karta').appendTo(tabContDiv);
+        make_tab_div('tab-pane', '3karta').appendTo(tabContDiv);
+
         //make_tab_div('tab-pane','4karta').append($('<p/>').html('Tresc zakladki 4')).appendTo(tabContDiv);
         side_panel_inner.append(tabContDiv);
 
@@ -285,15 +321,22 @@ define([
         //https://kursbootstrap.pl/examples/navs.html
         //https://kursbootstrap.pl/zakladki-nav-tabs/
         //$('#1karta').load("readme.md");
-        make_link($('#1karta'), '#', 'Link dowolny');
-        make_link($('#1karta'), Jupyter.notebook.base_url, 'Katalog główny');
+        make_link($('#2karta'), '#', 'Link dowolny');
+        make_link($('#2karta'), Jupyter.notebook.base_url, 'Katalog główny');
         make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
         make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 2');
         make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
 
-        var akapit = $('<p/>').load('http://localhost:8888/tree #notebook_list');
+        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
         $('#1karta').append(akapit);
-        akapit = $('<p/>').load('./item_row.html'); //taka sciezka jest relatywna do katalogu głownego serwera (u mnie /anaconda3/)
+
+        //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
+
+        var akapit1 = $('<div/>').load('./item_row.html'); //taka sciezka jest relatywna do katalogu głownego serwera (u mnie /anaconda3/)
+        $('#1karta').append(akapit1);
+        $('#notebook_list').addClass('list_container');
+        //wstawianie funkcją
+        akapit = make_row_item().appendTo($('<div/>'));
         $('#1karta').append(akapit);
 
 //!@!@!@!@!@!@!@!lista notebooków, którą można spr. wykorzystać do zburowania filemanagera jest w pliku:
@@ -363,3 +406,5 @@ define([
         load_ipython_extension: load_ipython_extension
     };
 });
+
+
