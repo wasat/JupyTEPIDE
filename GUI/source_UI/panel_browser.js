@@ -329,6 +329,9 @@ define([
         //https://kursbootstrap.pl/zakladki-nav-tabs/
         //$('#1karta').load("readme.md");
 
+
+        var rowItemArray = [];
+        var i;
 //Karta Files
         //Nagłówek listy
         var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
@@ -343,7 +346,7 @@ define([
 
         //wstawianie funkcją
 
-        var rowItemArray = [];
+
         //pozycje listy
         rowItemArray[0]= new row_item('bin','/tree/anaconda3/bin','month ago','Stopped');
         rowItemArray[1]=new row_item('bin bin','/tree/anaconda3/bin','month ago','Stopped');
@@ -362,9 +365,12 @@ define([
         rowItemArray[14]=new row_item('yaml','/tree/anaconda3/bin','month ago','Stopped');
         rowItemArray[15]=new row_item('yeti','/tree/anaconda3/bin','month ago','Stopped');
 
-        for (var i=0;i<rowItemArray.length;i++){
+        for (i=0;i<rowItemArray.length;i++){
             $('#1karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
         }
+
+        rowItemArray = [];
+
 
         //$('#1karta').append(make_row_item(rowItemArray[1]).appendTo($('<div/>')));
 
@@ -374,13 +380,44 @@ define([
         //spr od napisania własnego, oddzielnego filemanagera.....
 
 //Karta Notebooks
-        make_link($('#2karta'), '#', 'Link dowolny');
-        make_link($('#2karta'), Jupyter.notebook.base_url, 'Katalog główny');
-        make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
-        make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 2');
+        var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
+        var notebookPath =  utils.url_path_join(Jupyter.notebook.base_url,'tree', utils.encode_uri_components(parent));
+
+        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
+        $('#2karta').append(akapit);
+        $('#notebook_list').addClass('list_container');
+
+        rowItemArray[0]= new row_item('moj_probny.ipynb',utils.url_path_join(notebookPath,'moj_probny.ipynb'),'month ago','Stopped');
+        rowItemArray[1]= new row_item('Untitled.ipynb',utils.url_path_join(notebookPath,'Untitled.ipynb'),'month ago','Stopped');
+        rowItemArray[2]= new row_item('Untitled1.ipynb',utils.url_path_join(notebookPath,'Untitled1.ipynb'),'month ago','Stopped');
+
+        for (i=0;i<rowItemArray.length;i++){
+            $('#2karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+        }
+
+        rowItemArray = [];
+
+        //make_link($('#2karta'), '#', 'Link dowolny');
+        //make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
 
 //Karta Snippets
-        make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
+        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
+        $('#3karta').append(akapit);
+        $('#notebook_list').addClass('list_container');
+
+        rowItemArray[0]= new row_item('Snippet 1','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[1]= new row_item('Snippet 2','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[2]= new row_item('Snippet 3','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[3]= new row_item('Snippet 4','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[4]= new row_item('Snippet 5','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[5]= new row_item('Snippet 6','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[6]= new row_item('Snippet 7','/tree/anaconda3/bin','month ago','Stopped');
+
+        for (i=0;i<rowItemArray.length;i++){
+            $('#3karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+        }
+
+        //make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
 
 
     };
