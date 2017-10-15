@@ -231,10 +231,17 @@ define([
         return tab_div;
     };
 
+    function row_item(name,link,time,status){
+        this.name=name;
+        this.link=link;
+        this.time=time;
+        this.status=status;
+    };
+
     //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
     //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
-    //patrsz item_row.html
-    var make_row_item = function(){
+    //patrz item_row.html
+    var make_row_item = function(row_item){
       var item_row = $('<div/>').addClass('list_item row');
       var colDiv = $('<div/>').addClass('col-md-12');
       colDiv.append(
@@ -245,23 +252,23 @@ define([
       colDiv.append(
           $('<i/>').addClass('item_icon folder_icon icon-fixed-width')
       );
-      var itemName=$('<span/>').addClass('item_name').html('bin');
+      var itemName=$('<span/>').addClass('item_name').html(row_item.name);
 
       colDiv.append(
           $('<a/>',
-              {href:'/tree/anaconda3/bin'
+              {href:row_item.link  //'/tree/anaconda3/bin'
               }).addClass('item_link').append(itemName)
       );
 
       colDiv.append(
           $('<span/>',{
               title:'017-08-24 13:35'
-          }).addClass('item_modified pull-right').html('a month ago')
+          }).addClass('item_modified pull-right').html(row_item.time)
       );
 
 
       var DivLast = $('<div/>').addClass('item_buttons pull-right');
-      var DivLast1 = $('<div/>',{style:'visibility: hidden;'}).addClass('running-indicator').html('Running');
+      var DivLast1 = $('<div/>',{style:'visibility: hidden;'}).addClass('running-indicator').html(row_item.status);
       colDiv.append(
           $('<div/>').addClass('item_buttons pull-right'
           ).append(DivLast1)
@@ -289,9 +296,9 @@ define([
     insert_into_side_panel = function (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
 
-        //**zakładki w bootstrap
+    //**zakładki w bootstrap
         //przy budowie filemanagera opierać się na strukturze filemanagera jupytera
-        //nagłówki zakładek
+    //nagłówki zakładek
         var tabsUl = $('<ul/>', {id: 'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
         var tabsLiActive = $('<li/>').addClass('active');
 
@@ -301,7 +308,7 @@ define([
         //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
 
         side_panel_inner.append(tabsUl);
-        // zawartość zakładek
+    // zawartość zakładek
         var tabContDiv = $('<div/>').addClass('tab-content');
         //make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
         //make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
@@ -314,35 +321,66 @@ define([
         //make_tab_div('tab-pane','4karta').append($('<p/>').html('Tresc zakladki 4')).appendTo(tabContDiv);
         side_panel_inner.append(tabContDiv);
 
-        //**koniec zakładek w bootstrap
+    //**koniec zakładek w bootstrap
 
-        //** treść zakładek - przygotować w oparciu o filemanagera jupytera. Niech to będzie lista / tabelka
+    //** treść zakładek - przygotować w oparciu o filemanagera jupytera. Niech to będzie lista / tabelka
         //a tu własne stylowanie bootstrapa:
         //https://kursbootstrap.pl/examples/navs.html
         //https://kursbootstrap.pl/zakladki-nav-tabs/
         //$('#1karta').load("readme.md");
-        make_link($('#2karta'), '#', 'Link dowolny');
-        make_link($('#2karta'), Jupyter.notebook.base_url, 'Katalog główny');
-        make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
-        make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 2');
-        make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
 
+//Karta Files
+        //Nagłówek listy
         var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
         $('#1karta').append(akapit);
+        $('#notebook_list').addClass('list_container');
 
         //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
 
-        var akapit1 = $('<div/>').load('./item_row.html'); //taka sciezka jest relatywna do katalogu głownego serwera (u mnie /anaconda3/)
-        $('#1karta').append(akapit1);
-        $('#notebook_list').addClass('list_container');
+        //var akapit1 = $('<div/>').load('./item_row.html'); //taka sciezka jest relatywna do katalogu głownego serwera (u mnie /anaconda3/)
+        //$('#1karta').append(akapit1);
+
+
         //wstawianie funkcją
-        akapit = make_row_item().appendTo($('<div/>'));
-        $('#1karta').append(akapit);
+
+        var rowItemArray = [];
+        //pozycje listy
+        rowItemArray[0]= new row_item('bin','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[1]=new row_item('bin bin','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[2]=new row_item('Folder 1','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[3]=new row_item('conda-meta','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[4]=new row_item('etc','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[5]=new row_item('include','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[6]=new row_item('lib','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[7]=new row_item('libexec','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[8]=new row_item('plugins','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[9]=new row_item('translations','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[10]=new row_item('sbin','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[11]=new row_item('var','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[12]=new row_item('zigbee','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[13]=new row_item('zuse','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[14]=new row_item('yaml','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[15]=new row_item('yeti','/tree/anaconda3/bin','month ago','Stopped');
+
+        for (var i=0;i<rowItemArray.length;i++){
+            $('#1karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+        }
+
+        //$('#1karta').append(make_row_item(rowItemArray[1]).appendTo($('<div/>')));
 
 //!@!@!@!@!@!@!@!lista notebooków, którą można spr. wykorzystać do zburowania filemanagera jest w pliku:
         ///home/michal/anaconda3/lib/python3.6/site-packages/notebook/static/tree/js/notebooklist.js
         //a wywołanie obiektu, który znajduje się w tym module jest w skrypcie main.js - studiować
         //spr od napisania własnego, oddzielnego filemanagera.....
+
+//Karta Notebooks
+        make_link($('#2karta'), '#', 'Link dowolny');
+        make_link($('#2karta'), Jupyter.notebook.base_url, 'Katalog główny');
+        make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
+        make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 2');
+
+//Karta Snippets
+        make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
 
 
     };
