@@ -14,6 +14,7 @@
 //TODO: zrobic panel z filemanagerem
 //TODO: spr. oprzeć panel na właściwościach jquery, może wyjść prostszy w implementacji
 //TODO: zrobić z każdego elementu wizualnego (menu, panel itp.) obiekt, uprości sie kod w pliku głównym
+//TODO: poprawić ładowanie do klasy list_container, tak, żeby razem był nagłówek i row_items'y
 //<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 //wczytanie filebrowsera Jupytera w ten sposób:
 //$('#1karta').load('http://localhost:8888/tree #notebooks');
@@ -51,7 +52,7 @@ define([
 //****
     var side_panel_min_rel_width = 10;
     var side_panel_max_rel_width = 90;
-    var side_panel_start_width = 18;
+    var side_panel_start_width = 28;
 
     var build_side_panel = function (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
@@ -334,9 +335,9 @@ define([
         var i;
 //Karta Files
         //Nagłówek listy
-        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
+        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
         $('#1karta').append(akapit);
-        $('#notebook_list').addClass('list_container');
+
 
         //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
 
@@ -368,7 +369,7 @@ define([
         for (i=0;i<rowItemArray.length;i++){
             $('#1karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
         }
-
+        //$('#notebook_list').addClass('list_container');
         rowItemArray = [];
 
 
