@@ -11,9 +11,11 @@ body > #header {
     background-color: #2a323a;
 }
 
+/* to będzie skutkowało zmianą koloru czcionki napisów w nagłówku i innych, domyślnie jest biały, ustawiony przez bootstrap
 body {
     color: #2a323a;
 }
+*/
 
 .notebook_app {
     background-color: #3d4954;
@@ -27,3 +29,5 @@ body {
 .list_header {
     background-color:  #2a323a;
 }
+
+/*popróbować różne bootstrap themes, dobrać kolory i style*/
