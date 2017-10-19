@@ -1,0 +1,29 @@
+/*notebook*/
+.container {
+    background-color: #2a323a;
+}
+
+body > #header {
+    background-color: #2a323a;
+}
+
+#notebook-container {
+    background-color: #2a323a;
+}
+
+body {
+    color: #2a323a;
+}
+
+.notebook_app {
+    background-color: #3d4954;
+}
+
+/*side pannel*/
+.side_panel_inner {
+    background-color: #3C3F41;
+}
+
+.list_header {
+    background-color:  #2a323a;
+}
