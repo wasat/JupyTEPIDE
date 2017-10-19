@@ -40,7 +40,7 @@ define([
             }
         } catch(e){}
 
-        //styl skórki jupytera
+        //styl skórki jupytera (patrz inne pliki w katalogu ./css/)
         var $link = $('<link/>');
         $('head').append($link);
 
@@ -49,6 +49,16 @@ define([
         $link.attr('href',require.toUrl('./css/'+'bootstrap.min'+'.css'))
             .attr('rel','stylesheet')
             .attr('type','text/css');
+
+       //styl jupyTEPIDE
+       var $jlink = $('<link/>');
+       $('head').append($jlink);
+
+       //podstawiam inny bootstrap niż jest - spr z innym jquery tak samo z innymi już istniejącymi jupytera
+       //można pozmieniać im nazwy plików, żeby się nie mieszały, ale namespace zostaną te same i się nadpiszą
+       $jlink.attr('href',require.toUrl('./css/'+'jupytepide'+'.css'))
+           .attr('rel','stylesheet')
+           .attr('type','text/css');
 
     };
 
