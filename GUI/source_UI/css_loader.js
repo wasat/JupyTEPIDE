@@ -31,12 +31,12 @@ define([
         $('head').append($tlink);
 
         try{
-                 $tlink.attr('href',require.toUrl('../../components/codemirror/theme/'+'monokai'+'.css'))
+                 $tlink.attr('href',require.toUrl('../../components/codemirror/theme/'+'mbo'+'.css'))
                      .attr('rel','stylesheet')
-                     .attr('type','text/css');
+                     .attr('type','text/css'); //monokai
 
             for(var c in IPython.notebook.get_cells()){
-                         Jupyter.notebook.get_cell(c).code_mirror.setOption('theme', 'monokai')
+                         Jupyter.notebook.get_cell(c).code_mirror.setOption('theme', 'mbo')
             }
         } catch(e){}
 
