@@ -1,14 +1,14 @@
 /*notebook*/
 .container {
-    background-color: #2a323a;
+    background-color: #1C1C1C;
 }
 
 body > #header {
-    background-color: #2a323a;
+    background-color: #1C1C1C;
 }
 
 #notebook-container {
-    background-color: #2a323a;
+    background-color: #313335;
 }
 
 /* to będzie skutkowało zmianą koloru czcionki napisów w nagłówku i innych, domyślnie jest biały, ustawiony przez bootstrap
@@ -18,7 +18,7 @@ body {
 */
 
 .notebook_app {
-    background-color: #3d4954;
+    background-color: #3C3F41;
 }
 
 /*side pannel*/
@@ -27,7 +27,41 @@ body {
 }
 
 .list_header {
-    background-color:  #2a323a;
+    background-color:  #1C1C1C;
 }
+
+.nav-tabs > li > a {
+    border: 1px solid #7a7c8a;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #7a7c8a;
+}
+
+/*to tymczasowo - do poprawienia ładowania list_container (patrz TODO w panel_browser.js*/
+.list_container{
+    border:none;
+}
+
+/* prompt po lewej stronie celek*/
+div.input_prompt {
+    color: #a2a2a2;
+}
+
+.prompt {
+    min-width: 5ex;
+}
+
+/*Celki Jupytera notebook'a*/
+div.input_area {
+    border: 1px solid #1C1C1C;
+    border-radius:0px;
+}
+/*
+kolor na obramowanie wybranej celki: #6f6c75
+div.cell.selected, div.cell.selected.jupyter-soft-selected
+
+
+*/
 
 /*popróbować różne bootstrap themes, dobrać kolory i style*/
