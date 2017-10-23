@@ -60,6 +60,10 @@ define([
            .attr('rel','stylesheet')
            .attr('type','text/css');
 
+       //nowy combobox na pasku w bootstrapowym stylu
+       //$('select').appendTo('<div/>');
+
+
     };
 
     //*** make_action ***
