@@ -13,21 +13,36 @@
 //TODO: zrobic ladowanie stylu
 //TODO: zrobic panel z filemanagerem
 //TODO: spr. oprzeć panel na właściwościach jquery, może wyjść prostszy w implementacji
+//TODO: zrobić z każdego elementu wizualnego (menu, panel itp.) obiekt, uprości sie kod w pliku głównym
+//TODO: poprawić ładowanie do klasy list_container, tak, żeby razem był nagłówek i row_items'y
+//<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+//wczytanie filebrowsera Jupytera w ten sposób:
+//$('#1karta').load('http://localhost:8888/tree #notebooks');
+//nic nie daje, bo nie odpala się skrypt odpowiedzialny za załadowanie zawartości katalogu
+//
 
 define([
     'require',
-    'jqueryui',
+    'jquery',
     'base/js/namespace',
     'base/js/events',
     'base/js/utils',
-    'services/config'
+    'services/config',
+    'tree/js/notebooklist',
+    'tree/js/sessionlist',
+    'contents',
+    'base/js/page'
 ], function (
     require,
     $,
     IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
     events,
     utils,
-    configmod
+    config,
+    notebooklist,
+    sesssionlist,
+    contents_service,
+    page
 ) {
     'use strict';
 // create config object to load parameters
@@ -37,7 +52,7 @@ define([
 //****
     var side_panel_min_rel_width = 10;
     var side_panel_max_rel_width = 90;
-    var side_panel_start_width = 15;
+    var side_panel_start_width = 28;
 
     var build_side_panel = function (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
@@ -180,39 +195,231 @@ define([
         qh.force_rebuild = true;
     };
 
-    //tworzy dowolny link
+    //tworzy dowolny link w podanym elemencie
+    //zwraca obiekt skonfigurowany link <a> jako obiekt jquery
     var make_link = function(element,href_,text_){
-        $(element).append(
-            $('<a/>', {
-                href: href_
-            }).html(text_).append($('<br>'))
-        );
+        var elA = $('<a/>', {href: href_}).html(text_)
+        $(element).append(elA);
+        $(element).append($('<br/>'));
+        return elA;
     };
 
-    //tworzy link relatywny do katalogu roboczego
+    //tworzy link w podanym elemencie, relatywny do katalogu roboczego
     var make_parent_link = function(element,document_,text_){
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
         $(element).append(
             $('<a/>', {
                 href: utils.url_path_join(Jupyter.notebook.base_url,'tree', utils.encode_uri_components(parent), document_)
-            }).html(text_).append($('<br>'))
+            }).html(text_).attr('target','#notebook').append($('<br>')) //target niekoniecznie potrzebny....
         );
     };
 
-    //proste wstawianie
-    var insert_into_side_panel = function(side_panel) {
+    //robi sam odnośnik
+    var make_tab_a = function(href_,text,expanded){
+        var tab_link=$('<a/>',{href:href_}).html(text);
+        tab_link.attr('data-toggle','tab');
+        tab_link.attr('aria-expanded',expanded);
+        return tab_link;
+    };
+
+    var make_tab_li = function(){
+        var tabsLi=$('<li/>');
+        return tabsLi;
+    };
+
+    var make_tab_div = function(class_,id_){
+        var tab_div = $('<div/>',{id:id_}).addClass(class_);
+        return tab_div;
+    };
+
+    function row_item(name,link,time,status){
+        this.name=name;
+        this.link=link;
+        this.time=time;
+        this.status=status;
+    };
+
+    //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
+    //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
+    //patrz item_row.html
+    var make_row_item = function(row_item){
+      var item_row = $('<div/>').addClass('list_item row');
+      var colDiv = $('<div/>').addClass('col-md-12');
+      colDiv.append(
+          $('<input>',
+              {title:'Click here to rename, delete, etc.',
+              type:'checkbox'
+              }));
+      colDiv.append(
+          $('<i/>').addClass('item_icon folder_icon icon-fixed-width')
+      );
+      var itemName=$('<span/>').addClass('item_name').html(row_item.name);
+
+      colDiv.append(
+          $('<a/>',
+              {href:row_item.link  //'/tree/anaconda3/bin'
+              }).addClass('item_link').append(itemName)
+      );
+
+      colDiv.append(
+          $('<span/>',{
+              title:'017-08-24 13:35'
+          }).addClass('item_modified pull-right').html(row_item.time)
+      );
+
+
+      var DivLast = $('<div/>').addClass('item_buttons pull-right');
+      var DivLast1 = $('<div/>',{style:'visibility: hidden;'}).addClass('running-indicator').html(row_item.status);
+      colDiv.append(
+          $('<div/>').addClass('item_buttons pull-right'
+          ).append(DivLast1)
+      );
+
+      DivLast.append();
+
+      item_row.append(colDiv);
+      return item_row;
+    };
+
+    //funkcja ładująca gotowe notebooki
+    var show_notebooks = function(){
+
+    };
+
+    //funkcja ładująca snippety kodu
+    var show_snippets = function(){
+
+    };
+
+    //proste wstawianie do panelu
+    // w tej metodzie dodać tworzenie całej zawartości panelu - czyli zakładki tu
+    var insert_into_side_panel;
+    insert_into_side_panel = function (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
 
-        $("<p href=#>Dostepne notebooki</p>").appendTo(side_panel_inner);
-        //$("<a href=#>Pokaz notebook 1</a><br>").appendTo(side_panel_inner);
-        //$("<a href=#>Pokaz notebook 2</a><br>").appendTo(side_panel_inner);
-        //$("<a href=#>Pokaz notebook 3</a><br>").appendTo(side_panel_inner);
+    //**zakładki w bootstrap
+        //przy budowie filemanagera opierać się na strukturze filemanagera jupytera
+    //nagłówki zakładek
+        var tabsUl = $('<ul/>', {id: 'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
+        var tabsLiActive = $('<li/>').addClass('active');
 
-        make_link(side_panel_inner,'#','Link dowolny');
-        make_link(side_panel_inner,Jupyter.notebook.base_url,'Katalog główny');
-        make_parent_link(side_panel_inner,'moj_probny.ipynb','Pokaz notebook 1');
-        make_parent_link(side_panel_inner,'moj_probny.ipynb','Pokaz notebook 2');
-        make_parent_link(side_panel_inner,'moj_probny.ipynb','Pokaz notebook 3');
+        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta', 'Files', 'true')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#2karta', 'Notebooks', 'false')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#3karta', 'Snippets', 'false')));
+        //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
+
+        side_panel_inner.append(tabsUl);
+    // zawartość zakładek
+        var tabContDiv = $('<div/>').addClass('tab-content');
+        //make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
+        //make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
+        //make_tab_div('tab-pane', '3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
+
+        make_tab_div('tab-pane active', '1karta').appendTo(tabContDiv);
+        make_tab_div('tab-pane', '2karta').appendTo(tabContDiv);
+        make_tab_div('tab-pane', '3karta').appendTo(tabContDiv);
+
+        //make_tab_div('tab-pane','4karta').append($('<p/>').html('Tresc zakladki 4')).appendTo(tabContDiv);
+        side_panel_inner.append(tabContDiv);
+
+    //**koniec zakładek w bootstrap
+
+    //** treść zakładek - przygotować w oparciu o filemanagera jupytera. Niech to będzie lista / tabelka
+        //a tu własne stylowanie bootstrapa:
+        //https://kursbootstrap.pl/examples/navs.html
+        //https://kursbootstrap.pl/zakladki-nav-tabs/
+        //$('#1karta').load("readme.md");
+
+
+        var rowItemArray = [];
+        var i;
+//Karta Files
+        //Nagłówek listy
+        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        $('#1karta').append(akapit);
+
+
+        //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
+
+        //var akapit1 = $('<div/>').load('./item_row.html'); //taka sciezka jest relatywna do katalogu głownego serwera (u mnie /anaconda3/)
+        //$('#1karta').append(akapit1);
+
+
+        //wstawianie funkcją
+
+
+        //pozycje listy
+        rowItemArray[0]= new row_item('bin','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[1]=new row_item('bin bin','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[2]=new row_item('Folder 1','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[3]=new row_item('conda-meta','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[4]=new row_item('etc','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[5]=new row_item('include','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[6]=new row_item('lib','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[7]=new row_item('libexec','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[8]=new row_item('plugins','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[9]=new row_item('translations','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[10]=new row_item('sbin','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[11]=new row_item('var','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[12]=new row_item('zigbee','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[13]=new row_item('zuse','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[14]=new row_item('yaml','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[15]=new row_item('yeti','/tree/anaconda3/bin','month ago','Stopped');
+
+        for (i=0;i<rowItemArray.length;i++){
+            $('#1karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+        }
+        //$('#notebook_list').addClass('list_container');
+        rowItemArray = [];
+
+
+        //$('#1karta').append(make_row_item(rowItemArray[1]).appendTo($('<div/>')));
+
+//!@!@!@!@!@!@!@!lista notebooków, którą można spr. wykorzystać do zburowania filemanagera jest w pliku:
+        ///home/michal/anaconda3/lib/python3.6/site-packages/notebook/static/tree/js/notebooklist.js
+        //a wywołanie obiektu, który znajduje się w tym module jest w skrypcie main.js - studiować
+        //spr od napisania własnego, oddzielnego filemanagera.....
+
+//Karta Notebooks
+        var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
+        var notebookPath =  utils.url_path_join(Jupyter.notebook.base_url,'tree', utils.encode_uri_components(parent));
+
+        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
+        $('#2karta').append(akapit);
+        $('#notebook_list').addClass('list_container');
+
+        rowItemArray[0]= new row_item('moj_probny.ipynb',utils.url_path_join(notebookPath,'moj_probny.ipynb'),'month ago','Stopped');
+        rowItemArray[1]= new row_item('Untitled.ipynb',utils.url_path_join(notebookPath,'Untitled.ipynb'),'month ago','Stopped');
+        rowItemArray[2]= new row_item('Untitled1.ipynb',utils.url_path_join(notebookPath,'Untitled1.ipynb'),'month ago','Stopped');
+
+        for (i=0;i<rowItemArray.length;i++){
+            $('#2karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+        }
+
+        rowItemArray = [];
+
+        //make_link($('#2karta'), '#', 'Link dowolny');
+        //make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
+
+//Karta Snippets
+        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
+        $('#3karta').append(akapit);
+        $('#notebook_list').addClass('list_container');
+
+        rowItemArray[0]= new row_item('Snippet 1','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[1]= new row_item('Snippet 2','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[2]= new row_item('Snippet 3','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[3]= new row_item('Snippet 4','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[4]= new row_item('Snippet 5','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[5]= new row_item('Snippet 6','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[6]= new row_item('Snippet 7','/tree/anaconda3/bin','month ago','Stopped');
+
+        for (i=0;i<rowItemArray.length;i++){
+            $('#3karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+        }
+
+        //make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
+
 
     };
 
@@ -239,7 +446,7 @@ define([
 
     function load_ipython_extension() {
 
-        //podlinkowanie stylu
+        //podlinkowanie stylu wlasnego panelu
         $('head').append(
             $('<link/>', {
                 rel: 'stylesheet',
@@ -247,6 +454,16 @@ define([
                 href: require.toUrl('./css/panel_browser.css')
             })
         );
+
+        //podlinkowanie stylu bootstrap
+      //  $('head').append(
+      //      $('<link/>', {
+      //          rel: 'stylesheet',
+      //          type:'text/css',
+      //          href: require.toUrl('https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+      //      })
+      //  );
+
 
         var action = {
             icon: 'fa-film', // a font-awesome class used on buttons, etc
@@ -258,8 +475,12 @@ define([
         var action_name = 'pokaz-panel';
         var full_action_name = Jupyter.actions.register(action, action_name, prefix);
         Jupyter.toolbar.add_buttons_group([full_action_name]);
+
+        togglePanel();
     }
     return {
         load_ipython_extension: load_ipython_extension
     };
 });
+
+
