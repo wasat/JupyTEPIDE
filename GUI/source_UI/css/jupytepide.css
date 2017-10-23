@@ -52,7 +52,17 @@ div.input_prompt {
     min-width: 5ex;
 }
 
-/*Celki Jupytera notebook'a*/
+/* toolbar kontrolki - próba
+żeby zrobić własny dropdown, trzeba go umieścić w bootstrapowym stylu - jako button dropdown (zamiast select, chociaż select też działa)
+
+*/
+/*dropdowns na toolbarze*/
+.toolbar select, .toolbar label {
+    height:30px;
+    background-color: #1c1c1c;
+}
+
+/*Celki (cells) Jupytera notebook'a*/
 div.input_area {
     border: 1px solid #1C1C1C;
     border-radius:0px;
