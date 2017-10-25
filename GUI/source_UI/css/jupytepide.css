@@ -11,6 +11,11 @@ body > #header {
     background-color: #313335;
 }
 
+/*kreska pod nagłówkiem*/
+body > #header .header-bar {
+    background-color:#1c1c1c;
+}
+
 /* to będzie skutkowało zmianą koloru czcionki napisów w nagłówku i innych, domyślnie jest biały, ustawiony przez bootstrap
 body {
     color: #2a323a;
@@ -66,6 +71,20 @@ div.input_prompt {
 div.input_area {
     border: 1px solid #1C1C1C;
     border-radius:0px;
+}
+
+/*Output pod celką*/
+div.output_area pre {
+    color:#FFFFFF;
+
+}
+
+/*czas wykonania pod celką - to jest od rozszerzenia związanego z execution timing)*/
+.timing_area {
+     background-color:#2c2c2c;
+     /*border: 1px solid #1c1c1c;*/
+     border-top: 1px solid #1c1c1c;
+     color: #ffffff;
 }
 
 /*Guzik na toolbarze (trusted)*/
