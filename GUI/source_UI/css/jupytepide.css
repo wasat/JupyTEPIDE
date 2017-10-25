@@ -113,18 +113,8 @@ span#login_widget > .button, #logout{
 
 }
 
-/*TODO TODO:*/
-/*spr. jak zmienić scrollbars - dla chrome to jes webkit
-najlepiej jquery: np czymś takim: http://jscrollpane.kelvinluck.com/
-
-Ponadto powalczyć z logo i banerem
-https://www.google.pl/search?q=jupyterhub&client=opera&hs=JsI&source=lnms&tbm=isch&sa=X&ved=0ahUKEwixkIa20YbXAhViP5oKHQJbBC8Q_AUICigB&biw=1536&bih=754#imgrc=GCbCtJG96BqiNM:*/
-
 /*
 kolor na obramowanie wybranej celki: #6f6c75
 div.cell.selected, div.cell.selected.jupyter-soft-selected
 
-
 */
-
-/*popróbować różne bootstrap themes, dobrać kolory i style*/
