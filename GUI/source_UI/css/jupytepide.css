@@ -113,6 +113,11 @@ span#login_widget > .button, #logout{
 
 }
 
+/*logo lewa górna część */
+#ipython_notebook img {
+    height:100%;
+}
+
 /*
 kolor na obramowanie wybranej celki: #6f6c75
 div.cell.selected, div.cell.selected.jupyter-soft-selected
