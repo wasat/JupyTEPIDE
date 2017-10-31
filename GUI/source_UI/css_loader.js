@@ -20,13 +20,12 @@ define([
     $,
     require
 ) {
-   var load_style = function() {
-        //var text = require.toUrl('../../components/codemirror/theme/'+'aaa'+'.css');
-        //alert(text);
-        //var css=Jupyter.notebook.get_cell(0);
-        //alert(css);
 
-        //styl codemirrora
+    //CSS style loading for JupyTEPIDE theme
+    //all styles stored in ./css/ folder
+   var load_style = function() {
+
+        //Codemirror style
         var $tlink = $('<link/>');
         $('head').append($tlink);
 
@@ -40,28 +39,27 @@ define([
             }
         } catch(e){}
 
-        //styl skórki jupytera (patrz inne pliki w katalogu ./css/)
+        //Jupyter theme style (look at folder ./css/)
         var $link = $('<link/>');
         $('head').append($link);
 
-        //podstawiam inny bootstrap niż jest - spr z innym jquery tak samo z innymi już istniejącymi jupytera
-        //można pozmieniać im nazwy plików, żeby się nie mieszały, ale namespace zostaną te same i się nadpiszą
         $link.attr('href',require.toUrl('./css/'+'bootstrap.min'+'.css'))
             .attr('rel','stylesheet')
             .attr('type','text/css');
 
-       //styl jupyTEPIDE
+       //jupyTEPIDE style
        var $jlink = $('<link/>');
        $('head').append($jlink);
 
-       //podstawiam inny bootstrap niż jest - spr z innym jquery tak samo z innymi już istniejącymi jupytera
-       //można pozmieniać im nazwy plików, żeby się nie mieszały, ale namespace zostaną te same i się nadpiszą
        $jlink.attr('href',require.toUrl('./css/'+'jupytepide'+'.css'))
            .attr('rel','stylesheet')
            .attr('type','text/css');
 
-       //nowy combobox na pasku w bootstrapowym stylu
+       //new combobox in bootstrap style
        //$('select').appendTo('<div/>');
+
+       //logo
+       $('#ipython_notebook img').attr('src','/nbextensions/source_UI/img/logo_jupytepide.png').attr('alt','JupyTEP IDE');
 
 
     };
