@@ -31,7 +31,8 @@ define([
     'tree/js/notebooklist',
     'tree/js/sessionlist',
     'contents',
-    'base/js/page'
+    'base/js/page',
+    './code_snippets'
 ], function (
     require,
     $,
@@ -42,7 +43,8 @@ define([
     notebooklist,
     sesssionlist,
     contents_service,
-    page
+    page,
+    code_snippets
 ) {
     'use strict';
 // create config object to load parameters
