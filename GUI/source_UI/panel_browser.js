@@ -14,7 +14,7 @@
 //TODO: zrobic panel z filemanagerem
 //TODO: spr. oprzeć panel na właściwościach jquery, może wyjść prostszy w implementacji
 //TODO: zrobić z każdego elementu wizualnego (menu, panel itp.) obiekt, uprości sie kod w pliku głównym
-//TODO: poprawić ładowanie do klasy list_container, tak, żeby razem był nagłówek i row_items'y
+//TODO: poprawić ładowanie do klasy list_container, tak, żeby razem był nagłówek i row_items'y. Najlepiej zbudować ten nagłówek od początku, zamiast do ładować
 //<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
 //wczytanie filebrowsera Jupytera w ten sposób:
 //$('#1karta').load('http://localhost:8888/tree #notebooks');
@@ -31,7 +31,8 @@ define([
     'tree/js/notebooklist',
     'tree/js/sessionlist',
     'contents',
-    'base/js/page'
+    'base/js/page',
+    './code_snippets'
 ], function (
     require,
     $,
@@ -42,7 +43,8 @@ define([
     notebooklist,
     sesssionlist,
     contents_service,
-    page
+    page,
+    code_snippets
 ) {
     'use strict';
 // create config object to load parameters
@@ -335,8 +337,8 @@ define([
         var i;
 //Karta Files
         //Nagłówek listy
-        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        $('#1karta').append(akapit);
+        var naglowek = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        $('#1karta').append(naglowek);
 
 
         //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
@@ -367,7 +369,7 @@ define([
         rowItemArray[15]=new row_item('yeti','/tree/anaconda3/bin','month ago','Stopped');
 
         for (i=0;i<rowItemArray.length;i++){
-            $('#1karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+            $('#1karta').append(make_row_item(rowItemArray[i]));
         }
         //$('#notebook_list').addClass('list_container');
         rowItemArray = [];
@@ -384,9 +386,13 @@ define([
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
         var notebookPath =  utils.url_path_join(Jupyter.notebook.base_url,'tree', utils.encode_uri_components(parent));
 
-        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
-        $('#2karta').append(akapit);
-        $('#notebook_list').addClass('list_container');
+        //Nagłówek listy
+        var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        $('#2karta').append(naglowek2);
+
+        //var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
+        //$('#2karta').append(naglowek);
+        //$('#notebook_list').addClass('list_container');
 
         rowItemArray[0]= new row_item('moj_probny.ipynb',utils.url_path_join(notebookPath,'moj_probny.ipynb'),'month ago','Stopped');
         rowItemArray[1]= new row_item('Untitled.ipynb',utils.url_path_join(notebookPath,'Untitled.ipynb'),'month ago','Stopped');
@@ -402,9 +408,14 @@ define([
         //make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
 
 //Karta Snippets
-        var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
-        $('#3karta').append(akapit);
-        $('#notebook_list').addClass('list_container');
+
+        //Nagłówek listy
+        var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        $('#3karta').append(naglowek3);
+
+        //var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
+        //$('#3karta').append(naglowek);
+        //$('#notebook_list').addClass('list_container');
 
         rowItemArray[0]= new row_item('Snippet 1','/tree/anaconda3/bin','month ago','Stopped');
         rowItemArray[1]= new row_item('Snippet 2','/tree/anaconda3/bin','month ago','Stopped');

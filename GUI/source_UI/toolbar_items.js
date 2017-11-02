@@ -12,9 +12,13 @@
 //
 
 define([
-    'base/js/namespace'
+    'base/js/namespace',
+    'jquery',
+    'require'
 ], function(
-    Jupyter
+    Jupyter,
+    $,
+    require
 ) {
     //***
     //*** Action Handlers ***

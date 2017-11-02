@@ -1,0 +1,126 @@
+/*notebook*/
+.container {
+    background-color: #1C1C1C;
+}
+
+body > #header {
+    background-color: #1C1C1C;
+}
+
+#notebook-container {
+    background-color: #313335;
+}
+
+/*kreska pod nagłówkiem*/
+body > #header .header-bar {
+    background-color:#1c1c1c;
+}
+
+/* to będzie skutkowało zmianą koloru czcionki napisów w nagłówku i innych, domyślnie jest biały, ustawiony przez bootstrap
+body {
+    color: #2a323a;
+}
+*/
+
+.notebook_app {
+    background-color: #3C3F41;
+}
+
+/*side pannel*/
+.side_panel_inner {
+    background-color: #3C3F41;
+}
+
+.list_header {
+    background-color:  #1C1C1C;
+}
+
+.nav-tabs > li > a {
+    border: 1px solid #7a7c8a;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #7a7c8a;
+}
+
+/*to tymczasowo - do poprawienia ładowania list_container (patrz TODO w panel_browser.js*/
+.list_container{
+    border:none;
+}
+
+/* prompt po lewej stronie celek*/
+div.input_prompt {
+    color: #a2a2a2;
+}
+
+.prompt {
+    min-width: 5ex;
+}
+
+/* toolbar kontrolki - próba
+żeby zrobić własny dropdown, trzeba go umieścić w bootstrapowym stylu - jako button dropdown (zamiast select, chociaż select też działa)
+
+*/
+/*dropdowns na toolbarze*/
+.toolbar select, .toolbar label {
+    height:30px;
+    background-color: #1c1c1c;
+}
+
+/*Celki (cells) Jupytera notebook'a*/
+div.input_area {
+    border: 1px solid #1C1C1C;
+    border-radius:0px;
+}
+
+/*Output pod celką*/
+div.output_area pre {
+    color:#FFFFFF;
+
+}
+
+/*czas wykonania pod celką - to jest od rozszerzenia związanego z execution timing)*/
+.timing_area {
+     background-color:#2c2c2c;
+     /*border: 1px solid #1c1c1c;*/
+     border-top: 1px solid #1c1c1c;
+     color: #ffffff;
+}
+
+/*Guzik na toolbarze (trusted)*/
+.notification_widget {
+    background-color: #424242;/*#BB5A2C;*/
+    color:#ffffff;/*#1c1c1c;*/
+    border: 1px solid #424242;
+}
+
+.notification_widget:hover {
+    background-color: #282828;/*#773b1f;*/
+    border: 1px solid #282828;
+}
+
+/*Guzik Logout na toolbarze*/
+span#login_widget > .button, #logout{
+    background-color: #3D74AD;/*#BB5A2C;*/
+    color:#ffffff;/*#1c1c1c;*/
+    border: 1px solid #3D74AD;
+}
+
+#logout:hover {
+    background-color:  #2B527C;
+    border: 1px solid #2B527C;
+    color:#ffffff;
+
+}
+
+/*logo lewa górna część */
+#ipython_notebook img {
+    height:100%;
+
+}
+
+/*
+kolor na obramowanie wybranej celki: #6f6c75
+div.cell.selected, div.cell.selected.jupyter-soft-selected
+
+*/
