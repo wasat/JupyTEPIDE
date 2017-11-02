@@ -12,18 +12,22 @@ define([
     './menu',
     './toolbar_items',
     './panel_browser',
-    './css_loader'
+    './css_loader',
+    './code_snippets'
 ],
     function(
         menu,
         toolbar_items,
         panel_browser,
-        css_loader
+        css_loader,
+        code_snippets
     ){
     menu.load_ipython_extension();
+    code_snippets.load_ipython_extension();
     css_loader.load_ipython_extension();
     toolbar_items.load_ipython_extension();
     panel_browser.load_ipython_extension();
+
 
 
 
