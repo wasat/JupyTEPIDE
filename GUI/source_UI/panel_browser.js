@@ -33,19 +33,17 @@ define([
     'contents',
     'base/js/page',
     './code_snippets'
-], function (
-    require,
-    $,
-    IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
-    events,
-    utils,
-    config,
-    notebooklist,
-    sesssionlist,
-    contents_service,
-    page,
-    code_snippets
-) {
+], function (require,
+             $,
+             IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
+             events,
+             utils,
+             config,
+             notebooklist,
+             sesssionlist,
+             contents_service,
+             page,
+             code_snippets) {
     'use strict';
 // create config object to load parameters
     //   var base_url = utils.get_body_data('baseUrl');
@@ -60,7 +58,7 @@ define([
         if (min_rel_width === undefined) min_rel_width = 0;
         if (max_rel_width === undefined) max_rel_width = 100;
 
-        side_panel.css('display','none');
+        side_panel.css('display', 'none');
 
         //W tym miejscu decyduje się czy panel będzie z lewej czy z prawej - jest jeszcze parę takich miejsc i należy odwrócic animację
         side_panel.insertAfter(main_panel);
@@ -96,7 +94,9 @@ define([
                 side_panel.insertAfter(main_panel);
                 $('#header').slideDown();
                 site.slideDown({
-                    complete: function() { events.trigger('resize-header.Page'); }
+                    complete: function () {
+                        events.trigger('resize-header.Page');
+                    }
                 });
                 side_panel_inner.css({'margin-left': ''});
                 side_panel_splitbar.show();
@@ -135,7 +135,7 @@ define([
     var slide_side_panel = function (main_panel, side_panel, desired_width) {
 
         var anim_opts = {
-            step : function (now, tween) {
+            step: function (now, tween) {
                 main_panel.css('width', 100 - now + '%');
             }
         };
@@ -157,7 +157,7 @@ define([
         else {
             anim_opts['complete'] = function () {
                 side_panel.hide();
-                main_panel.css({float : '', 'overflow-x': '', width: ''});
+                main_panel.css({float: '', 'overflow-x': '', width: ''});
             };
         }
 
@@ -166,10 +166,10 @@ define([
     };
 
     //wstawienie danych do panelu
-    var populate_side_panel = function(side_panel) {
+    var populate_side_panel = function (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
         var qh = IPython.quick_help;
-        var strip_modal = function(into) {
+        var strip_modal = function (into) {
             // strip qh modal, insert content into element 'into'
             $('.quickhelp').closest('.modal-body').children().children().appendTo(into);
         };
@@ -184,7 +184,7 @@ define([
             qh.show_keyboard_shortcuts();
             // attach handler for qh showing shortcuts
             var qh_dia = $(qh.shortcut_dialog);
-            qh_dia.on('shown.bs.modal', function(evt) {
+            qh_dia.on('shown.bs.modal', function (evt) {
                 strip_modal(side_panel_inner);
                 // delicately pretend that it was never shown, unbind handlers
                 qh_dia.on('hidden.bs.modal', function () {
@@ -199,7 +199,7 @@ define([
 
     //tworzy dowolny link w podanym elemencie
     //zwraca obiekt skonfigurowany link <a> jako obiekt jquery
-    var make_link = function(element,href_,text_){
+    var make_link = function (element, href_, text_) {
         var elA = $('<a/>', {href: href_}).html(text_)
         $(element).append(elA);
         $(element).append($('<br/>'));
@@ -207,89 +207,91 @@ define([
     };
 
     //tworzy link w podanym elemencie, relatywny do katalogu roboczego
-    var make_parent_link = function(element,document_,text_){
+    var make_parent_link = function (element, document_, text_) {
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
         $(element).append(
             $('<a/>', {
-                href: utils.url_path_join(Jupyter.notebook.base_url,'tree', utils.encode_uri_components(parent), document_)
-            }).html(text_).attr('target','#notebook').append($('<br>')) //target niekoniecznie potrzebny....
+                href: utils.url_path_join(Jupyter.notebook.base_url, 'tree', utils.encode_uri_components(parent), document_)
+            }).html(text_).attr('target', '#notebook').append($('<br>')) //target niekoniecznie potrzebny....
         );
     };
 
     //robi sam odnośnik
-    var make_tab_a = function(href_,text,expanded){
-        var tab_link=$('<a/>',{href:href_}).html(text);
-        tab_link.attr('data-toggle','tab');
-        tab_link.attr('aria-expanded',expanded);
+    var make_tab_a = function (href_, text, expanded) {
+        var tab_link = $('<a/>', {href: href_}).html(text);
+        tab_link.attr('data-toggle', 'tab');
+        tab_link.attr('aria-expanded', expanded);
         return tab_link;
     };
 
-    var make_tab_li = function(){
-        var tabsLi=$('<li/>');
+    var make_tab_li = function () {
+        var tabsLi = $('<li/>');
         return tabsLi;
     };
 
-    var make_tab_div = function(class_,id_){
-        var tab_div = $('<div/>',{id:id_}).addClass(class_);
+    var make_tab_div = function (class_, id_) {
+        var tab_div = $('<div/>', {id: id_}).addClass(class_);
         return tab_div;
     };
 
-    function row_item(name,link,time,status){
-        this.name=name;
-        this.link=link;
-        this.time=time;
-        this.status=status;
+    function row_item(name, link, time, status) {
+        this.name = name;
+        this.link = link;
+        this.time = time;
+        this.status = status;
     };
 
     //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
     //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
     //patrz item_row.html
-    var make_row_item = function(row_item){
-      var item_row = $('<div/>').addClass('list_item row');
-      var colDiv = $('<div/>').addClass('col-md-12');
-      colDiv.append(
-          $('<input>',
-              {title:'Click here to rename, delete, etc.',
-              type:'checkbox'
-              }));
-      colDiv.append(
-          $('<i/>').addClass('item_icon folder_icon icon-fixed-width')
-      );
-      var itemName=$('<span/>').addClass('item_name').html(row_item.name);
+    var make_row_item = function (row_item) {
+        var item_row = $('<div/>').addClass('list_item row');
+        var colDiv = $('<div/>').addClass('col-md-12');
+        colDiv.append(
+            $('<input>',
+                {
+                    title: 'Click here to rename, delete, etc.',
+                    type: 'checkbox'
+                }));
+        colDiv.append(
+            $('<i/>').addClass('item_icon folder_icon icon-fixed-width')
+        );
+        var itemName = $('<span/>').addClass('item_name').html(row_item.name);
 
-      colDiv.append(
-          $('<a/>',
-              {href:row_item.link  //'/tree/anaconda3/bin'
-              }).addClass('item_link').append(itemName)
-      );
+        colDiv.append(
+            $('<a/>',
+                {
+                    href: row_item.link  //'/tree/anaconda3/bin'
+                }).addClass('item_link').append(itemName)
+        );
 
-      colDiv.append(
-          $('<span/>',{
-              title:'017-08-24 13:35'
-          }).addClass('item_modified pull-right').html(row_item.time)
-      );
+        colDiv.append(
+            $('<span/>', {
+                title: '017-08-24 13:35'
+            }).addClass('item_modified pull-right').html(row_item.time)
+        );
 
 
-      var DivLast = $('<div/>').addClass('item_buttons pull-right');
-      var DivLast1 = $('<div/>',{style:'visibility: hidden;'}).addClass('running-indicator').html(row_item.status);
-      colDiv.append(
-          $('<div/>').addClass('item_buttons pull-right'
-          ).append(DivLast1)
-      );
+        var DivLast = $('<div/>').addClass('item_buttons pull-right');
+        var DivLast1 = $('<div/>', {style: 'visibility: hidden;'}).addClass('running-indicator').html(row_item.status);
+        colDiv.append(
+            $('<div/>').addClass('item_buttons pull-right'
+            ).append(DivLast1)
+        );
 
-      DivLast.append();
+        DivLast.append();
 
-      item_row.append(colDiv);
-      return item_row;
+        item_row.append(colDiv);
+        return item_row;
     };
 
     //funkcja ładująca gotowe notebooki
-    var show_notebooks = function(){
+    var show_notebooks = function () {
 
     };
 
     //funkcja ładująca snippety kodu
-    var show_snippets = function(){
+    var show_snippets = function () {
 
     };
 
@@ -299,9 +301,9 @@ define([
     insert_into_side_panel = function (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
 
-    //**zakładki w bootstrap
+        //**zakładki w bootstrap
         //przy budowie filemanagera opierać się na strukturze filemanagera jupytera
-    //nagłówki zakładek
+        //nagłówki zakładek
         var tabsUl = $('<ul/>', {id: 'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
         var tabsLiActive = $('<li/>').addClass('active');
 
@@ -311,7 +313,7 @@ define([
         //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
 
         side_panel_inner.append(tabsUl);
-    // zawartość zakładek
+        // zawartość zakładek
         var tabContDiv = $('<div/>').addClass('tab-content');
         //make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
         //make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
@@ -324,9 +326,9 @@ define([
         //make_tab_div('tab-pane','4karta').append($('<p/>').html('Tresc zakladki 4')).appendTo(tabContDiv);
         side_panel_inner.append(tabContDiv);
 
-    //**koniec zakładek w bootstrap
+        //**koniec zakładek w bootstrap
 
-    //** treść zakładek - przygotować w oparciu o filemanagera jupytera. Niech to będzie lista / tabelka
+        //** treść zakładek - przygotować w oparciu o filemanagera jupytera. Niech to będzie lista / tabelka
         //a tu własne stylowanie bootstrapa:
         //https://kursbootstrap.pl/examples/navs.html
         //https://kursbootstrap.pl/zakladki-nav-tabs/
@@ -351,24 +353,24 @@ define([
 
 
         //pozycje listy
-        rowItemArray[0]= new row_item('bin','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[1]=new row_item('bin bin','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[2]=new row_item('Folder 1','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[3]=new row_item('conda-meta','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[4]=new row_item('etc','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[5]=new row_item('include','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[6]=new row_item('lib','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[7]=new row_item('libexec','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[8]=new row_item('plugins','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[9]=new row_item('translations','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[10]=new row_item('sbin','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[11]=new row_item('var','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[12]=new row_item('zigbee','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[13]=new row_item('zuse','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[14]=new row_item('yaml','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[15]=new row_item('yeti','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[0] = new row_item('bin', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[1] = new row_item('bin bin', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[2] = new row_item('Folder 1', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[3] = new row_item('conda-meta', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[4] = new row_item('etc', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[5] = new row_item('include', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[6] = new row_item('lib', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[7] = new row_item('libexec', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[8] = new row_item('plugins', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[9] = new row_item('translations', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[10] = new row_item('sbin', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[11] = new row_item('var', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[12] = new row_item('zigbee', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[13] = new row_item('zuse', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[14] = new row_item('yaml', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[15] = new row_item('yeti', '/tree/anaconda3/bin', 'month ago', 'Stopped');
 
-        for (i=0;i<rowItemArray.length;i++){
+        for (i = 0; i < rowItemArray.length; i++) {
             $('#1karta').append(make_row_item(rowItemArray[i]));
         }
         //$('#notebook_list').addClass('list_container');
@@ -384,7 +386,7 @@ define([
 
 //Karta Notebooks
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
-        var notebookPath =  utils.url_path_join(Jupyter.notebook.base_url,'tree', utils.encode_uri_components(parent));
+        var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree', utils.encode_uri_components(parent));
 
         //Nagłówek listy
         var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
@@ -394,11 +396,11 @@ define([
         //$('#2karta').append(naglowek);
         //$('#notebook_list').addClass('list_container');
 
-        rowItemArray[0]= new row_item('moj_probny.ipynb',utils.url_path_join(notebookPath,'moj_probny.ipynb'),'month ago','Stopped');
-        rowItemArray[1]= new row_item('Untitled.ipynb',utils.url_path_join(notebookPath,'Untitled.ipynb'),'month ago','Stopped');
-        rowItemArray[2]= new row_item('Untitled1.ipynb',utils.url_path_join(notebookPath,'Untitled1.ipynb'),'month ago','Stopped');
+        rowItemArray[0] = new row_item('moj_probny.ipynb', utils.url_path_join(notebookPath, 'moj_probny.ipynb'), 'month ago', 'Stopped');
+        rowItemArray[1] = new row_item('Untitled.ipynb', utils.url_path_join(notebookPath, 'Untitled.ipynb'), 'month ago', 'Stopped');
+        rowItemArray[2] = new row_item('Untitled1.ipynb', utils.url_path_join(notebookPath, 'Untitled1.ipynb'), 'month ago', 'Stopped');
 
-        for (i=0;i<rowItemArray.length;i++){
+        for (i = 0; i < rowItemArray.length; i++) {
             $('#2karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
         }
 
@@ -417,15 +419,15 @@ define([
         //$('#3karta').append(naglowek);
         //$('#notebook_list').addClass('list_container');
 
-        rowItemArray[0]= new row_item('Snippet 1','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[1]= new row_item('Snippet 2','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[2]= new row_item('Snippet 3','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[3]= new row_item('Snippet 4','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[4]= new row_item('Snippet 5','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[5]= new row_item('Snippet 6','/tree/anaconda3/bin','month ago','Stopped');
-        rowItemArray[6]= new row_item('Snippet 7','/tree/anaconda3/bin','month ago','Stopped');
+        rowItemArray[0] = new row_item('Snippet 1', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[1] = new row_item('Snippet 2', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[2] = new row_item('Snippet 3', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[3] = new row_item('Snippet 4', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[4] = new row_item('Snippet 5', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[5] = new row_item('Snippet 6', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[6] = new row_item('Snippet 7', '/tree/anaconda3/bin', 'month ago', 'Stopped');
 
-        for (i=0;i<rowItemArray.length;i++){
+        for (i = 0; i < rowItemArray.length; i++) {
             $('#3karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
         }
 
@@ -452,6 +454,7 @@ define([
         }
         return visible;
     };
+
 //***
 
 
@@ -461,26 +464,26 @@ define([
         $('head').append(
             $('<link/>', {
                 rel: 'stylesheet',
-                type:'text/css',
+                type: 'text/css',
                 href: require.toUrl('./css/panel_browser.css')
             })
         );
 
         //podlinkowanie stylu bootstrap
-      //  $('head').append(
-      //      $('<link/>', {
-      //          rel: 'stylesheet',
-      //          type:'text/css',
-      //          href: require.toUrl('https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
-      //      })
-      //  );
+        //  $('head').append(
+        //      $('<link/>', {
+        //          rel: 'stylesheet',
+        //          type:'text/css',
+        //          href: require.toUrl('https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+        //      })
+        //  );
 
 
         var action = {
             icon: 'fa-film', // a font-awesome class used on buttons, etc
             help: 'Pokaz panel boczny',
-            help_index : 'to by mogla byc pomoc',
-            handler : togglePanel
+            help_index: 'to by mogla byc pomoc',
+            handler: togglePanel
         };
         var prefix = 'moj_panel';
         var action_name = 'pokaz-panel';
@@ -489,6 +492,7 @@ define([
 
         togglePanel();
     }
+
     return {
         load_ipython_extension: load_ipython_extension
     };
