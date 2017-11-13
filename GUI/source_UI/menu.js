@@ -126,7 +126,7 @@ define([
 
     function create_menu() {
         //elementy dodane do istniejacej pozycji w main menu - "Help"
-        moje_submenu = add_submenu('Moje menu 1', '#help_menu')
+        moje_submenu = add_submenu('Moje menu 1', '#help_menu');
         add_menu_item('Element 1', 'Opis elementu 1', '#', moje_submenu, function (evt) {
             evt.preventDefault();
             open_notebook('moj_probny.ipynb');

@@ -200,7 +200,7 @@ define([
     //tworzy dowolny link w podanym elemencie
     //zwraca obiekt skonfigurowany link <a> jako obiekt jquery
     var make_link = function (element, href_, text_) {
-        var elA = $('<a/>', {href: href_}).html(text_)
+        var elA = $('<a/>', {href: href_}).html(text_);
         $(element).append(elA);
         $(element).append($('<br/>'));
         return elA;
@@ -239,8 +239,7 @@ define([
         this.link = link;
         this.time = time;
         this.status = status;
-    };
-
+    }
     //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
     //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
     //patrz item_row.html

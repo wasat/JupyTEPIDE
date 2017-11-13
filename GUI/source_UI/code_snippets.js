@@ -50,8 +50,7 @@ define([
                 $("select#snippet_picker").append(option);
             });
 
-    };
-
+    }
     var insert_cell = function () {
         var selected_snippet = $("select#snippet_picker").find(":selected");
 
