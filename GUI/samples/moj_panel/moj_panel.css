@@ -36,7 +36,7 @@
 	cursor: col-resize;
 	height: 100%;
 	width: 8px;
-	background: url(./img/handle-v.png) 2px 50% no-repeat;
+	background: url(img/handle-v.png) 2px 50% no-repeat;
 	background-color: #F6F6F6;
 }
 
