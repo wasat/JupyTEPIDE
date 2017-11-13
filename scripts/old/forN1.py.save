@@ -1,11 +1,12 @@
 #!/opt/anaconda/anaconda3/envs/python34/bin/python
-import snappy
 import sys
+
+import snappy
 
 
 def main(x):
     p = snappy.ProductIO.readProduct(x)
-    rad13 =
+    # rad13 =
     w = p.getRasterWidth()
     h = p.getRasterHeight()
     metadata = p.getMetadataRoot()
