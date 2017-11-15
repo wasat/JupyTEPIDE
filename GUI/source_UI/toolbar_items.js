@@ -15,11 +15,9 @@ define([
     'base/js/namespace',
     'jquery',
     'require'
-], function(
-    Jupyter,
-    $,
-    require
-) {
+], function (Jupyter,
+             $,
+             require) {
     //***
     //*** Action Handlers ***
     //Function objects for handling actions performed by tool-buttons click
@@ -27,7 +25,7 @@ define([
         alert('To jest moj komunikat po polskuuuuu!');
     };
 
-    var komunikat2_handler = function() {
+    var komunikat2_handler = function () {
         alert('To jest komunikat nr 2');
     };
 
@@ -43,17 +41,18 @@ define([
     //
     //Out: action_made
     // Jupyter registered action object
-    function make_action(action_name,prefix,icon_,help_,help_index_,handler_){
+    function make_action(action_name, prefix, icon_, help_, help_index_, handler_) {
         var action = {
             icon: icon_,
             help: help_,
-            help_index : help_index_,
-            handler : handler_
+            help_index: help_index_,
+            handler: handler_
         };
         var action_made = Jupyter.actions.register(action, action_name, prefix);
         return action_made;
 
     }
+
     //***
 
     //*** load_ipython_extension ***
@@ -61,13 +60,14 @@ define([
     function load_ipython_extension() {
 
         //Prepare actions for tool-buttons
-        var komunikat = make_action('komunikat1', 'my_ext','fa-comment-o','Pokaz komunikat1','to jest komunikat1',komunikat_handler);
-        var komunikat2 = make_action('komunikat2', 'my_ext2','fa-comment-o','Pokaz komunikat2','to jest komunikat2',komunikat2_handler);
+        var komunikat = make_action('komunikat1', 'my_ext', 'fa-comment-o', 'Pokaz komunikat1', 'to jest komunikat1', komunikat_handler);
+        var komunikat2 = make_action('komunikat2', 'my_ext2', 'fa-comment-o', 'Pokaz komunikat2', 'to jest komunikat2', komunikat2_handler);
 
         //Load buttons to UI
         Jupyter.toolbar.add_buttons_group([komunikat, komunikat2]);
 
     }
+
     return {
         load_ipython_extension: load_ipython_extension
     };

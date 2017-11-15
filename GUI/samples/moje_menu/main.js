@@ -15,16 +15,14 @@ define([
     'require',
     'base/js/namespace',
     'base/js/utils'
-], function(
-    Jupyter,
-    $,
-    require,
-    IPython,
-    utils
-) {
+], function (Jupyter,
+             $,
+             require,
+             IPython,
+             utils) {
 
     //otwieranie notebooka, lub innego pliku - jako name można podać dowolny plik
-    function open_notebook(name){
+    function open_notebook(name) {
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
         window.open(
             //"http://localhost:8888/notebooks/anaconda3/moj_probny.ipynb"
@@ -35,7 +33,7 @@ define([
     }
 
     //tworzenie pozycji w menu głownym, przypisanie akcji
-    function create_menu () {
+    function create_menu() {
 
 
         //elementy dodane do istniejacej pozycji "Help"
@@ -44,7 +42,9 @@ define([
             .append(
                 $('<a href="#">')
                     .text('Moje menu')
-                    .on('click', function (evt) { evt.preventDefault(); })
+                    .on('click', function (evt) {
+                        evt.preventDefault();
+                    })
             )
             .appendTo($('#help_menu')); //id elementu w istniejacym menu glownym
 
@@ -120,8 +120,10 @@ define([
                 $('<a href="#">')
                     .text('Nowe menu')
                     .addClass('dropdown-toggle')
-                    .attr('data-toggle','dropdown')
-                    .on('click', function (evt) { evt.preventDefault(); })
+                    .attr('data-toggle', 'dropdown')
+                    .on('click', function (evt) {
+                        evt.preventDefault();
+                    })
             )
             .appendTo($('.navbar-nav'));
 
@@ -131,7 +133,7 @@ define([
             .appendTo($(nowe_menu_item)); //id elementu w istniejacym menu glownym
 
         $('<li/>')
-            .attr('title','opis opis')
+            .attr('title', 'opis opis')
             .append(
                 $('<a href="#">')
                     .text('Moj probny notebook')
@@ -143,11 +145,13 @@ define([
             .appendTo(moje_menu_item1);
 
         $('<li/>')
-            .attr('title','opis opis')
+            .attr('title', 'opis opis')
             .append(
                 $('<a href="#">')
                     .text('Element 2')
-                    .on('click', function (evt) { evt.preventDefault(); })
+                    .on('click', function (evt) {
+                        evt.preventDefault();
+                    })
             )
             .appendTo(moje_menu_item1);
 
@@ -156,9 +160,11 @@ define([
     function load_ipython_extension() {
         // try to load jquery-ui
         if ($.ui === undefined && options.highlight.use) {
-            require(['jquery-ui'], function ($) {}, function (err) {
+            require(['jquery-ui'], function ($) {
+            }, function (err) {
                 // try to load using the older, non-standard name (without hyphen)
-                require(['jqueryui'], function ($) {}, function (err) {
+                require(['jqueryui'], function ($) {
+                }, function (err) {
                     console.log(log_prefix, 'couldn\'t find jquery-ui, so no animations');
                 });
             });
@@ -166,7 +172,8 @@ define([
 
         create_menu();
 
-      }
+    }
+
     return {
         load_ipython_extension: load_ipython_extension
     };

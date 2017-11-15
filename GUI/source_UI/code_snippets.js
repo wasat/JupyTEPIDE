@@ -6,14 +6,14 @@ define([
     'base/js/dialog',
     'base/js/utils',
     'services/config'
-], function($, Jupyter, dialog, utils, configmod) {
+], function ($, Jupyter, dialog, utils, configmod) {
     "use strict";
 
     // create config object to load parameters
     var base_url = utils.get_body_data("baseUrl");
     var config = new configmod.ConfigSection('notebook', {base_url: base_url});
 
-    config.loaded.then(function() {
+    config.loaded.then(function () {
         var dropdown = $("<select></select>").attr("id", "snippet_picker")
             .css("margin-left", "0.75em")
             .attr("class", "form-control select-xs")
@@ -25,7 +25,7 @@ define([
     function load_extension() {
         config.load(); // trigger loading config parameters
 
-        $.getJSON("/nbextensions/source_UI/code_snippets.json", function(data) {
+        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
             // Add the header as the top option, does nothing on click
             var option = $("<option></option>")
                 .attr("id", "snippet_header")
@@ -33,7 +33,7 @@ define([
             $("select#snippet_picker").append(option);
 
             // Add options for each code snippet in the snippets.json file
-            $.each(data['code_snippets'], function(key, snippet) {
+            $.each(data['code_snippets'], function (key, snippet) {
                 var option = $("<option></option>")
                     .attr("value", snippet['name'])
                     .text(snippet['name'])
@@ -41,7 +41,7 @@ define([
                 $("select#snippet_picker").append(option);
             });
         })
-            .error(function(jqXHR, textStatus, errorThrown) {
+            .error(function (jqXHR, textStatus, errorThrown) {
                 // Add an error message if the JSON fails to load
                 var option = $("<option></option>")
                     .attr("value", 'ERROR')
@@ -50,9 +50,8 @@ define([
                 $("select#snippet_picker").append(option);
             });
 
-    };
-
-    var insert_cell = function() {
+    }
+    var insert_cell = function () {
         var selected_snippet = $("select#snippet_picker").find(":selected");
 
         if (selected_snippet.attr("name") != 'header') {
@@ -61,12 +60,12 @@ define([
             new_cell.set_text(code);
             new_cell.focus_cell();
 
-            $("option#snippet_header").prop("selected",true);
+            $("option#snippet_header").prop("selected", true);
         }
     };
 
     // return public methods
     return {
-        load_ipython_extension : load_extension
+        load_ipython_extension: load_extension
     };
 });

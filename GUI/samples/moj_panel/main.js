@@ -19,18 +19,16 @@ define([
     'base/js/events',
     'base/js/utils',
     'services/config'
-], function (
-    require,
-    $,
-    IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
-    events,
-    utils,
-    configmod
-) {
+], function (require,
+             $,
+             IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
+             events,
+             utils,
+             configmod) {
     'use strict';
 // create config object to load parameters
- //   var base_url = utils.get_body_data('baseUrl');
- //   var config = new configmod.ConfigSection('notebook', {base_url: base_url});
+    //   var base_url = utils.get_body_data('baseUrl');
+    //   var config = new configmod.ConfigSection('notebook', {base_url: base_url});
 
 //****
     var side_panel_min_rel_width = 10;
@@ -41,7 +39,7 @@ define([
         if (min_rel_width === undefined) min_rel_width = 0;
         if (max_rel_width === undefined) max_rel_width = 100;
 
-        side_panel.css('display','none');
+        side_panel.css('display', 'none');
 
         //W tym miejscu decyduje się czy panel będzie z lewej czy z prawej - jest jeszcze parę takich miejsc i należy odwrócic animację
         side_panel.insertAfter(main_panel);
@@ -77,7 +75,9 @@ define([
                 side_panel.insertAfter(main_panel);
                 $('#header').slideDown();
                 site.slideDown({
-                    complete: function() { events.trigger('resize-header.Page'); }
+                    complete: function () {
+                        events.trigger('resize-header.Page');
+                    }
                 });
                 side_panel_inner.css({'margin-left': ''});
                 side_panel_splitbar.show();
@@ -116,7 +116,7 @@ define([
     var slide_side_panel = function (main_panel, side_panel, desired_width) {
 
         var anim_opts = {
-            step : function (now, tween) {
+            step: function (now, tween) {
                 main_panel.css('width', 100 - now + '%');
             }
         };
@@ -138,7 +138,7 @@ define([
         else {
             anim_opts['complete'] = function () {
                 side_panel.hide();
-                main_panel.css({float : '', 'overflow-x': '', width: ''});
+                main_panel.css({float: '', 'overflow-x': '', width: ''});
             };
         }
 
@@ -147,10 +147,10 @@ define([
     };
 
     //wstawienie danych do panelu
-    var populate_side_panel = function(side_panel) {
+    var populate_side_panel = function (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
         var qh = IPython.quick_help;
-        var strip_modal = function(into) {
+        var strip_modal = function (into) {
             // strip qh modal, insert content into element 'into'
             $('.quickhelp').closest('.modal-body').children().children().appendTo(into);
         };
@@ -165,7 +165,7 @@ define([
             qh.show_keyboard_shortcuts();
             // attach handler for qh showing shortcuts
             var qh_dia = $(qh.shortcut_dialog);
-            qh_dia.on('shown.bs.modal', function(evt) {
+            qh_dia.on('shown.bs.modal', function (evt) {
                 strip_modal(side_panel_inner);
                 // delicately pretend that it was never shown, unbind handlers
                 qh_dia.on('hidden.bs.modal', function () {
@@ -179,26 +179,26 @@ define([
     };
 
     //tworzy dowolny link
-     var make_link = function(element,href_,text_){
-         $(element).append(
-             $('<a/>', {
-                 href: href_
-             }).html(text_).append($('<br>'))
-         );
-     };
+    var make_link = function (element, href_, text_) {
+        $(element).append(
+            $('<a/>', {
+                href: href_
+            }).html(text_).append($('<br>'))
+        );
+    };
 
     //tworzy link relatywny do katalogu roboczego
-    var make_parent_link = function(element,document_,text_){
+    var make_parent_link = function (element, document_, text_) {
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
         $(element).append(
             $('<a/>', {
-                href: utils.url_path_join(Jupyter.notebook.base_url,'tree', utils.encode_uri_components(parent), document_)
+                href: utils.url_path_join(Jupyter.notebook.base_url, 'tree', utils.encode_uri_components(parent), document_)
             }).html(text_).append($('<br>'))
         );
     };
 
     //proste wstawianie
-    var insert_into_side_panel = function(side_panel) {
+    var insert_into_side_panel = function (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
 
         $("<p href=#>Dostepne notebooki</p>").appendTo(side_panel_inner);
@@ -206,11 +206,11 @@ define([
         //$("<a href=#>Pokaz notebook 2</a><br>").appendTo(side_panel_inner);
         //$("<a href=#>Pokaz notebook 3</a><br>").appendTo(side_panel_inner);
 
-        make_link(side_panel_inner,'#','Link dowolny');
-        make_link(side_panel_inner,Jupyter.notebook.base_url,'Katalog główny');
-        make_parent_link(side_panel_inner,'moj_probny.ipynb','Pokaz notebook 1');
-        make_parent_link(side_panel_inner,'moj_probny.ipynb','Pokaz notebook 2');
-        make_parent_link(side_panel_inner,'moj_probny.ipynb','Pokaz notebook 3');
+        make_link(side_panel_inner, '#', 'Link dowolny');
+        make_link(side_panel_inner, Jupyter.notebook.base_url, 'Katalog główny');
+        make_parent_link(side_panel_inner, 'moj_probny.ipynb', 'Pokaz notebook 1');
+        make_parent_link(side_panel_inner, 'moj_probny.ipynb', 'Pokaz notebook 2');
+        make_parent_link(side_panel_inner, 'moj_probny.ipynb', 'Pokaz notebook 3');
 
     };
 
@@ -232,6 +232,7 @@ define([
         }
         return visible;
     };
+
 //***
 
 
@@ -241,7 +242,7 @@ define([
         $('head').append(
             $('<link/>', {
                 rel: 'stylesheet',
-                type:'text/css',
+                type: 'text/css',
                 href: require.toUrl('./moj_panel.css')
             })
         );
@@ -249,14 +250,15 @@ define([
         var action = {
             icon: 'fa-film', // a font-awesome class used on buttons, etc
             help: 'Pokaz panel boczny',
-            help_index : 'to by mogla byc pomoc',
-            handler : togglePanel
+            help_index: 'to by mogla byc pomoc',
+            handler: togglePanel
         };
         var prefix = 'moj_panel';
         var action_name = 'pokaz-panel';
         var full_action_name = Jupyter.actions.register(action, action_name, prefix);
         Jupyter.toolbar.add_buttons_group([full_action_name]);
     }
+
     return {
         load_ipython_extension: load_ipython_extension
     };
