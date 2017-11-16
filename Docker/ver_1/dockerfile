@@ -20,6 +20,8 @@ USER $NB_USER
 # Remove pyqt and qt pulled in for matplotlib since we're only ever going to
 # use notebook-friendly backends in these images
 RUN conda install --quiet --yes -c conda-forge \
+    'libgdal' \
+    'gdal' \
     'jupyter_nbextensions_configurator' &&  \
     # Activate ipywidgets extension in the environment that runs the notebook server
     jupyter nbextensions_configurator enable --user && \
