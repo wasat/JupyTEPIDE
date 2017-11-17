@@ -16,8 +16,6 @@ USER $NB_USER
 
 # Conda installs
 RUN conda install --quiet --yes -c conda-forge \
-    'libgdal' \
-    'gdal' \
     'jupyter_nbextensions_configurator' &&  \
     # Activate ipywidgets extension in the environment that runs the notebook server
     jupyter nbextensions_configurator enable --user && \
