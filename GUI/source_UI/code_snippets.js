@@ -51,7 +51,9 @@ define([
             });
 
     }
-    var insert_cell = function () {
+
+    //tą funkcję chcę wywołać w innym module
+    function insert_cell() {
         var selected_snippet = $("select#snippet_picker").find(":selected");
 
         if (selected_snippet.attr("name") != 'header') {
@@ -66,6 +68,7 @@ define([
 
     // return public methods
     return {
-        load_ipython_extension: load_extension
+        load_ipython_extension: load_extension,
+        insert_snippet_cell:insert_cell
     };
 });
