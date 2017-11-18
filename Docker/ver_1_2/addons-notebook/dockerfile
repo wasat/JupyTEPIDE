@@ -20,4 +20,8 @@ RUN conda install --quiet --yes -c conda-forge \
     'ipywidgets' && \
     fix-permissions $CONDA_DIR
 
+# Add Live slideshows with RISE
+RUN wget https://github.com/pdonorio/RISE/archive/master.tar.gz \
+    && tar xvzf *.gz && cd master && python3 setup.py install
+
 USER $NB_USER
