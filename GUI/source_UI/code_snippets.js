@@ -66,9 +66,29 @@ define([
         }
     };
 
+    function insert_cell1(name){
+        //handle function passed IN parameter
+        var snippet_name = name.data.snippet_name;
+
+        //czytanie jsona
+        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+            // Insert snippet from JSON file named "snippet_name"
+            $.each(data['code_snippets'], function (key, snippet) {
+                if (snippet['name']==snippet_name){
+                    var new_cell = Jupyter.notebook.insert_cell_above('');
+                    new_cell.set_text(snippet['code'].join('\n'));
+                    new_cell.focus_cell();
+                };
+
+            });
+        })
+
+
+    };
+
     // return public methods
     return {
         load_ipython_extension: load_extension,
-        insert_snippet_cell:insert_cell
+        insert_snippet_cell:insert_cell1
     };
 });
