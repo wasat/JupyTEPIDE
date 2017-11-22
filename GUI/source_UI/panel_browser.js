@@ -260,8 +260,8 @@ define([
         colDiv.append(
             $('<a/>',
                 {
-                    href: '#'//row_item.link  //'/tree/anaconda3/bin',
-                }).addClass('item_link').append(itemName).click(code_snippets.insert_snippet_cell)
+                    href: row_item.link  //'/tree/anaconda3/bin',
+                }).addClass('item_link').append(itemName)//.bind('click', { snippet_name: "Example1" }, code_snippets.insert_snippet_cell)
         );
 
         colDiv.append(
@@ -418,16 +418,19 @@ define([
         //$('#3karta').append(naglowek);
         //$('#notebook_list').addClass('list_container');
 
-        rowItemArray[0] = new row_item('Snippet 1', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[1] = new row_item('Snippet 2', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[2] = new row_item('Snippet 3', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[3] = new row_item('Snippet 4', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[4] = new row_item('Snippet 5', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[5] = new row_item('Snippet 6', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[6] = new row_item('Snippet 7', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        rowItemArray[0] = new row_item('Snippet 1', '#', 'month ago', 'Stopped');
+        rowItemArray[1] = new row_item('Snippet 2', '#', 'month ago', 'Stopped');
+        rowItemArray[2] = new row_item('Snippet 3', '#', 'month ago', 'Stopped');
+        rowItemArray[3] = new row_item('Snippet 4', '#', 'month ago', 'Stopped');
+        rowItemArray[4] = new row_item('Snippet 5', '#', 'month ago', 'Stopped');
+        rowItemArray[5] = new row_item('Snippet 6', '#', 'month ago', 'Stopped');
+        rowItemArray[6] = new row_item('Snippet 7', '#', 'month ago', 'Stopped');
 
+        //TODO:nazwa ładowanego snippeta powinna pochodzić albo z atrybutu, albo z wartości linka
+        //TODO:poprawić, żeby onclick nie było zbindowane z divem tylko z <a>
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#3karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+            $('#3karta').append(make_row_item(rowItemArray[i]).bind('click', { snippet_name: "Example1" },
+                code_snippets.insert_snippet_cell).appendTo($('<div/>')));
         }
 
 
