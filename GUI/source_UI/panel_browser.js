@@ -260,14 +260,14 @@ define([
         colDiv.append(
             $('<a/>',
                 {
-                    href: row_item.link  //'/tree/anaconda3/bin'
-                }).addClass('item_link').append(itemName)
+                    href: '#'//row_item.link  //'/tree/anaconda3/bin',
+                }).addClass('item_link').append(itemName).click(code_snippets.insert_snippet_cell)
         );
 
         colDiv.append(
             $('<span/>', {
                 title: '017-08-24 13:35'
-            }).addClass('item_modified pull-right').html(row_item.time)
+            }).addClass('item_modified pull-right').html(row_item.time)//.click(code_snippets.insert_snippet_cell)
         );
 
 
@@ -429,6 +429,7 @@ define([
         for (i = 0; i < rowItemArray.length; i++) {
             $('#3karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
         }
+
 
         //make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
 
