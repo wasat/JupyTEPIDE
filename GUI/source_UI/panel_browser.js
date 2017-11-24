@@ -234,15 +234,19 @@ define([
         return tab_div;
     };
 
-    function row_item(name, link, time, status) {
+    function row_item(name, link, time, status,icon,on_click) {
         this.name = name;
         this.link = link;
         this.time = time;
         this.status = status;
+        this.icon = icon;
+        this.on_click=on_click;
     }
     //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
     //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
     //patrz item_row.html
+    //wejście: row item, czyli obiekt produkowany przez funkcję row_item(),
+    // albo coś w postaci(dobór atrybutów dowolny): {name:'Snippet 1',link:'#',time:'yesterday'}
     var make_row_item = function (row_item) {
         var item_row = $('<div/>').addClass('list_item row');
         var colDiv = $('<div/>').addClass('col-md-12');
@@ -253,16 +257,22 @@ define([
                     type: 'checkbox'
                 }));
         colDiv.append(
+            //jakie są inne ikony
             $('<i/>').addClass('item_icon folder_icon icon-fixed-width')
         );
         var itemName = $('<span/>').addClass('item_name').html(row_item.name);
 
-        colDiv.append(
-            $('<a/>',
-                {
-                    href: row_item.link  //'/tree/anaconda3/bin',
-                }).addClass('item_link').append(itemName)//.bind('click', { snippet_name: "Example1" }, code_snippets.insert_snippet_cell)
-        );
+        var a_link = $('<a/>',
+            {
+                href: row_item.link  //'/tree/anaconda3/bin',
+            }).addClass('item_link').append(itemName);
+
+        if (row_item.on_click){
+            a_link.bind('click', { snippet_name: row_item.snippet_name },
+                row_item.on_click);
+        }
+
+        colDiv.append(a_link);
 
         colDiv.append(
             $('<span/>', {
@@ -418,24 +428,28 @@ define([
         //$('#3karta').append(naglowek);
         //$('#notebook_list').addClass('list_container');
 
-        rowItemArray[0] = new row_item('Snippet 1', '#', 'month ago', 'Stopped');
-        rowItemArray[1] = new row_item('Snippet 2', '#', 'month ago', 'Stopped');
-        rowItemArray[2] = new row_item('Snippet 3', '#', 'month ago', 'Stopped');
-        rowItemArray[3] = new row_item('Snippet 4', '#', 'month ago', 'Stopped');
-        rowItemArray[4] = new row_item('Snippet 5', '#', 'month ago', 'Stopped');
-        rowItemArray[5] = new row_item('Snippet 6', '#', 'month ago', 'Stopped');
-        rowItemArray[6] = new row_item('Snippet 7', '#', 'month ago', 'Stopped');
+        //this.name = name;
+        //this.link = link;
+        //this.time = time;
+        //this.status = status;
+        //this.icon = icon;
+        //this.on_click=on_click;
+
+        var snippetsList = [];
+
+        snippetsList = code_snippets.getSnippetsList();
+        for (i=0;i<snippetsList.length;i++){
+
+            rowItemArray[i] = {name:snippetsList[i],link:'#',time:'yesterday',snippet_name:snippetsList[i],on_click:code_snippets.insert_snippet_cell};
+        };
+
 
         //TODO:nazwa ładowanego snippeta powinna pochodzić albo z atrybutu, albo z wartości linka
         //TODO:poprawić, żeby onclick nie było zbindowane z divem tylko z <a>
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#3karta').append(make_row_item(rowItemArray[i]).bind('click', { snippet_name: "Example1" },
-                code_snippets.insert_snippet_cell).appendTo($('<div/>')));
+            $('#3karta').append(make_row_item(rowItemArray[i]));
+
         }
-
-
-        //make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
-
 
     };
 
