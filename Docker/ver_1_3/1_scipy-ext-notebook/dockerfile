@@ -52,11 +52,14 @@ RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
 
 
 RUN conda install --quiet --yes -c anaconda-cluster \
-    'apache-maven' && \
-    fix-permissions $CONDA_DIR
+    'apache-maven'
+
+RUN conda install --quiet --yes -c anaconda \
+    'numpy'
 
 # Conda installs
 RUN conda install --quiet --yes -c conda-forge \
+    'matplotlib' \
     'nb_conda' \
     'nb_conda_kernels' \
     'ipyleaflet' \
