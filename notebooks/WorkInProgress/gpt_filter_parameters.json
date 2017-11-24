@@ -1,1 +1,24 @@
-{"Aatsr.SST": {"dual": "boolean", "dualCoefficientsFile": "files", "dualMaskExpression": "string", "nadir": "boolean", "nadirCoefficientsFile": "files", "nadirMaskExpression": "string", "invalidSstValue": "float"}, "AATSR.Ungrid": {"L1BCharacterisationFile": "file", "cornerReferenceFlag": "boolean", "topographicFlag": "boolean", "topographyHomogenity": "double"}, "AdaptiveThresholding": {"targetWindowSizeInMeter": "int", "guardWindowSizeInMeter": "double", "backgroundWindowSizeInMeter": "double", "pfa": "double", "estimateBackground": "boolean"}}
+{
+  "Aatsr.SST": {
+    "dual": "boolean",
+    "dualCoefficientsFile": "files",
+    "dualMaskExpression": "string",
+    "nadir": "boolean",
+    "nadirCoefficientsFile": "files",
+    "nadirMaskExpression": "string",
+    "invalidSstValue": "float"
+  },
+  "AATSR.Ungrid": {
+    "L1BCharacterisationFile": "file",
+    "cornerReferenceFlag": "boolean",
+    "topographicFlag": "boolean",
+    "topographyHomogenity": "double"
+  },
+  "AdaptiveThresholding": {
+    "targetWindowSizeInMeter": "int",
+    "guardWindowSizeInMeter": "double",
+    "backgroundWindowSizeInMeter": "double",
+    "pfa": "double",
+    "estimateBackground": "boolean"
+  }
+}

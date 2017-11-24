@@ -25,7 +25,7 @@ RUN conda install --quiet --yes -c conda-forge \
     jupyter nbextensions_configurator enable --user && \
     fix-permissions $CONDA_DIR
 
-# Install facets which does not have a pip or conda package at the moment
+# Install JupyTEP IDE UI layout and enable it
 RUN cd /tmp && \
     git clone https://github.com/wasat/JupyTEPIDE.git && \
     cd JupyTEPIDE && \

@@ -64,11 +64,10 @@ define([
 
             $("option#snippet_header").prop("selected", true);
         }
-    };
-
+    }
     // return public methods
     return {
         load_ipython_extension: load_extension,
-        insert_snippet_cell:insert_cell
+        insert_snippet_cell: insert_cell
     };
 });
