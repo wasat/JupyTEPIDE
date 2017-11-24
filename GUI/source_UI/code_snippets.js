@@ -52,7 +52,7 @@ define([
 
     }
 
-    //tą funkcję chcę wywołać w innym module
+
     function insert_cell() {
         var selected_snippet = $("select#snippet_picker").find(":selected");
 
@@ -66,6 +66,7 @@ define([
         }
     };
 
+    //czytanie z pliku JSON po podanej nazwie snippeta
     function insert_cell1(name){
         //handle function passed IN parameter
         var snippet_name = name.data.snippet_name;
@@ -86,9 +87,32 @@ define([
 
     };
 
+    //daje listę nazw snippetów z pliku JSON
+    function get_SnippetsList(){
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+        // (w tym przypadku tablicy snippetNames)
+        $.ajaxSetup({
+            async: false
+        });
+
+        var snippetsNames = [];
+        //czytanie jsona
+        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+            // Insert snippet from JSON file named "snippet_name"
+            $.each(data['code_snippets'], function (key, snippet) {
+                snippetsNames.push(snippet['name']);
+                //snippetsNames.push([{name:'Example 1',link:'#',time:'yesterday',snippet_name:'Example1',on_click:insert_cell1}]);
+
+            });
+        });
+
+        return snippetsNames;
+    };
+
     // return public methods
     return {
         load_ipython_extension: load_extension,
-        insert_snippet_cell:insert_cell1
+        insert_snippet_cell:insert_cell1,
+        getSnippetsList:get_SnippetsList
     };
 });
