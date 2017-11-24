@@ -21,17 +21,17 @@ RUN mkdir snap && \
     /bin/bash "snap/esa-snap_all_unix_5_0.sh" -q
 
 # Install and configure Snappy
-RUN git clone https://github.com/bcdev/jpy.git && \
-    cd jpy && \
-    python setup.py --quiet --maven bdist_wheel > /dev/null 2>&1 && \
-    cd .. && \
-    mkdir snap/snap-python && \
-    mkdir snap/snap-python/snappy && \
-    cp jpy/dist/jpy-0.9.0.dev1-cp36-cp36m-linux_x86_64.whl "snap/snap-python/snappy" && \
-    cd /opt/snap/bin && \
-    ./snappy-conf /opt/conda/envs/python34/bin/python && \
-    cp -R /home/jovyan/.snap/snap-python/snappy /opt/conda/envs/python34/lib/python3.4/site-packages/ && \
-    rm -r /tmp/*
+RUN git clone https://github.com/bcdev/jpy.git
+RUN cd jpy
+RUN python setup.py --quiet --maven bdist_wheel
+RUN cd ..
+RUN mkdir snap/snap-python
+RUN mkdir snap/snap-python/snappy
+RUN cp jpy/dist/jpy-0.9.0.dev1-cp36-cp36m-linux_x86_64.whl "snap/snap-python/snappy"
+RUN cd /opt/snap/bin
+RUN ./snappy-conf /opt/conda/envs/python34/bin/python
+RUN cp -R /home/jovyan/.snap/snap-python/snappy /opt/conda/envs/python34/lib/python3.4/site-packages/
+RUN rm -r /tmp/*
 
 RUN fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
