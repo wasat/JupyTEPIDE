@@ -1,6 +1,6 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupytepide/scipy-addons-notebook
+FROM jupytepide/scipy-ext-notebook
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
@@ -28,7 +28,8 @@ RUN conda install --quiet --yes -c conda-forge \
 
 USER root
 
-RUN fix-permissions $CONDA_DIR
+RUN fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
 
 WORKDIR /home/$NB_USER
 USER $NB_USER

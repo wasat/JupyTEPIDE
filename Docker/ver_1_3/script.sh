@@ -1,7 +1,7 @@
 #!/bin/sh
 
-cd 1_addons/
-sudo docker build -t jupytepide/scipy-addons-notebook .
+cd 1_scipy-ext-notebook /
+sudo docker build -t jupytepide/scipy-ext-notebook .
 
 cd ../2_geo-notebook/
 sudo docker build -t jupytepide/geospatial-notebook  .
