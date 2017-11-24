@@ -24,6 +24,14 @@
         "import this",
         "a=12"
       ]
+    },
+    {
+      "name": "Example3",
+      "code": [
+        "# Third example snippet!",
+        "a=45",
+        "x=12*a+sin(x)"
+      ]
     }
   ]
 }
