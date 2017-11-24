@@ -1,0 +1,34 @@
+# Copyright (c) JupyTEP IDE Development Team.
+# Distributed under the terms of the Modified BSD License.
+FROM jupytepide/scipy-addons-notebook
+
+LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
+
+USER root
+
+# apt-get installs
+RUN apt-get update -qq && \
+    apt-get install -qq -y --no-install-recommends && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+USER $NB_USER
+
+# Conda installs
+RUN conda install --quiet --yes -c conda-forge \
+    'libgdal' \
+    'gdal' \
+    'owslib' \
+    'geopandas' \
+    'fiona' \
+    'shapely' \
+    'geopy' \
+    'geojson' \
+    'gridgeo'
+
+USER root
+
+RUN fix-permissions $CONDA_DIR
+
+WORKDIR /home/$NB_USER
+USER $NB_USER
