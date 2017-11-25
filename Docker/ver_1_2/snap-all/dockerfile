@@ -74,22 +74,32 @@ USER root
 RUN $CONDA_DIR/envs/python34/bin/python -m ipykernel install && \
     /bin/bash -c "source activate python34"
 
-RUN mkdir snap && \
-    wget --quiet http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh -P snap && \
-    chmod +x snap/esa-snap_all_unix_5_0.sh && \
-    /bin/bash "snap/esa-snap_all_unix_5_0.sh" -q
+WORKDIR /tmp
 
+# Download and install ESA SNAP toolbox (with all components)
+RUN wget --quiet http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh && \
+    chmod +x esa-snap_all_unix_5_0.sh && \
+    /bin/bash "esa-snap_all_unix_5_0.sh" -q
+
+# Install and configure Snappy
 RUN git clone https://github.com/bcdev/jpy.git && \
-    cd jpy && \
-    python setup.py --quiet --maven bdist_wheel && \
-    cd .. && \
-    mkdir snap/snap-python && \
-    mkdir snap/snap-python/snappy && \
-    cp jpy/dist/jpy-0.9.0.dev1-cp36-cp36m-linux_x86_64.whl "snap/snap-python/snappy" && \
+    cd /tmp/jpy  && \
+    python setup.py --quiet --maven bdist_wheel > /dev/null 2>&1
+
+USER $NB_USER
+
+RUN mkdir .snap && \
+    mkdir .snap/snap-python && \
+    mkdir .snap/snap-python/snappy && \
+    cp /tmp/jpy/dist/jpy-0.9.0.dev1-cp36-cp36m-linux_x86_64.whl ".snap/snap-python/snappy" && \
     cd /opt/snap/bin && \
-    ./snappy-conf /opt/conda/envs/python34/bin/python && \
-    cp -R /tmp/snap/snap-python/snappy /opt/conda/envs/python34/lib/python3.4/site-packages/ && \
-    rm -r /tmp/*
+    ./snappy-conf /opt/conda/envs/python34/bin/python
+
+USER root
+RUN cp -R /home/jovyan/.snap/snap-python/snappy /opt/conda/envs/python34/lib/python3.4/site-packages/ && \
+    rm -r /tmp/* && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
