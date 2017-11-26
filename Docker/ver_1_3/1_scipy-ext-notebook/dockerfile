@@ -107,7 +107,6 @@ RUN cd /tmp && \
     cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
-    rm -r /tmp/* && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 

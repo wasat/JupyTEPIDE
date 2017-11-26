@@ -1,6 +1,6 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupytepide/scipy-ext-notebook
+FROM jupytepide/scipy-ext-notebook:latest
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
