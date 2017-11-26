@@ -78,6 +78,7 @@ define([
                 if (snippet['name']==snippet_name){
                     var new_cell = Jupyter.notebook.insert_cell_above('');
                     new_cell.set_text(snippet['code'].join('\n'));
+                    new_cell.code_mirror.setOption('theme', 'mbo');
                     new_cell.focus_cell();
                 };
 
