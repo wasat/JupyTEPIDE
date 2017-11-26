@@ -316,9 +316,9 @@ define([
         var tabsUl = $('<ul/>', {id: 'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
         var tabsLiActive = $('<li/>').addClass('active');
 
-        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta', 'Files', 'true')));
+        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta', 'Snippets', 'true')));
         tabsUl.append(make_tab_li().append(make_tab_a('#2karta', 'Notebooks', 'false')));
-        tabsUl.append(make_tab_li().append(make_tab_a('#3karta', 'Snippets', 'false')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#3karta', 'Files', 'false')));
         //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
 
         side_panel_inner.append(tabsUl);
@@ -349,7 +349,7 @@ define([
 //Karta Files
         //Nagłówek listy
         var naglowek = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        $('#1karta').append(naglowek);
+        $('#3karta').append(naglowek);
 
 
         //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
@@ -380,7 +380,7 @@ define([
         rowItemArray[15] = new row_item('yeti', '/tree/anaconda3/bin', 'month ago', 'Stopped');
 
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#1karta').append(make_row_item(rowItemArray[i]));
+            $('#3karta').append(make_row_item(rowItemArray[i]));
         }
         //$('#notebook_list').addClass('list_container');
         rowItemArray = [];
@@ -422,19 +422,10 @@ define([
 
         //Nagłówek listy
         var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        $('#3karta').append(naglowek3);
+        $('#1karta').append(naglowek3);
 
-        //var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
-        //$('#3karta').append(naglowek);
-        //$('#notebook_list').addClass('list_container');
 
-        //this.name = name;
-        //this.link = link;
-        //this.time = time;
-        //this.status = status;
-        //this.icon = icon;
-        //this.on_click=on_click;
-
+        //Load snippets from JSON
         var snippetsList = [];
 
         snippetsList = code_snippets.getSnippetsList();
@@ -443,13 +434,11 @@ define([
             rowItemArray[i] = {name:snippetsList[i],link:'#',time:'yesterday',snippet_name:snippetsList[i],on_click:code_snippets.insert_snippet_cell};
         };
 
-
-        //TODO:nazwa ładowanego snippeta powinna pochodzić albo z atrybutu, albo z wartości linka
-        //TODO:poprawić, żeby onclick nie było zbindowane z divem tylko z <a>
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#3karta').append(make_row_item(rowItemArray[i]));
-
+            $('#1karta').append(make_row_item(rowItemArray[i]));
         }
+//kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
+
 
     };
 
