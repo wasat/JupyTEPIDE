@@ -32,7 +32,8 @@ define([
     'tree/js/sessionlist',
     'contents',
     'base/js/page',
-    './code_snippets'
+    './code_snippets',
+    './jupytepide_notebooks',
 ], function (require,
              $,
              IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
@@ -43,7 +44,8 @@ define([
              sesssionlist,
              contents_service,
              page,
-             code_snippets) {
+             code_snippets,
+             jupytepide_notebooks) {
     'use strict';
 // create config object to load parameters
     //   var base_url = utils.get_body_data('baseUrl');
@@ -395,25 +397,33 @@ define([
 
 //Karta Notebooks
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
-        var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree', utils.encode_uri_components(parent));
+        //var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks', utils.encode_uri_components(parent));
+        var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks');
+
 
         //Nagłówek listy
         var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
         $('#2karta').append(naglowek2);
 
-        //var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
-        //$('#2karta').append(naglowek);
-        //$('#notebook_list').addClass('list_container');
 
-        rowItemArray[0] = new row_item('moj_probny.ipynb', utils.url_path_join(notebookPath, 'moj_probny.ipynb'), 'month ago', 'Stopped');
-        rowItemArray[1] = new row_item('Untitled.ipynb', utils.url_path_join(notebookPath, 'Untitled.ipynb'), 'month ago', 'Stopped');
-        rowItemArray[2] = new row_item('Untitled1.ipynb', utils.url_path_join(notebookPath, 'Untitled1.ipynb'), 'month ago', 'Stopped');
+//>>>>>
+        //Load jupytepide notebooks list from JSON
+        var notebooksList = [];
+
+        notebooksList = jupytepide_notebooks.getNotebooksList();
+        for (i=0;i<notebooksList.length;i++){
+
+            rowItemArray[i] = {name:notebooksList[i],link:utils.url_path_join(notebookPath, notebooksList[i]),time:'yesterday'};
+        };
 
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#2karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+            $('#2karta').append(make_row_item(rowItemArray[i]));
         }
 
         rowItemArray = [];
+//>>>>>
+
+
 
         //make_link($('#2karta'), '#', 'Link dowolny');
         //make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');

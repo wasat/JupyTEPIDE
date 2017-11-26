@@ -119,6 +119,12 @@ span#login_widget > .button, #logout {
 
 }
 
+/*komunikaty pod celkami*/
+.rendered_html p {
+    color: #ffffff;
+}
+
+
 /*
 kolor na obramowanie wybranej celki: #6f6c75
 div.cell.selected, div.cell.selected.jupyter-soft-selected

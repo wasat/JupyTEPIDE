@@ -1,4 +1,9 @@
-// Code cell snippets
+// file source_UI/code_snippets.js
+// Edited by: Michał Bednarczyk
+// Copyright (C) 2017 .....
+//
+//  Distributed under the terms of the BSD License.
+// ---------------------------------------------------------------------------
 
 define([
     'jquery',
