@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Dimap_Document name="output.dim">
+    <Metadata_Id>
+        <METADATA_FORMAT version="2.12.1">DIMAP</METADATA_FORMAT>
+        <METADATA_PROFILE>BEAM-DATAMODEL-V1</METADATA_PROFILE>
+    </Metadata_Id>
+    <Dataset_Id>
+        <DATASET_SERIES>BEAM-PRODUCT</DATASET_SERIES>
+        <DATASET_NAME>output</DATASET_NAME>
+    </Dataset_Id>
+    <Production>
+        <DATASET_PRODUCER_NAME />
+        <PRODUCT_TYPE>S2_MSI_Level-1C_gndvi</PRODUCT_TYPE>
+    </Production>
+    <Coordinate_Reference_System>
+        <WKT>
+             PROJCS["WGS 84 / UTM zone 49S", 
+               GEOGCS["WGS 84", 
+                 DATUM["World Geodetic System 1984", 
+                   SPHEROID["WGS 84", 6378137.0, 298.257223563, AUTHORITY["EPSG","7030"]], 
+                   AUTHORITY["EPSG","6326"]], 
+                 PRIMEM["Greenwich", 0.0, AUTHORITY["EPSG","8901"]], 
+                 UNIT["degree", 0.017453292519943295], 
+                 AXIS["Geodetic latitude", NORTH], 
+                 AXIS["Geodetic longitude", EAST], 
+                 AUTHORITY["EPSG","4326"]], 
+               PROJECTION["Transverse_Mercator", AUTHORITY["EPSG","9807"]], 
+               PARAMETER["central_meridian", 111.0], 
+               PARAMETER["latitude_of_origin", 0.0], 
+               PARAMETER["scale_factor", 0.9996], 
+               PARAMETER["false_easting", 500000.0], 
+               PARAMETER["false_northing", 10000000.0], 
+               UNIT["m", 1.0], 
+               AXIS["Easting", EAST], 
+               AXIS["Northing", NORTH], 
+               AUTHORITY["EPSG","32749"]]
+        </WKT>
+    </Coordinate_Reference_System>
+    <Geoposition>
+        <IMAGE_TO_MODEL_TRANSFORM>10.0,0.0,0.0,-10.0,799980.0,9200020.0</IMAGE_TO_MODEL_TRANSFORM>
+    </Geoposition>
+    <Flag_Coding name="flags">
+        <Flag>
+            <Flag_Name>ARITHMETIC</Flag_Name>
+            <Flag_Index>1</Flag_Index>
+            <Flag_description>Value calculation failed due to an arithmetic exception</Flag_description>
+        </Flag>
+        <Flag>
+            <Flag_Name>NEGATIVE</Flag_Name>
+            <Flag_Index>2</Flag_Index>
+            <Flag_description>Index value is too low</Flag_description>
+        </Flag>
+        <Flag>
+            <Flag_Name>SATURATION</Flag_Name>
+            <Flag_Index>4</Flag_Index>
+            <Flag_description>Index value is too high</Flag_description>
+        </Flag>
+    </Flag_Coding>
+    <Raster_Dimensions>
+        <NCOLS>10980</NCOLS>
+        <NROWS>10980</NROWS>
+        <NBANDS>2</NBANDS>
+    </Raster_Dimensions>
+    <Data_Access>
+        <DATA_FILE_FORMAT>ENVI</DATA_FILE_FORMAT>
+        <DATA_FILE_FORMAT_DESC>ENVI File Format</DATA_FILE_FORMAT_DESC>
+        <DATA_FILE_ORGANISATION>BAND_SEPARATE</DATA_FILE_ORGANISATION>
+        <Data_File>
+            <DATA_FILE_PATH href="output.data/gndvi.hdr" />
+            <BAND_INDEX>0</BAND_INDEX>
+        </Data_File>
+        <Data_File>
+            <DATA_FILE_PATH href="output.data/flags.hdr" />
+            <BAND_INDEX>1</BAND_INDEX>
+        </Data_File>
+    </Data_Access>
+    <Masks>
+        <Mask type="Maths">
+            <NAME value="ARITHMETIC" />
+            <MASK_RASTER_WIDTH value="10980" />
+            <MASK_RASTER_HEIGHT value="10980" />
+            <DESCRIPTION value="An arithmetic exception occurred." />
+            <COLOR red="255" green="0" blue="0" alpha="255" />
+            <TRANSPARENCY value="0.7" />
+            <IMAGE_TO_MODEL_TRANSFORM value="10.0,0.0,0.0,-10.0,799980.0,9200020.0" />
+            <EXPRESSION value="flags.ARITHMETIC" />
+        </Mask>
+        <Mask type="Maths">
+            <NAME value="NEGATIVE" />
+            <MASK_RASTER_WIDTH value="10980" />
+            <MASK_RASTER_HEIGHT value="10980" />
+            <DESCRIPTION value="Index value is too low." />
+            <COLOR red="255" green="0" blue="0" alpha="255" />
+            <TRANSPARENCY value="0.7" />
+            <IMAGE_TO_MODEL_TRANSFORM value="10.0,0.0,0.0,-10.0,799980.0,9200020.0" />
+            <EXPRESSION value="flags.NEGATIVE" />
+        </Mask>
+        <Mask type="Maths">
+            <NAME value="SATURATION" />
+            <MASK_RASTER_WIDTH value="10980" />
+            <MASK_RASTER_HEIGHT value="10980" />
+            <DESCRIPTION value="Index value is too high." />
+            <COLOR red="178" green="0" blue="0" alpha="255" />
+            <TRANSPARENCY value="0.7" />
+            <IMAGE_TO_MODEL_TRANSFORM value="10.0,0.0,0.0,-10.0,799980.0,9200020.0" />
+            <EXPRESSION value="flags.SATURATION" />
+        </Mask>
+    </Masks>
+    <Image_Interpretation>
+        <Spectral_Band_Info>
+            <BAND_INDEX>0</BAND_INDEX>
+            <BAND_DESCRIPTION />
+            <BAND_NAME>gndvi</BAND_NAME>
+            <BAND_RASTER_WIDTH>10980</BAND_RASTER_WIDTH>
+            <BAND_RASTER_HEIGHT>10980</BAND_RASTER_HEIGHT>
+            <DATA_TYPE>float32</DATA_TYPE>
+            <SOLAR_FLUX>0.0</SOLAR_FLUX>
+            <BAND_WAVELEN>0.0</BAND_WAVELEN>
+            <BANDWIDTH>0.0</BANDWIDTH>
+            <SCALING_FACTOR>1.0</SCALING_FACTOR>
+            <SCALING_OFFSET>0.0</SCALING_OFFSET>
+            <LOG10_SCALED>false</LOG10_SCALED>
+            <NO_DATA_VALUE_USED>false</NO_DATA_VALUE_USED>
+            <NO_DATA_VALUE>0.0</NO_DATA_VALUE>
+            <IMAGE_TO_MODEL_TRANSFORM>10.0,0.0,0.0,-10.0,799980.0,9200020.0</IMAGE_TO_MODEL_TRANSFORM>
+        </Spectral_Band_Info>
+        <Spectral_Band_Info>
+            <BAND_INDEX>1</BAND_INDEX>
+            <BAND_DESCRIPTION>gndvi specific flags</BAND_DESCRIPTION>
+            <BAND_NAME>flags</BAND_NAME>
+            <BAND_RASTER_WIDTH>10980</BAND_RASTER_WIDTH>
+            <BAND_RASTER_HEIGHT>10980</BAND_RASTER_HEIGHT>
+            <DATA_TYPE>int32</DATA_TYPE>
+            <SOLAR_FLUX>0.0</SOLAR_FLUX>
+            <BAND_WAVELEN>0.0</BAND_WAVELEN>
+            <BANDWIDTH>0.0</BANDWIDTH>
+            <FLAG_CODING_NAME>flags</FLAG_CODING_NAME>
+            <SCALING_FACTOR>1.0</SCALING_FACTOR>
+            <SCALING_OFFSET>0.0</SCALING_OFFSET>
+            <LOG10_SCALED>false</LOG10_SCALED>
+            <NO_DATA_VALUE_USED>false</NO_DATA_VALUE_USED>
+            <NO_DATA_VALUE>0.0</NO_DATA_VALUE>
+            <IMAGE_TO_MODEL_TRANSFORM>10.0,0.0,0.0,-10.0,799980.0,9200020.0</IMAGE_TO_MODEL_TRANSFORM>
+        </Spectral_Band_Info>
+    </Image_Interpretation>
+    <Dataset_Sources>
+        <MDElem name="metadata">
+            <MDElem name="Processing_Graph">
+                <MDElem name="node.0">
+                    <MDATTR name="id" type="ascii" mode="rw">GndviOp$15E7A5DDB6E</MDATTR>
+                    <MDATTR name="operator" type="ascii" mode="rw">GndviOp</MDATTR>
+                    <MDATTR name="moduleName" type="ascii" mode="rw">Radiometric Indices Bundle</MDATTR>
+                    <MDATTR name="moduleVersion" type="ascii" mode="rw">5.0.6</MDATTR>
+                    <MDATTR name="purpose" type="ascii" mode="rw">Green Normalized Difference Vegetation Index</MDATTR>
+                    <MDATTR name="authors" type="ascii" mode="rw">Dragos Mihailescu</MDATTR>
+                    <MDATTR name="version" type="ascii" mode="rw">1.0</MDATTR>
+                    <MDATTR name="copyright" type="ascii" mode="rw">Copyright (C) 2016 by CS ROMANIA</MDATTR>
+                    <MDATTR name="processingTime" type="ascii" mode="rw">2017-09-13T08:32:04.974Z</MDATTR>
+                    <MDElem name="sources">
+                        <MDATTR name="sourceProduct" type="ascii" mode="rw">file:/eodata/Sentinel-2/MSI/L1C/2017/09/13/S2A_MSIL1C_20170913T024941_N0205_R046_T49MHM_20170913T024944.SAFE/MTD_MSIL1C.xml</MDATTR>
+                    </MDElem>
+                    <MDElem name="parameters">
+                        <MDATTR name="upsampling" type="ascii">Nearest</MDATTR>
+                        <MDATTR name="greenSourceBand" type="ascii">B3</MDATTR>
+                        <MDATTR name="downsampling" type="ascii">First</MDATTR>
+                        <MDATTR name="nirFactor" type="ascii">1.0</MDATTR>
+                        <MDATTR name="greenFactor" type="ascii">1.0</MDATTR>
+                        <MDATTR name="resampleType" type="ascii">None</MDATTR>
+                        <MDATTR name="nirSourceBand" type="ascii">B7</MDATTR>
+                    </MDElem>
+                </MDElem>
+            </MDElem>
+        </MDElem>
+    </Dataset_Sources>
+</Dimap_Document>

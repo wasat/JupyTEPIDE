@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Dimap_Document name="snappy_ndvi_s2output.dim">
+    <Metadata_Id>
+        <METADATA_FORMAT version="2.12.1">DIMAP</METADATA_FORMAT>
+        <METADATA_PROFILE>BEAM-DATAMODEL-V1</METADATA_PROFILE>
+    </Metadata_Id>
+    <Dataset_Id>
+        <DATASET_SERIES>BEAM-PRODUCT</DATASET_SERIES>
+        <DATASET_NAME>snappy_ndvi_s2output</DATASET_NAME>
+    </Dataset_Id>
+    <Production>
+        <DATASET_PRODUCER_NAME />
+        <PRODUCT_TYPE>NDVI</PRODUCT_TYPE>
+    </Production>
+    <Coordinate_Reference_System>
+        <Horizontal_CS>
+            <HORIZONTAL_CS_TYPE>GEOGRAPHIC</HORIZONTAL_CS_TYPE>
+            <Geographic_CS>
+                <Horizontal_Datum>
+                    <HORIZONTAL_DATUM_NAME>WGS-84</HORIZONTAL_DATUM_NAME>
+                    <Ellipsoid>
+                        <ELLIPSOID_NAME>WGS-84</ELLIPSOID_NAME>
+                        <Ellipsoid_Parameters>
+                            <ELLIPSOID_MAJ_AXIS unit="M">6378137.0</ELLIPSOID_MAJ_AXIS>
+                            <ELLIPSOID_MIN_AXIS unit="M">6356752.3</ELLIPSOID_MIN_AXIS>
+                        </Ellipsoid_Parameters>
+                    </Ellipsoid>
+                </Horizontal_Datum>
+            </Geographic_CS>
+        </Horizontal_CS>
+    </Coordinate_Reference_System>
+    <Geoposition>
+        <Geoposition_Points>
+            <TIE_POINT_GRID_NAME_LAT>latitude</TIE_POINT_GRID_NAME_LAT>
+            <TIE_POINT_GRID_NAME_LON>longitude</TIE_POINT_GRID_NAME_LON>
+        </Geoposition_Points>
+    </Geoposition>
+    <Flag_Coding name="ndvi_flags">
+        <Flag>
+            <Flag_Name>NDVI_LOW</Flag_Name>
+            <Flag_Index>1</Flag_Index>
+            <Flag_description>NDVI below 0</Flag_description>
+        </Flag>
+        <Flag>
+            <Flag_Name>NDVI_HIGH</Flag_Name>
+            <Flag_Index>2</Flag_Index>
+            <Flag_description>NDVI above 1</Flag_description>
+        </Flag>
+    </Flag_Coding>
+    <Raster_Dimensions>
+        <NCOLS>4481</NCOLS>
+        <NROWS>11521</NROWS>
+        <NBANDS>2</NBANDS>
+    </Raster_Dimensions>
+    <Data_Access>
+        <DATA_FILE_FORMAT>ENVI</DATA_FILE_FORMAT>
+        <DATA_FILE_FORMAT_DESC>ENVI File Format</DATA_FILE_FORMAT_DESC>
+        <DATA_FILE_ORGANISATION>BAND_SEPARATE</DATA_FILE_ORGANISATION>
+        <Data_File>
+            <DATA_FILE_PATH href="snappy_ndvi_s2output.data/ndvi.hdr" />
+            <BAND_INDEX>0</BAND_INDEX>
+        </Data_File>
+        <Data_File>
+            <DATA_FILE_PATH href="snappy_ndvi_s2output.data/ndvi_flags.hdr" />
+            <BAND_INDEX>1</BAND_INDEX>
+        </Data_File>
+        <Tie_Point_Grid_File>
+            <TIE_POINT_GRID_FILE_PATH href="snappy_ndvi_s2output.data/tie_point_grids/latitude.hdr" />
+            <TIE_POINT_GRID_INDEX>0</TIE_POINT_GRID_INDEX>
+        </Tie_Point_Grid_File>
+        <Tie_Point_Grid_File>
+            <TIE_POINT_GRID_FILE_PATH href="snappy_ndvi_s2output.data/tie_point_grids/longitude.hdr" />
+            <TIE_POINT_GRID_INDEX>1</TIE_POINT_GRID_INDEX>
+        </Tie_Point_Grid_File>
+    </Data_Access>
+    <Tie_Point_Grids>
+        <NUM_TIE_POINT_GRIDS>2</NUM_TIE_POINT_GRIDS>
+        <Tie_Point_Grid_Info>
+            <TIE_POINT_GRID_INDEX>0</TIE_POINT_GRID_INDEX>
+            <TIE_POINT_DESCRIPTION>Latitude of the tie points (WGS-84), positive N</TIE_POINT_DESCRIPTION>
+            <PHYSICAL_UNIT>deg</PHYSICAL_UNIT>
+            <TIE_POINT_GRID_NAME>latitude</TIE_POINT_GRID_NAME>
+            <DATA_TYPE>float32</DATA_TYPE>
+            <NCOLS>71</NCOLS>
+            <NROWS>181</NROWS>
+            <OFFSET_X>0.5</OFFSET_X>
+            <OFFSET_Y>0.5</OFFSET_Y>
+            <STEP_X>64.0</STEP_X>
+            <STEP_Y>64.0</STEP_Y>
+            <CYCLIC>false</CYCLIC>
+        </Tie_Point_Grid_Info>
+        <Tie_Point_Grid_Info>
+            <TIE_POINT_GRID_INDEX>1</TIE_POINT_GRID_INDEX>
+            <TIE_POINT_DESCRIPTION>Longitude of the tie points (WGS-84), Greenwich origin, positive E</TIE_POINT_DESCRIPTION>
+            <PHYSICAL_UNIT>deg</PHYSICAL_UNIT>
+            <TIE_POINT_GRID_NAME>longitude</TIE_POINT_GRID_NAME>
+            <DATA_TYPE>float32</DATA_TYPE>
+            <NCOLS>71</NCOLS>
+            <NROWS>181</NROWS>
+            <OFFSET_X>0.5</OFFSET_X>
+            <OFFSET_Y>0.5</OFFSET_Y>
+            <STEP_X>64.0</STEP_X>
+            <STEP_Y>64.0</STEP_Y>
+            <CYCLIC>true</CYCLIC>
+        </Tie_Point_Grid_Info>
+    </Tie_Point_Grids>
+    <Image_Interpretation>
+        <Spectral_Band_Info>
+            <BAND_INDEX>0</BAND_INDEX>
+            <BAND_DESCRIPTION />
+            <BAND_NAME>ndvi</BAND_NAME>
+            <BAND_RASTER_WIDTH>4481</BAND_RASTER_WIDTH>
+            <BAND_RASTER_HEIGHT>11521</BAND_RASTER_HEIGHT>
+            <DATA_TYPE>float32</DATA_TYPE>
+            <SOLAR_FLUX>0.0</SOLAR_FLUX>
+            <BAND_WAVELEN>0.0</BAND_WAVELEN>
+            <BANDWIDTH>0.0</BANDWIDTH>
+            <SCALING_FACTOR>1.0</SCALING_FACTOR>
+            <SCALING_OFFSET>0.0</SCALING_OFFSET>
+            <LOG10_SCALED>false</LOG10_SCALED>
+            <NO_DATA_VALUE_USED>false</NO_DATA_VALUE_USED>
+            <NO_DATA_VALUE>0.0</NO_DATA_VALUE>
+        </Spectral_Band_Info>
+        <Spectral_Band_Info>
+            <BAND_INDEX>1</BAND_INDEX>
+            <BAND_DESCRIPTION />
+            <BAND_NAME>ndvi_flags</BAND_NAME>
+            <BAND_RASTER_WIDTH>4481</BAND_RASTER_WIDTH>
+            <BAND_RASTER_HEIGHT>11521</BAND_RASTER_HEIGHT>
+            <DATA_TYPE>uint8</DATA_TYPE>
+            <SOLAR_FLUX>0.0</SOLAR_FLUX>
+            <BAND_WAVELEN>0.0</BAND_WAVELEN>
+            <BANDWIDTH>0.0</BANDWIDTH>
+            <FLAG_CODING_NAME>ndvi_flags</FLAG_CODING_NAME>
+            <SCALING_FACTOR>1.0</SCALING_FACTOR>
+            <SCALING_OFFSET>0.0</SCALING_OFFSET>
+            <LOG10_SCALED>false</LOG10_SCALED>
+            <NO_DATA_VALUE_USED>false</NO_DATA_VALUE_USED>
+            <NO_DATA_VALUE>0.0</NO_DATA_VALUE>
+        </Spectral_Band_Info>
+    </Image_Interpretation>
+</Dimap_Document>
