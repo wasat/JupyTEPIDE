@@ -1,4 +1,4 @@
-﻿#!/bin/sh
+#!/bin/bash
 
 cd 1_scipy-ext-notebook /
 sudo docker build -t jupytepide/scipy-ext-notebook:latest .
