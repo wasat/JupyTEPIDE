@@ -1,6 +1,6 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupytepide/geospatial-notebook
+FROM jupytepide/geospatial-notebook:latest
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
@@ -13,27 +13,30 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp
-USER $NB_USER
+
 # Download and install ESA SNAP toolbox (with all components)
-RUN mkdir snap && \
-    wget --quiet http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh -P snap && \
-    chmod +x snap/esa-snap_all_unix_5_0.sh && \
-    /bin/bash "snap/esa-snap_all_unix_5_0.sh" -q
+RUN wget --quiet http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh && \
+    chmod +x esa-snap_all_unix_5_0.sh && \
+    /bin/bash "esa-snap_all_unix_5_0.sh" -q
 
 # Install and configure Snappy
-RUN git clone https://github.com/bcdev/jpy.git
-RUN cd jpy
-RUN python setup.py --quiet --maven bdist_wheel
-RUN cd ..
-RUN mkdir snap/snap-python
-RUN mkdir snap/snap-python/snappy
-RUN cp jpy/dist/jpy-0.9.0.dev1-cp36-cp36m-linux_x86_64.whl "snap/snap-python/snappy"
-RUN cd /opt/snap/bin
-RUN ./snappy-conf /opt/conda/envs/python34/bin/python
-RUN cp -R /home/jovyan/.snap/snap-python/snappy /opt/conda/envs/python34/lib/python3.4/site-packages/
-RUN rm -r /tmp/*
+RUN git clone https://github.com/bcdev/jpy.git && \
+    cd /tmp/jpy  && \
+    python setup.py --quiet --maven bdist_wheel > /dev/null 2>&1
 
-RUN fix-permissions $CONDA_DIR && \
+USER $NB_USER
+
+RUN mkdir .snap && \
+    mkdir .snap/snap-python && \
+    mkdir .snap/snap-python/snappy && \
+    cp /tmp/jpy/dist/jpy-0.9.0.dev1-cp36-cp36m-linux_x86_64.whl ".snap/snap-python/snappy" && \
+    cd /opt/snap/bin && \
+    ./snappy-conf /opt/conda/envs/python34/bin/python && \
+    cp -R /home/jovyan/.snap/snap-python/snappy /opt/conda/envs/python34/lib/python3.4/site-packages/
+
+USER root
+RUN rm -r /tmp/* && \
+    fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
 WORKDIR /home/$NB_USER

@@ -32,7 +32,8 @@ define([
     'tree/js/sessionlist',
     'contents',
     'base/js/page',
-    './code_snippets'
+    './code_snippets',
+    './jupytepide_notebooks',
 ], function (require,
              $,
              IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
@@ -43,7 +44,8 @@ define([
              sesssionlist,
              contents_service,
              page,
-             code_snippets) {
+             code_snippets,
+             jupytepide_notebooks) {
     'use strict';
 // create config object to load parameters
     //   var base_url = utils.get_body_data('baseUrl');
@@ -234,15 +236,19 @@ define([
         return tab_div;
     };
 
-    function row_item(name, link, time, status) {
+    function row_item(name, link, time, status,icon,on_click) {
         this.name = name;
         this.link = link;
         this.time = time;
         this.status = status;
+        this.icon = icon;
+        this.on_click=on_click;
     }
     //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
     //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
     //patrz item_row.html
+    //wejście: row item, czyli obiekt produkowany przez funkcję row_item(),
+    // albo coś w postaci(dobór atrybutów dowolny): {name:'Snippet 1',link:'#',time:'yesterday'}
     var make_row_item = function (row_item) {
         var item_row = $('<div/>').addClass('list_item row');
         var colDiv = $('<div/>').addClass('col-md-12');
@@ -253,16 +259,22 @@ define([
                     type: 'checkbox'
                 }));
         colDiv.append(
+            //jakie są inne ikony
             $('<i/>').addClass('item_icon folder_icon icon-fixed-width')
         );
         var itemName = $('<span/>').addClass('item_name').html(row_item.name);
 
-        colDiv.append(
-            $('<a/>',
-                {
-                    href: '#'//row_item.link  //'/tree/anaconda3/bin',
-                }).addClass('item_link').append(itemName).click(code_snippets.insert_snippet_cell)
-        );
+        var a_link = $('<a/>',
+            {
+                href: row_item.link  //'/tree/anaconda3/bin',
+            }).addClass('item_link').append(itemName);
+
+        if (row_item.on_click){
+            a_link.bind('click', { snippet_name: row_item.snippet_name },
+                row_item.on_click);
+        }
+
+        colDiv.append(a_link);
 
         colDiv.append(
             $('<span/>', {
@@ -306,9 +318,9 @@ define([
         var tabsUl = $('<ul/>', {id: 'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
         var tabsLiActive = $('<li/>').addClass('active');
 
-        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta', 'Files', 'true')));
+        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta', 'Snippets', 'true')));
         tabsUl.append(make_tab_li().append(make_tab_a('#2karta', 'Notebooks', 'false')));
-        tabsUl.append(make_tab_li().append(make_tab_a('#3karta', 'Snippets', 'false')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#3karta', 'Files', 'false')));
         //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
 
         side_panel_inner.append(tabsUl);
@@ -339,7 +351,7 @@ define([
 //Karta Files
         //Nagłówek listy
         var naglowek = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        $('#1karta').append(naglowek);
+        $('#3karta').append(naglowek);
 
 
         //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
@@ -370,7 +382,7 @@ define([
         rowItemArray[15] = new row_item('yeti', '/tree/anaconda3/bin', 'month ago', 'Stopped');
 
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#1karta').append(make_row_item(rowItemArray[i]));
+            $('#3karta').append(make_row_item(rowItemArray[i]));
         }
         //$('#notebook_list').addClass('list_container');
         rowItemArray = [];
@@ -385,25 +397,33 @@ define([
 
 //Karta Notebooks
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
-        var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree', utils.encode_uri_components(parent));
+        //var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks', utils.encode_uri_components(parent));
+        var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks');
+
 
         //Nagłówek listy
         var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
         $('#2karta').append(naglowek2);
 
-        //var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
-        //$('#2karta').append(naglowek);
-        //$('#notebook_list').addClass('list_container');
 
-        rowItemArray[0] = new row_item('moj_probny.ipynb', utils.url_path_join(notebookPath, 'moj_probny.ipynb'), 'month ago', 'Stopped');
-        rowItemArray[1] = new row_item('Untitled.ipynb', utils.url_path_join(notebookPath, 'Untitled.ipynb'), 'month ago', 'Stopped');
-        rowItemArray[2] = new row_item('Untitled1.ipynb', utils.url_path_join(notebookPath, 'Untitled1.ipynb'), 'month ago', 'Stopped');
+//>>>>>
+        //Load jupytepide notebooks list from JSON
+        var notebooksList = [];
+
+        notebooksList = jupytepide_notebooks.getNotebooksList();
+        for (i=0;i<notebooksList.length;i++){
+
+            rowItemArray[i] = {name:notebooksList[i],link:utils.url_path_join(notebookPath, notebooksList[i]),time:'yesterday'};
+        };
 
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#2karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+            $('#2karta').append(make_row_item(rowItemArray[i]));
         }
 
         rowItemArray = [];
+//>>>>>
+
+
 
         //make_link($('#2karta'), '#', 'Link dowolny');
         //make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
@@ -412,26 +432,22 @@ define([
 
         //Nagłówek listy
         var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        $('#3karta').append(naglowek3);
+        $('#1karta').append(naglowek3);
 
-        //var akapit = $('<div/>').load('http://localhost:8888/tree #notebook_list');
-        //$('#3karta').append(naglowek);
-        //$('#notebook_list').addClass('list_container');
 
-        rowItemArray[0] = new row_item('Snippet 1', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[1] = new row_item('Snippet 2', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[2] = new row_item('Snippet 3', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[3] = new row_item('Snippet 4', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[4] = new row_item('Snippet 5', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[5] = new row_item('Snippet 6', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[6] = new row_item('Snippet 7', '/tree/anaconda3/bin', 'month ago', 'Stopped');
+        //Load snippets from JSON
+        var snippetsList = [];
+
+        snippetsList = code_snippets.getSnippetsList();
+        for (i=0;i<snippetsList.length;i++){
+
+            rowItemArray[i] = {name:snippetsList[i],link:'#',time:'yesterday',snippet_name:snippetsList[i],on_click:code_snippets.insert_snippet_cell};
+        };
 
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#3karta').append(make_row_item(rowItemArray[i]).appendTo($('<div/>')));
+            $('#1karta').append(make_row_item(rowItemArray[i]));
         }
-
-
-        //make_parent_link($('#3karta'), 'moj_probny.ipynb', 'Pokaz notebook 3');
+//kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
 
 
     };
