@@ -101,6 +101,6 @@ define([
 
     return {
         load_ipython_extension: load_ipython_extension,
-        load_jupytepide_theme:load_style
+        load_jupytepide_theme: load_style
     };
 });
