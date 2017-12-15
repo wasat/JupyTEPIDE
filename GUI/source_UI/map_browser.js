@@ -32,8 +32,8 @@ define([
             layers: layers,
             target: 'map_panel',
             view: new ol.View({
-                center: [-16032.384103771166,6712921.766818939],
-                zoom: 18
+                center: [1894460,6640076],
+                zoom: 10
             })
         });
     };
