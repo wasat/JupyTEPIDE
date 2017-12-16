@@ -11,7 +11,22 @@ define([
              require,
              ol) {
 
+    function getMousePos(){
+        //Mouse position obtaining
+        var mousePositionControl = new ol.control.MousePosition({
+            coordinateFormat: ol.coordinate.createStringXY(4),
+            projection: 'EPSG:4326',
+            // comment the following two lines to have the mouse position
+            // be placed within the map.
+            //className: 'custom-mouse-position',
+            //target: document.getElementById('mouse-position'),
+            undefinedHTML: '&nbsp;'
+        });
+        return mousePositionControl;
+    };
+
     function load_ol_map(){
+
         var mapWMSTile = new ol.source.TileWMS({
             url: 'http://185.52.193.26:8080/geoserver/test/wms',
             params: {'LAYERS': 'test:centroid_point_day','TILED': true, TIME: '2017-11-30T00:00:00.000Z'},
@@ -28,7 +43,13 @@ define([
                 //source: mapWMSTile
             })
         ];
+
         var map = new ol.Map({
+            controls: ol.control.defaults({
+                attributionOptions: {
+                    collapsible: false
+                }
+            }).extend([getMousePos()]),
             layers: layers,
             target: 'map_panel',
             view: new ol.View({
@@ -55,9 +76,9 @@ define([
       //existing notebook UI element
       var main_panel = $('#notebook-container'); //albo wstawiać go za tym elementem, albo za site...
 
-      //#flip_map
-      var flip = $('<div/>',{id:'flip_map',style:'background-color:#1c1c1c;width:100%;'});
-      flip.append($('<button/>',{id:'map_toggle'}).html('Hide/Show'));
+      //#flip_map //,style:'background-color:#1c1c1c;width:100%;height:30px;'
+      var flip = $('<div/>',{id:'flip_map',class:'container toolbar'});
+      flip.append($('<button/>',{id:'map_toggle', class:'btn btn-xs btn-default'}).html('Hide/Show'));
       flip.append($('<a>',{name:'map'}));
 
 
