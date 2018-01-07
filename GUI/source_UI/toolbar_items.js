@@ -29,6 +29,13 @@ define([
         alert('To jest komunikat nr 2');
     };
 
+    var testowanie_handler = function () {
+
+        Jupyter.notebook.select_next(true);
+        var indx = Jupyter.notebook.get_selected_index();
+        alert(indx);
+    };
+
     //*** make_action ***
     //Function for action preparing
     //In: Parameters to perform action.
@@ -62,9 +69,9 @@ define([
         //Prepare actions for tool-buttons
         var komunikat = make_action('komunikat1', 'my_ext', 'fa-comment-o', 'Pokaz komunikat1', 'to jest komunikat1', komunikat_handler);
         var komunikat2 = make_action('komunikat2', 'my_ext2', 'fa-comment-o', 'Pokaz komunikat2', 'to jest komunikat2', komunikat2_handler);
-
+        var test = make_action('test', 'my_ext2', 'fa-comment-o', 'testuj', 'testuj', testowanie_handler);
         //Load buttons to UI
-        Jupyter.toolbar.add_buttons_group([komunikat, komunikat2]);
+        Jupyter.toolbar.add_buttons_group([komunikat, komunikat2, test]);
 
     }
 
