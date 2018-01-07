@@ -14,10 +14,12 @@
 define([
     'base/js/namespace',
     'jquery',
-    'require'
+    'require',
+    './code_snippets'
 ], function (Jupyter,
              $,
-             require) {
+             require,
+             code_snippets) {
     //***
     //*** Action Handlers ***
     //Function objects for handling actions performed by tool-buttons click
@@ -29,11 +31,45 @@ define([
         alert('To jest komunikat nr 2');
     };
 
+    //testowanie Web Map Browsera - odłączyć
     var testowanie_handler = function () {
 
-        Jupyter.notebook.select_next(true);
-        var indx = Jupyter.notebook.get_selected_index();
-        alert(indx);
+        //Jupyter.notebook.select_next(true);
+        //var indx = Jupyter.notebook.get_selected_index();
+        //alert(indx);
+
+        var new_cell = Jupyter.notebook.insert_cell_at_index('code',1);
+        $('.input').last().css({display:"none"});//.atr('style','display:none');
+
+        var tekst;
+        tekst = code_snippets.getWebMapBrowserText();
+        //alert(code_snippets.getWebMapBrowserText());
+        //alert(tekst);
+
+        //###
+      //  var WMBText;
+      //  $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+      //      $.each(data['code_snippets'], function (key, snippet) {
+      //          if (snippet['name']=="Web Map Browser"){
+      //              WMBText = snippet['code'].join('\n');
+      //          };
+      //      });
+      //  });
+        //###
+
+
+        //tekst = "1+9";
+        new_cell.set_text(tekst);
+
+        new_cell.code_mirror.setOption('theme', 'mbo');
+        var idx = [];
+        idx.push(1);
+        Jupyter.notebook.execute_cells(idx);
+
+
+        new_cell.unselect(true);
+        var first_cell = Jupyter.notebook.get_cell(0);
+        first_cell.select();
     };
 
     //*** make_action ***
