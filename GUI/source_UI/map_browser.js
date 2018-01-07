@@ -5,11 +5,13 @@ define([
     'base/js/namespace',
     'jquery',
     'require',
-    './ol'
+    './ol',
+    './code_snippets'
 ], function (Jupyter,
              $,
              require,
-             ol) {
+             ol,
+             code_snippets) {
 
     function getMousePos(){
         //Mouse position obtaining
@@ -59,6 +61,25 @@ define([
         });
     };
 
+    function load_leaflet_map(){
+
+        var new_cell = Jupyter.notebook.insert_cell_at_index('code',1);
+        $('.input').last().css({display:"none"});//.atr('style','display:none');
+
+        var tekst;
+        tekst = code_snippets.getWebMapBrowserText();
+        new_cell.set_text(tekst);
+
+        new_cell.code_mirror.setOption('theme', 'mbo');
+        var idx = [];
+        idx.push(1);
+        Jupyter.notebook.execute_cells(idx);
+
+        new_cell.unselect(true);
+        var first_cell = Jupyter.notebook.get_cell(0);
+        first_cell.select();
+    };
+
     function build_map_panel (){
         //#map_panel - for map containing
         //openlayers scripts and CSS - look at css_loader.js
@@ -71,6 +92,7 @@ define([
     };
 
     function load_extension(){
+      load_leaflet_map();
       var map_panel = build_map_panel();
 
       //existing notebook UI element
@@ -91,6 +113,7 @@ define([
       map_panel.show();
       var visible = true;
       load_ol_map();
+
 
       //**** leaflet na próbę
      // var leaflet = $('<div/>',{class:'output_subarea jupyter-widgets-view'}).append($('<div/>',{class:'p-Widget leaflet-container leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom',style:'height:400px'}).append($('<div/>',{class:'leaflet-pane leaflet-map-pane'}).
