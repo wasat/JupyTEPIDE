@@ -92,6 +92,16 @@ define([
       var visible = true;
       load_ol_map();
 
+      //**** leaflet na próbę
+     // var leaflet = $('<div/>',{class:'output_subarea jupyter-widgets-view'}).append($('<div/>',{class:'p-Widget leaflet-container leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom',style:'height:400px'}).append($('<div/>',{class:'leaflet-pane leaflet-map-pane'}).
+     //  append($('<div/>',{class:'leaflet-pane leaflet-tile-pane'}).
+     //   append($('<div/>',{class:'leaflet-layer ',style:'z-index: 1; opacity: 1;'}).
+     //    append($('<div/>',{class:'leaflet-tile-container leaflet-zoom-animated',style:'z-index: 19; transform: translate3d(0px, 0px, 0px) scale(1);'}))))));
+     // leaflet.insertAfter(map_panel);
+
+        //map_panel.load('/nbextensions/source_UI/aa.html');
+        //map_panel_load('#notebook');
+        //Jupyter.notebook.execute_cell();
 
       $('#map_toggle').click(function(){
           map_panel.slideToggle('medium'); //albo fadeToggle(), toggle()
