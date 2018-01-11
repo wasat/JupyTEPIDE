@@ -6,12 +6,14 @@ define([
     'jquery',
     'require',
     './ol',
-    './code_snippets'
+    './code_snippets',
+    './leaflet'
 ], function (Jupyter,
              $,
              require,
              ol,
-             code_snippets) {
+             code_snippets,
+             leaflet) {
 
     function getMousePos(){
         //Mouse position obtaining
@@ -27,6 +29,7 @@ define([
         return mousePositionControl;
     };
 
+    //** OpenLayers map loading ***
     function load_ol_map(){
 
         var mapWMSTile = new ol.source.TileWMS({
@@ -61,7 +64,51 @@ define([
         });
     };
 
-    function load_leaflet_map(){
+    //*** Leaflet map loading ***
+    //Loading map with leaflet JS script, embeded in Jupytepide
+
+    function load_leaflet_map(mapContainer){
+        var mymap = leaflet.map(mapContainer).setView([51.505, -0.09], 13);
+
+        leaflet.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+            maxZoom: 18,
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+            id: 'mapbox.streets'
+        }).addTo(mymap);
+
+        leaflet.marker([51.5, -0.09]).addTo(mymap)
+            .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+
+        leaflet.circle([51.508, -0.11], 500, {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5
+        }).addTo(mymap).bindPopup("I am a circle.");
+
+        leaflet.polygon([
+            [51.509, -0.08],
+            [51.503, -0.06],
+            [51.51, -0.047]
+        ]).addTo(mymap).bindPopup("I am a polygon.");
+
+
+        var popup = leaflet.popup();
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked the map at " + e.latlng.toString())
+                .openOn(mymap);
+        }
+
+        mymap.on('click', onMapClick);
+
+    };
+
+    //*** ładowanie mapy z użyciem rozszerzenia ipyleaflet ***
+    //Mapa ładowana jest do nowo dodanej celki, jej kod źródłowy jest ukrywany
+    function load_ipyleaflet_map(){
 
         var new_cell = Jupyter.notebook.insert_cell_at_index('code',1);
         $('.input').last().css({display:"none"});//.atr('style','display:none');
@@ -84,15 +131,29 @@ define([
         //#map_panel - for map containing
         //openlayers scripts and CSS - look at css_loader.js
         //TODO: rozbudować go o panel boczny do obsługi mapy (lewa część), w prawą załadowac mapę
-        var map_panel = $('<div/>',{id:'map_panel', class:'map_panel', style:'background-color:white; width:100%;position:relative;overflow:auto'});
+        //var map_panel = $('<div/>',{id:'map_panel', class:'map_panel', style:'background-color:white; width:100%;position:relative;overflow:auto'});
+        //cały panel
+        var map_panel = $('<div/>',{id:'map_panel', class:'map_panel', style:'background-color:white; width:100%;position:relative;'});
 
+        //mapa
+        var map_container=$('<div/>',{id:'map_container', style:'width:100%;height:400px;position:relative;'});
+        //elementy leafleta - można ich nie dodawać
+        //map_container.append($('<div/>',{class:'leaflet-pane leaflet-map-pane',style:'transform: translate3d(-32px, -14px, 0px);'}));
+        //map_container.append($('<div/>',{class:'leaflet-control-container'}));
+
+        //pasek narzędzowy - mój
+        //TODO: umieścić go jako "wiszący" nad treścią mapy
+        var control_container=$('<div/>',{class:'map_control_container'});
+
+        map_panel.append(map_container);
+        map_panel.append(control_container);
         //html('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel lorem. Etiam pellentesque aliquet tellus. Phasellus pharetra nulla ac diam. Quisque semper justo at risus. Donec venenatis, turpis vel hendrerit interdum, dui ligula ultricies purus, sed posuere libero dui id orci. Nam congue, pede vitae dapibus aliquet, elit magna vulputate arcu, vel tempus metus leo non est. Etiam sit amet lectus quis est congue mollis. Phasellus congue lacus eget neque. Phasellus ornare, ante vitae consectetuer consequat, purus sapien ultricies dolor, et mollis pede metus eget nisi. Praesent sodales velit quis augue. Cras suscipit, urna at aliquam rhoncus, urna quam viverra nisi, in interdum massa nibh nec erat.');
 
         return map_panel;
     };
 
     function load_extension(){
-      load_leaflet_map();
+      //load_ipyleaflet_map();
       var map_panel = build_map_panel();
 
       //existing notebook UI element
@@ -112,7 +173,8 @@ define([
       map_panel.insertAfter(flip);
       map_panel.show();
       var visible = true;
-      load_ol_map();
+      //load_ol_map();
+      load_leaflet_map('map_container');
 
 
       //**** leaflet na próbę
