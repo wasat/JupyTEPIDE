@@ -65,9 +65,9 @@ define([
             src:'https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL'
         }));
             //OpenLayers script
-        $('head').append($('<script/>',{
-            src:'https://openlayers.org/en/v4.4.2/build/ol.js'
-        }));
+     //   $('head').append($('<script/>',{
+     //       src:'https://openlayers.org/en/v4.4.2/build/ol.js'
+     //   }));
 
         //new combobox in bootstrap style
         //$('select').appendTo('<div/>');
@@ -75,6 +75,10 @@ define([
         //logo
         $('#ipython_notebook img').attr('src', '/nbextensions/source_UI/img/logo_jupytepide.png').attr('alt', 'JupyTEP IDE');
 
+        //Leaflet map JS library style
+        $('head').append($('<link/>').attr('href', require.toUrl('./css/' + 'leaflet' + '.css'))
+            .attr('rel', 'stylesheet')
+            .attr('type', 'text/css'));
 
     };
 
