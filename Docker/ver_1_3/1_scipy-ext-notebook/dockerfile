@@ -11,7 +11,7 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # apt-get installs
 RUN apt-get update -qq && \
-    apt-get install -y -qq --no-install-recommends software-properties-common nano mc && \
+    apt-get install -y -qq --no-install-recommends software-properties-common apt-utils nano mc && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -50,14 +50,14 @@ RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
     rm -r /tmp/*
 
 
-RUN conda install --quiet --yes -c anaconda-cluster \
+RUN conda install --yes -c anaconda-cluster \
     'apache-maven' && conda clean -tipsy
 
-RUN conda install --quiet --yes -c anaconda \
+RUN conda install --yes -c anaconda \
     'numpy' && conda clean -tipsy
 
 # Conda installs
-RUN conda install --quiet --yes -c conda-forge \
+RUN conda install --yes -c conda-forge \
     'matplotlib' \
     'nb_conda' \
     'nb_conda_kernels' \
@@ -104,10 +104,9 @@ RUN cd /tmp && \
     cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
-    rm -rf JupyTEPIDE
-    # && \
-    # fix-permissions $CONDA_DIR && \
-    # fix-permissions /home/$NB_USER
+    rm -rf JupyTEPIDE && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
 
 WORKDIR /home/$NB_USER
 USER $NB_USER

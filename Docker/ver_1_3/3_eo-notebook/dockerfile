@@ -1,6 +1,6 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupytepide/geospatial-notebook:ver_1.0.1
+FROM jupytepide/geospatial-notebook:ver_1.0.2
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
