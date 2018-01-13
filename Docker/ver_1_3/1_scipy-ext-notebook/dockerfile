@@ -1,6 +1,6 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupyter/scipy-notebook:c7fb6660d096
+FROM jupyter/scipy-notebook:033056e6d164
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
@@ -49,21 +49,18 @@ RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
     rm /tmp/jai-1_1_3-lib-linux-amd64.tar.gz && \
     rm -r /tmp/*
 
-
-RUN conda install --yes -c anaconda-cluster \
-    'apache-maven' && conda clean -tipsy
-
-RUN conda install --yes -c anaconda \
-    'numpy' && conda clean -tipsy
-
 # Conda installs
-RUN conda install --yes -c conda-forge \
-    'matplotlib' \
-    'nb_conda' \
-    'nb_conda_kernels' \
-    'ipyleaflet' \
-    'ipywidgets' \
-    'jupyter_nbextensions_configurator' &&  \
+RUN conda install --quiet --yes -c anaconda-cluster \
+    'apache-maven=3.3.3*' && conda clean -tipsy && \
+    conda install --quiet --yes -c anaconda \
+    'numpy=1.12.1*' && conda clean -tipsy && \
+    conda install --quiet --yes -c conda-forge \
+    'ipyleaflet=0.5.3*' \
+    'ipywidgets=7.1.0*' \
+    'jupyter_nbextensions_configurator=0.3.0*' \
+    'matplotlib=2.1.1*' \
+    'nb_conda=2.2.1*' \
+    'nb_conda_kernels=2.1.0*' && \
     # Activate ipywidgets extension in the environment that runs the notebook server
     jupyter nbextensions_configurator enable --user && \
     conda clean -tipsy && fix-permissions $CONDA_DIR
