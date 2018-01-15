@@ -1,6 +1,6 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupytepide/scipy-ext-notebook:latest
+FROM jupytepide/scipy-ext-notebook:ver_1.0.1
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
@@ -15,16 +15,18 @@ RUN apt-get update -qq && \
 USER $NB_USER
 
 # Conda installs
-RUN conda install --quiet --yes -c conda-forge \
+RUN conda install --yes -c conda-forge \
     'libgdal' \
-    'gdal' \
-    'owslib' \
-    'geopandas' \
-    'fiona' \
-    'shapely' \
-    'geopy' \
-    'geojson' \
-    'gridgeo'
+    'gdal=2.1.4*'
+    # \
+    # 'owslib' \
+    # 'geopandas' \
+    # 'fiona' \
+    # 'shapely' \
+    # 'geopy' \
+    # 'geojson' \
+    # 'gridgeo' && \
+    # conda clean -tipsy
 
 USER root
 

@@ -1,6 +1,6 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupyter/scipy-notebook
+FROM jupyter/scipy-notebook:c7fb6660d096
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
@@ -51,10 +51,10 @@ RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
 
 
 RUN conda install --quiet --yes -c anaconda-cluster \
-    'apache-maven'
+    'apache-maven' && conda clean -tipsy
 
 RUN conda install --quiet --yes -c anaconda \
-    'numpy'
+    'numpy' && conda clean -tipsy
 
 # Conda installs
 RUN conda install --quiet --yes -c conda-forge \
@@ -66,7 +66,7 @@ RUN conda install --quiet --yes -c conda-forge \
     'jupyter_nbextensions_configurator' &&  \
     # Activate ipywidgets extension in the environment that runs the notebook server
     jupyter nbextensions_configurator enable --user && \
-    fix-permissions $CONDA_DIR
+    conda clean -tipsy && fix-permissions $CONDA_DIR
 
 # Create a Python 2.x environment using conda including at least the ipython kernel
 # and the kernda utility. Add any additional packages you want available for use
@@ -104,8 +104,10 @@ RUN cd /tmp && \
     cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    rm -rf JupyTEPIDE
+    # && \
+    # fix-permissions $CONDA_DIR && \
+    # fix-permissions /home/$NB_USER
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
