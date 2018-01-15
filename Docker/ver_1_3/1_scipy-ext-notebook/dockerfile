@@ -1,6 +1,6 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupyter/scipy-notebook:c7fb6660d096
+FROM jupyter/scipy-notebook:033056e6d164
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
@@ -11,7 +11,7 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # apt-get installs
 RUN apt-get update -qq && \
-    apt-get install -y -qq --no-install-recommends software-properties-common nano mc && \
+    apt-get install -y -qq --no-install-recommends software-properties-common apt-utils nano mc && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -49,21 +49,18 @@ RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
     rm /tmp/jai-1_1_3-lib-linux-amd64.tar.gz && \
     rm -r /tmp/*
 
-
-RUN conda install --quiet --yes -c anaconda-cluster \
-    'apache-maven' && conda clean -tipsy
-
-RUN conda install --quiet --yes -c anaconda \
-    'numpy' && conda clean -tipsy
-
 # Conda installs
-RUN conda install --quiet --yes -c conda-forge \
-    'matplotlib' \
-    'nb_conda' \
-    'nb_conda_kernels' \
-    'ipyleaflet' \
-    'ipywidgets' \
-    'jupyter_nbextensions_configurator' &&  \
+RUN conda install --quiet --yes -c anaconda-cluster \
+    'apache-maven=3.3.3*' && conda clean -tipsy && \
+    conda install --quiet --yes -c anaconda \
+    'numpy=1.12.1*' && conda clean -tipsy && \
+    conda install --quiet --yes -c conda-forge \
+    'ipyleaflet=0.5.3*' \
+    'ipywidgets=7.1.0*' \
+    'jupyter_nbextensions_configurator=0.3.0*' \
+    'matplotlib=2.1.1*' \
+    'nb_conda=2.2.1*' \
+    'nb_conda_kernels=2.1.0*' && \
     # Activate ipywidgets extension in the environment that runs the notebook server
     jupyter nbextensions_configurator enable --user && \
     conda clean -tipsy && fix-permissions $CONDA_DIR
@@ -72,22 +69,22 @@ RUN conda install --quiet --yes -c conda-forge \
 # and the kernda utility. Add any additional packages you want available for use
 # in a Python 2 notebook to the first line here (e.g., pandas, matplotlib, etc.)
 RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel kernda && \
-    conda clean -tipsy
+    conda clean -tipsy && \
 
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
-RUN $CONDA_DIR/envs/python27/bin/python -m ipykernel install && \
-    /bin/bash -c "source activate python27 && kernda -o -y /opt/conda/envs/python27/share/jupyter/kernels/python2/kernel.json && source deactivate python27"
+    $CONDA_DIR/envs/python27/bin/python -m ipykernel install && \
+    /bin/bash -c "source activate python27 && kernda -o -y /opt/conda/envs/python27/share/jupyter/kernels/python2/kernel.json && source deactivate python27" && \
 
 # Create a Python 3.4 environment using conda including at least the ipython kernel
 # and the kernda utility. Add any additional packages you want available for use
 # in a Python 3.4 notebook to the first line here (e.g., pandas, matplotlib, etc.)
-RUN conda create --quiet --yes -p $CONDA_DIR/envs/python34 python=3.4 ipython ipykernel numpy matplotlib ipyleaflet ipywidgets && \
-    conda clean -tipsy
+    conda create --quiet --yes -p $CONDA_DIR/envs/python34 python=3.4 ipython ipykernel numpy matplotlib ipyleaflet ipywidgets && \
+    conda clean -tipsy && \
 
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python34 conda environment.
-RUN $CONDA_DIR/envs/python34/bin/python -m ipykernel install && \
+    $CONDA_DIR/envs/python34/bin/python -m ipykernel install && \
     /bin/bash -c "source activate python34"
     # conda install --quiet --yes -c anaconda \
     #'numpy' && \
@@ -104,10 +101,9 @@ RUN cd /tmp && \
     cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
-    rm -rf JupyTEPIDE
-    # && \
-    # fix-permissions $CONDA_DIR && \
-    # fix-permissions /home/$NB_USER
+    rm -rf JupyTEPIDE && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
