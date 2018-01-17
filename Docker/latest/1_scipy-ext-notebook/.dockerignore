@@ -2,7 +2,7 @@
 .git
 .ipynb_checkpoints/*
 /unused/*
-Dockerfile
+dockerfile
 .DS_Store
 .gitignore
 README.md
