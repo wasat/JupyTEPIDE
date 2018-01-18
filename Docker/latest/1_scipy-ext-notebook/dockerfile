@@ -85,7 +85,8 @@ RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ip
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python34 conda environment.
     $CONDA_DIR/envs/python34/bin/python -m ipykernel install && \
-    /bin/bash -c "source activate python34"
+    /bin/bash -c "source activate python34" && \
+    conda clean -tipsy
     # conda install --quiet --yes -c anaconda \
     #'numpy' && \
     # conda install --quiet --yes -c conda-forge \
