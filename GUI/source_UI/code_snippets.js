@@ -58,6 +58,7 @@ define([
     }
 
 
+    //***
     function insert_cell() {
         var selected_snippet = $("select#snippet_picker").find(":selected");
 
@@ -71,7 +72,7 @@ define([
         }
     };
 
-    //czytanie z pliku JSON po podanej nazwie snippeta
+    //*** czytanie z pliku JSON po podanej nazwie snippeta
     function insert_cell1(name){
         //handle function passed IN parameter
         var snippet_name = name.data.snippet_name;
@@ -85,15 +86,14 @@ define([
                     new_cell.set_text(snippet['code'].join('\n'));
                     new_cell.code_mirror.setOption('theme', 'mbo');
                     new_cell.focus_cell();
+
                 };
 
             });
         })
-
-
     };
 
-    //daje listę nazw snippetów z pliku JSON
+    //*** daje listę nazw snippetów z pliku JSON
     function get_SnippetsList(){
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
         // (w tym przypadku tablicy snippetNames)
@@ -115,10 +115,35 @@ define([
         return snippetsNames;
     };
 
+    //*** get Web Map Browser
+    // zwraca tekst snippeta Web Map Browser
+    //Do wstawienia w ukrytej celce zawierającej Web Map Browser
+    function get_WebMapBrowserText(){
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+        // (w tym przypadku tablicy snippetNames)
+        $.ajaxSetup({
+            async: false
+        });
+
+        var snippet_name="Web Map Browser";
+        var WMBText="";
+        //czytanie jsona
+        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+            $.each(data['code_snippets'], function (key, snippet) {
+                if (snippet['name']==snippet_name){
+                    WMBText = snippet['code'].join('\n');
+                };
+            });
+        });
+        //WMBText = "12+99";
+        return WMBText;
+    };
+
     // return public methods
     return {
         load_ipython_extension: load_extension,
         insert_snippet_cell:insert_cell1,
-        getSnippetsList:get_SnippetsList
+        getSnippetsList:get_SnippetsList,
+        getWebMapBrowserText:get_WebMapBrowserText
     };
 });
