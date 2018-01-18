@@ -1,6 +1,6 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupytepide/geospatial-notebook
+FROM jupytepide/geospatial-notebook:ver_1.0.4
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
@@ -8,19 +8,18 @@ USER root
 
 # apt-get installs
 RUN apt-get update -qq && \
-    apt-get install -qy --no-install-recommends && \
+    apt-get install -qqy --no-install-recommends file && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp
 
 # Download and install ESA SNAP toolbox (with all components)
+# Install and configure Snappy
 RUN wget --quiet http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh && \
     chmod +x esa-snap_all_unix_5_0.sh && \
-    /bin/bash "esa-snap_all_unix_5_0.sh" -q
-
-# Install and configure Snappy
-RUN git clone https://github.com/bcdev/jpy.git && \
+    /bin/bash "esa-snap_all_unix_5_0.sh" -q && \
+    git clone https://github.com/bcdev/jpy.git && \
     cd /tmp/jpy  && \
     python setup.py --quiet --maven bdist_wheel > /dev/null 2>&1
 
@@ -34,8 +33,19 @@ RUN mkdir .snap && \
     ./snappy-conf /opt/conda/envs/python34/bin/python && \
     cp -R /home/jovyan/.snap/snap-python/snappy /opt/conda/envs/python34/lib/python3.4/site-packages/
 
+ENV PATH="/opt/conda/bin:${PATH}"
+ENV OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python
+
+# Download and install Orfeo toolbox OTB
+RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.2.0-Linux64.run && \
+    chmod +x OTB-6.2.0-Linux64.run && \
+    /bin/bash -c "source deactivate root" && \
+    /bin/bash -c "source activate python27" && \
+    python --version && \
+    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.2.0-Linux64.run"
+
 USER root
-RUN rm -r /tmp/* && \
+RUN rm -r /tmp/*  && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
