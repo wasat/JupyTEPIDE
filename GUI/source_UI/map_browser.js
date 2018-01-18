@@ -7,13 +7,16 @@ define([
     'require',
     './ol',
     './code_snippets',
-    './leaflet'
+    './leaflet',
+    './leaflet_interface'
 ], function (Jupyter,
              $,
              require,
              ol,
              code_snippets,
-             leaflet) {
+             leaflet,
+             leaflet_interface
+) {
 
     function getMousePos(){
         //Mouse position obtaining
@@ -69,6 +72,7 @@ define([
 
     function load_leaflet_map(mapContainer){
         var mymap = leaflet.map(mapContainer).setView([51.505, -0.09], 13);
+        //Jupyter.mymap = mymap; //TO JEST SUPERIMPORTANT THING!!!!!!!!!!!! Stworzyć interfejs z metodami do wywołania.....mymap to obiekt główny interfejsu
 
         leaflet.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
             maxZoom: 18,
@@ -78,8 +82,21 @@ define([
             id: 'mapbox.streets'
         }).addTo(mymap);
 
-        leaflet.marker([51.5, -0.09]).addTo(mymap)
-            .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+        var myIcon = leaflet.icon({
+            iconUrl: '/nbextensions/source_UI/img/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [0, -41],
+            shadowUrl: '/nbextensions/source_UI/img/marker-shadow.png',
+            shadowSize: [41, 41],
+            shadowAnchor: [12, 41]
+        });
+
+        //leaflet.marker([51.5, -0.09],{icon: myIcon}).addTo(mymap)
+        //    .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+
+        leaflet.marker([51.5, -0.09],{icon: myIcon}).addTo(mymap)
+            .bindPopup("<b>Hello world!</b><br />I am a popup.")
 
         leaflet.circle([51.508, -0.11], 500, {
             color: 'red',
@@ -103,6 +120,11 @@ define([
         }
 
         mymap.on('click', onMapClick);
+
+        return mymap;
+
+        //$.getScript(require.toUrl('./' + 'leaflet_interface' + '.js'));
+        //$.getScript('/nbextensions/source_UI/leaflet_interface.js');
 
     };
 
@@ -152,6 +174,12 @@ define([
         return map_panel;
     };
 
+    var leafletMap;
+
+    function getLeafletMap(){
+        return this.leafletMap;
+    };
+
     function load_extension(){
       //load_ipyleaflet_map();
       var map_panel = build_map_panel();
@@ -173,20 +201,11 @@ define([
       map_panel.insertAfter(flip);
       map_panel.show();
       var visible = true;
-      //load_ol_map();
-      load_leaflet_map('map_container');
 
+       //load_ol_map();
+      //load_leaflet_map("map_container");
+        leaflet_interface.load_leaflet();
 
-      //**** leaflet na próbę
-     // var leaflet = $('<div/>',{class:'output_subarea jupyter-widgets-view'}).append($('<div/>',{class:'p-Widget leaflet-container leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom',style:'height:400px'}).append($('<div/>',{class:'leaflet-pane leaflet-map-pane'}).
-     //  append($('<div/>',{class:'leaflet-pane leaflet-tile-pane'}).
-     //   append($('<div/>',{class:'leaflet-layer ',style:'z-index: 1; opacity: 1;'}).
-     //    append($('<div/>',{class:'leaflet-tile-container leaflet-zoom-animated',style:'z-index: 19; transform: translate3d(0px, 0px, 0px) scale(1);'}))))));
-     // leaflet.insertAfter(map_panel);
-
-        //map_panel.load('/nbextensions/source_UI/aa.html');
-        //map_panel_load('#notebook');
-        //Jupyter.notebook.execute_cell();
 
       $('#map_toggle').click(function(){
           map_panel.slideToggle('medium'); //albo fadeToggle(), toggle()
@@ -213,11 +232,13 @@ define([
           //alert(map_panel.position().top);
       });
 
-
     };
 
     // return public methods
     return {
-        load_ipython_extension: load_extension
+        load_ipython_extension: load_extension,
+        getLeafletMap: getLeafletMap
+
     };
 });
+
