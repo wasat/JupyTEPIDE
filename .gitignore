@@ -102,5 +102,4 @@ ENV/
 
 # Idea conf files
 .idea/
-/Docker/tmp/
-/.idea/
+/docker/tmp/
