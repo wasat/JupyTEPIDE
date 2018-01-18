@@ -16,7 +16,7 @@ define([
     "use strict";
 
     //daje listę nazw notebooków z pliku notebooks.json
-    function get_NotebooksList() {
+    function get_NotebooksList(){
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
 
         $.ajaxSetup({
@@ -33,11 +33,11 @@ define([
         });
 
         return NotebooksList;
-    }
+    };
 
     // return public methods
     return {
-        getNotebooksList: get_NotebooksList
+        getNotebooksList:get_NotebooksList
     };
 
 });
