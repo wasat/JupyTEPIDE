@@ -57,11 +57,14 @@ RUN conda install --quiet --yes -c anaconda-cluster \
     conda install --quiet --yes -c conda-forge \
     'ipyleaflet=0.5.3*' \
     'ipywidgets=7.1.0*' \
+    'ipyparallel=6.0.2*' \
+    'jupyter_contrib_nbextensions=0.3.3*'\
     'jupyter_nbextensions_configurator=0.3.0*' \
     'matplotlib=2.1.1*' \
     'nb_conda=2.2.1*' \
     'nb_conda_kernels=2.1.0*' && \
     # Activate ipywidgets extension in the environment that runs the notebook server
+    jupyter contrib nbextension install --user && \
     jupyter nbextensions_configurator enable --user && \
     conda clean -tipsy && fix-permissions $CONDA_DIR
 
@@ -70,18 +73,15 @@ RUN conda install --quiet --yes -c anaconda-cluster \
 # in a Python 2 notebook to the first line here (e.g., pandas, matplotlib, etc.)
 RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel kernda && \
     conda clean -tipsy && \
-
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
     $CONDA_DIR/envs/python27/bin/python -m ipykernel install && \
     /bin/bash -c "source activate python27 && kernda -o -y /opt/conda/envs/python27/share/jupyter/kernels/python2/kernel.json && source deactivate python27" && \
-
 # Create a Python 3.4 environment using conda including at least the ipython kernel
 # and the kernda utility. Add any additional packages you want available for use
 # in a Python 3.4 notebook to the first line here (e.g., pandas, matplotlib, etc.)
     conda create --quiet --yes -p $CONDA_DIR/envs/python34 python=3.4 ipython ipykernel numpy matplotlib ipyleaflet ipywidgets && \
     conda clean -tipsy && \
-
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python34 conda environment.
     $CONDA_DIR/envs/python34/bin/python -m ipykernel install && \
