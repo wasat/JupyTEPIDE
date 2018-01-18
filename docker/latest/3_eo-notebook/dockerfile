@@ -7,10 +7,18 @@ LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 USER root
 
 # apt-get installs
-RUN apt-get update -qq && \
-    apt-get install -qqy --no-install-recommends file && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# RUN apt-get update -qq && \
+#    apt-get install -qqy --no-install-recommends file && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/*
+
+# Orfeo toolbox OTB - Repository install
+RUN apt-get install -qqy software-properties-common --no-install-recommends &&\
+        apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable &&\
+        apt-get -qqy update &&\
+        apt-get install -qqy otb-bin python-otb --no-install-recommends &&\
+        apt-get clean &&\
+        rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp
 
@@ -40,14 +48,6 @@ ENV PATH="/opt/conda/bin:${PATH}"
 # RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.2.0-Linux64.run && \
 #    chmod +x OTB-6.2.0-Linux64.run && \
 #    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.2.0-Linux64.run" -q
-
-# Orfeo toolbox OTB - Repository install
-RUN apt-get install -qqy software-properties-common --no-install-recommends &&\
-        apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable &&\
-        apt-get -qqy update &&\
-        apt-get install -qqy otb-bin python-otb --no-install-recommends &&\
-        apt-get clean &&\
-        rm -rf /var/lib/apt/lists/*
 
 USER root
 RUN rm -r /tmp/*  && \
