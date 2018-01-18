@@ -15,11 +15,16 @@ define([
     'base/js/namespace',
     'jquery',
     'require',
-    './code_snippets'
+    './code_snippets',
+    './map_browser',
+    './leaflet'
 ], function (Jupyter,
              $,
              require,
-             code_snippets) {
+             code_snippets,
+             map_browser,
+             leaflet
+) {
     //***
     //*** Action Handlers ***
     //Function objects for handling actions performed by tool-buttons click
@@ -29,6 +34,17 @@ define([
 
     var komunikat2_handler = function () {
         alert('To jest komunikat nr 2');
+    };
+
+    //testowanie Leafleta na WebMap browserze - odłączyć
+    var testowanie_leaflet_handler = function(){
+       //var leafletMap=map_browser.getLeafletMap();
+        var leafletMap=Jupyter.leafletMap;
+        leaflet.polygon([
+            [51.51368, -0.15776],
+            [51.5219, -0.15724],
+            [51.51945, -0.13012]
+        ]).addTo(leafletMap).bindPopup("I am a second polygon.");
     };
 
     //testowanie Web Map Browsera - odłączyć
@@ -106,8 +122,9 @@ define([
         var komunikat = make_action('komunikat1', 'my_ext', 'fa-comment-o', 'Pokaz komunikat1', 'to jest komunikat1', komunikat_handler);
         var komunikat2 = make_action('komunikat2', 'my_ext2', 'fa-comment-o', 'Pokaz komunikat2', 'to jest komunikat2', komunikat2_handler);
         var test = make_action('test', 'my_ext2', 'fa-comment-o', 'testuj', 'testuj', testowanie_handler);
+        var test_leaflet = make_action('test_leaflet', 'my_ext2', 'fa-comment-o', 'testuj_leaflet', 'testuj_leaflet', testowanie_leaflet_handler);
         //Load buttons to UI
-        Jupyter.toolbar.add_buttons_group([komunikat, komunikat2, test]);
+        Jupyter.toolbar.add_buttons_group([komunikat, komunikat2, test, test_leaflet]);
 
     }
 
