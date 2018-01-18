@@ -34,15 +34,11 @@ RUN mkdir .snap && \
     cp -R /home/jovyan/.snap/snap-python/snappy /opt/conda/envs/python34/lib/python3.4/site-packages/
 
 ENV PATH="/opt/conda/bin:${PATH}"
-ENV OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python
 
 # Download and install Orfeo toolbox OTB
 RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.2.0-Linux64.run && \
     chmod +x OTB-6.2.0-Linux64.run && \
-    /bin/bash -c "source deactivate root" && \
-    /bin/bash -c "source activate python27" && \
-    python --version && \
-    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.2.0-Linux64.run"
+    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.2.0-Linux64.run" -q
 
 USER root
 RUN rm -r /tmp/*  && \
