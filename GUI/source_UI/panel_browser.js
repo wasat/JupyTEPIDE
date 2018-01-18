@@ -236,13 +236,13 @@ define([
         return tab_div;
     };
 
-    function row_item(name, link, time, status, icon, on_click) {
+    function row_item(name, link, time, status,icon,on_click) {
         this.name = name;
         this.link = link;
         this.time = time;
         this.status = status;
         this.icon = icon;
-        this.on_click = on_click;
+        this.on_click=on_click;
     }
     //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
     //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
@@ -269,8 +269,8 @@ define([
                 href: row_item.link  //'/tree/anaconda3/bin',
             }).addClass('item_link').append(itemName);
 
-        if (row_item.on_click) {
-            a_link.bind('click', {snippet_name: row_item.snippet_name},
+        if (row_item.on_click){
+            a_link.bind('click', { snippet_name: row_item.snippet_name },
                 row_item.on_click);
         }
 
@@ -411,14 +411,11 @@ define([
         var notebooksList = [];
 
         notebooksList = jupytepide_notebooks.getNotebooksList();
-        for (i = 0; i < notebooksList.length; i++) {
+        for (i=0;i<notebooksList.length;i++){
 
-            rowItemArray[i] = {
-                name: notebooksList[i],
-                link: utils.url_path_join(notebookPath, notebooksList[i]),
-                time: 'yesterday'
-            };
-        }
+            rowItemArray[i] = {name:notebooksList[i],link:utils.url_path_join(notebookPath, notebooksList[i]),time:'yesterday'};
+        };
+
         for (i = 0; i < rowItemArray.length; i++) {
             $('#2karta').append(make_row_item(rowItemArray[i]));
         }
@@ -442,16 +439,11 @@ define([
         var snippetsList = [];
 
         snippetsList = code_snippets.getSnippetsList();
-        for (i = 0; i < snippetsList.length; i++) {
+        for (i=0;i<snippetsList.length;i++){
 
-            rowItemArray[i] = {
-                name: snippetsList[i],
-                link: '#',
-                time: 'yesterday',
-                snippet_name: snippetsList[i],
-                on_click: code_snippets.insert_snippet_cell
-            };
-        }
+            rowItemArray[i] = {name:snippetsList[i],link:'#',time:'yesterday',snippet_name:snippetsList[i],on_click:code_snippets.insert_snippet_cell};
+        };
+
         for (i = 0; i < rowItemArray.length; i++) {
             $('#1karta').append(make_row_item(rowItemArray[i]));
         }
