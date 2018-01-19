@@ -7,16 +7,16 @@ LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 USER root
 
 # apt-get installs
-# RUN apt-get update -qq && \
-#    apt-get install -qqy --no-install-recommends file && \
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/*
+ RUN apt-get update -qq && \
+     apt-get install -qqy --no-install-recommends file && \
+     apt-get clean && \
+     rm -rf /var/lib/apt/lists/*
 
 # Orfeo toolbox OTB - Repository install
 RUN apt-get install -qqy software-properties-common --no-install-recommends &&\
         apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable &&\
         apt-get -qqy update &&\
-        apt-get install -qqy otb-bin python-otb --no-install-recommends &&\
+        apt-get install -qqy otb-bin otb-bin-qt python-otb --no-install-recommends &&\
         apt-get clean &&\
         rm -rf /var/lib/apt/lists/*
 
@@ -30,6 +30,9 @@ RUN wget --quiet http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_
     git clone https://github.com/bcdev/jpy.git && \
     cd /tmp/jpy  && \
     python setup.py --quiet --maven bdist_wheel > /dev/null 2>&1
+
+RUN chmod 755 /opt &&\
+    chown -R $NB_USER:$NB_GID /opt
 
 USER $NB_USER
 
@@ -45,9 +48,11 @@ ENV PATH="/opt/conda/bin:${PATH}"
 
 # Download and install Orfeo toolbox OTB
 # Standalone install
-# RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.2.0-Linux64.run && \
-#    chmod +x OTB-6.2.0-Linux64.run && \
-#    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.2.0-Linux64.run" -q
+RUN wget https://www.orfeo-toolbox.org/packages/OTB-6.2.0-Linux64.run && \
+    cp "/tmp/OTB-6.2.0-Linux64.run" "/opt/OTB-6.2.0-Linux64.run"  && \
+    chmod +x /opt/OTB-6.2.0-Linux64.run && \
+    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./opt/OTB-6.2.0-Linux64.run" -q &&\
+    rm -r /opt/OTB-6.2.0-Linux64.run
 
 USER root
 RUN rm -r /tmp/*  && \
