@@ -13,12 +13,12 @@ USER root
      rm -rf /var/lib/apt/lists/*
 
 # Orfeo toolbox OTB - Repository install
-RUN apt-get install -qqy software-properties-common --no-install-recommends &&\
-        apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable &&\
-        apt-get -qqy update &&\
-        apt-get install -qqy otb-bin otb-bin-qt python-otb --no-install-recommends &&\
-        apt-get clean &&\
-        rm -rf /var/lib/apt/lists/*
+# RUN apt-get install -qqy software-properties-common --no-install-recommends &&\
+#        apt-add-repository -y ppa:ubuntugis/ubuntugis-unstable &&\
+#        apt-get -qqy update &&\
+#        apt-get install -qqy otb-bin otb-bin-qt python-otb --no-install-recommends &&\
+#        apt-get clean &&\
+#        rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp
 
@@ -31,8 +31,8 @@ RUN wget --quiet http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_
     cd /tmp/jpy  && \
     python setup.py --quiet --maven bdist_wheel > /dev/null 2>&1
 
-RUN chmod 755 /opt &&\
-    chown -R $NB_USER:$NB_GID /opt
+# RUN chmod 755 /opt &&\
+#    chown -R $NB_USER:$NB_GID /opt
 
 USER $NB_USER
 
@@ -46,18 +46,20 @@ RUN mkdir .snap && \
 
 ENV PATH="/opt/conda/bin:${PATH}"
 
+USER root
+WORKDIR /opt
 # Download and install Orfeo toolbox OTB
 # Standalone install
-RUN wget https://www.orfeo-toolbox.org/packages/OTB-6.2.0-Linux64.run && \
-    cp "/tmp/OTB-6.2.0-Linux64.run" "/opt/OTB-6.2.0-Linux64.run"  && \
-    chmod +x /opt/OTB-6.2.0-Linux64.run && \
-    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./opt/OTB-6.2.0-Linux64.run" -q &&\
-    rm -r /opt/OTB-6.2.0-Linux64.run
+RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.2.0-Linux64.run && \
+    #cp "/tmp/OTB-6.2.0-Linux64.run" "/opt/OTB-6.2.0-Linux64.run"  && \
+    chmod +x OTB-6.2.0-Linux64.run && \
+    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.2.0-Linux64.run" -q &&\
+    rm -r OTB-6.2.0-Linux64.run
 
-USER root
 RUN rm -r /tmp/*  && \
     fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    fix-permissions /home/$NB_USER && \
+    fix-permissions "/opt/OTB-6.2.0-Linux64"
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
