@@ -203,9 +203,10 @@ define([
       var visible = true;
 
        //load_ol_map();
-      //load_leaflet_map("map_container");
-        leaflet_interface.load_leaflet();
-
+        //załadowanie leafleta
+        leaflet_interface.load_map("map_container");
+        //warstwa inicjalizacyjna mapy
+        leaflet_interface.load_mapboxLayer();
 
       $('#map_toggle').click(function(){
           map_panel.slideToggle('medium'); //albo fadeToggle(), toggle()
