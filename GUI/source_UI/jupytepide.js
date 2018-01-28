@@ -50,6 +50,26 @@ define([
         leaflet_interface.add_polygon(points,popup_);
     };
 
+    //example: url='https://demo.boundlessgeo.com/geoserver/ows?', atrib={layers:'ne:ne'}, more options: http://leafletjs.com/reference-1.3.0.html#tilelayer-wms
+    Jupytepide.map_addWmsLayer = function(url_,atrib,layer_name){
+        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+        Jupytepide.leafletMap[layer_name] = leaflet_interface.load_wmsLayer(url_,atrib);
+
+        //usuniecie warstwy
+        //Jupytepide.leafletMap.warstewka.remove(); albo Jupytepide.leafletMap[name].remove(); (ogólnie odwoływać się jak do Layer leafleta)
+        //pomyśleć nad utworzeniem listy warstw, żeby można było dowiedzieć się, jakie sa zaladowane
+        //w ten sposób rozwiązać też manipulację właściwościami warstw
+
+        //MOZE PRZENIESC TO DODAWANIE I USUWANIE DO leaflet_interface.js?
+
+        //dorobić funkcję deleteAllLAyers - do usuwania wszystkich za pomocą each_Layer (leafleta) - przydatne gdy ktoś nie nada nazw tworzonym warstwom  i nie będzie mógł wywalić...
+    };
+
+    Jupytepide.map_removeLayer = function(layer_name){
+        Jupytepide.leafletMap[layer_name].remove();
+        delete Jupytepide.leafletMap[layer_name];
+    }
+
     // return public object
     return Jupytepide
 
