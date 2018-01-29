@@ -206,7 +206,8 @@ define([
         //załadowanie leafleta
         leaflet_interface.load_map("map_container");
         //warstwa inicjalizacyjna mapy
-        leaflet_interface.load_mapboxLayer();
+        //leaflet_interface.load_mapboxLayer();
+        leaflet_interface.load_initialBaseLayers();
 
       $('#map_toggle').click(function(){
           map_panel.slideToggle('medium'); //albo fadeToggle(), toggle()
