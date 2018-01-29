@@ -38,10 +38,14 @@ define([
     var mymap;
 
     //*** load_map ***
+    //Used for initial map loading (not for notebook users)
+    //Jupytepide.leafletMap initialization
     var load_map = function(map_container) {
         mymap = L.map(map_container).setView([0,0], 1).on('click', onMapClick);
         Jupytepide.leafletMap = mymap;
     };
+
+
 
     //*** load_layer ***
     //call example - look at load_mapboxLayer
@@ -56,7 +60,7 @@ define([
 
     };
 
-    //*** load_mapboxLayer **
+    //*** load_mapboxLayer ***
     //initial map loaded into Jupytepide UI
     var load_mapboxLayer = function() {
         load_tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
@@ -66,6 +70,37 @@ define([
             'Imagery © <a href="http://mapbox.com">Mapbox</a>',
             id: 'mapbox.streets'
         });
+
+        set_view([52,21],3);
+    };
+
+    //*** load_initialBaseLayers ***
+    var load_initialBaseLayers = function() {
+        Jupytepide.leafletMap.layers = {};
+
+        Jupytepide.leafletMap.layers.mapbox = load_tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+            maxZoom: 18,
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+            id: 'mapbox.streets'
+        });
+
+        Jupytepide.leafletMap.layers.osm = load_tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+        });
+
+
+        var baseLayers = {
+
+            "Mapbox:streets":Jupytepide.leafletMap.layers.mapbox,
+            "OSM":Jupytepide.leafletMap.layers.osm
+        };
+
+        var overlays ={};
+
+        Jupytepide.leafletMap.control = add_layerControls(baseLayers,overlays);
 
         set_view([52,21],3);
     };
@@ -115,6 +150,30 @@ define([
     var add_polygon = function(points,popup_){
         L.polygon(points).addTo(Jupytepide.leafletMap).bindPopup(popup_);
     };
+
+    //*** add_layerControls ***
+    var add_layerControls = function(baseLayers,overlays){
+        return L.control.layers(baseLayers,overlays).addTo(Jupytepide.leafletMap);
+    };
+
+    //*** add_controlBaseLayer ***
+    //Add a base layer instance to control.layers (radio button entry)
+    var add_controlBaseLayer = function(Layer,name){
+        //L.control.addBaseLayer(Layer,name);
+    };
+
+    //*** add_controlBaseLayer ***
+    //Add an overlay layer instance to control.layers (check box entry)
+    var add_controlOverlayLayer = function(Layer,name){
+        //L.control.addOverlay(Layer,name);
+    };
+
+    var remove_controlLayer = function(Layer){
+       // L.control.removeLayer(Layer);
+    };
+
+    //****** testing area *****
+
 
     //*** load_leaflet ***
     //function for testing purposes - delete when finished
@@ -185,13 +244,19 @@ define([
         load_leaflet:load_leaflet,
         load_test_polygon:load_test_polygon,
         load_map:load_map,
+        load_initialBaseLayers:load_initialBaseLayers,
         load_tileLayer:load_tileLayer,
         load_wmsLayer:load_wmsLayer,
         load_mapboxLayer:load_mapboxLayer,
         set_view:set_view,
         add_marker:add_marker,
         add_circle:add_circle,
-        add_polygon:add_polygon
+        add_polygon:add_polygon,
+        add_layerControls:add_layerControls,
+        add_controlBaseLayer:add_controlBaseLayer,
+        add_controlOverlayLayer:add_controlOverlayLayer,
+        remove_controlLayer:remove_controlLayer
+
     };
 
 });
