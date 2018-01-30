@@ -95,7 +95,7 @@ define([
         var baseLayers = {
 
             "Mapbox:streets":Jupytepide.leafletMap.layers.mapbox,
-            "OSM":Jupytepide.leafletMap.layers.osm
+            "OSM <a href='#'>ooo</a>":Jupytepide.leafletMap.layers.osm
         };
 
         var overlays ={};
