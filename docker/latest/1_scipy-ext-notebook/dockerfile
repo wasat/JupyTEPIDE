@@ -73,7 +73,7 @@ RUN conda install --quiet --yes -c anaconda-cluster \
 # Create a Python 2.x environment using conda including at least the ipython kernel
 # and the kernda utility. Add any additional packages you want available for use
 # in a Python 2 notebook to the first line here (e.g., pandas, matplotlib, etc.)
-RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel numpy kernda && \
+RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel numpy matplotlib kernda && \
     conda clean -tipsy && \
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
@@ -102,7 +102,7 @@ RUN cd /tmp && \
     cd JupyTEPIDE && \
     cp -R notebooks /home/jovyan/ && \
     mkdir -p /home/jovyan/.ipython/profile_default/startup && \
-    cp -R data_dir/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/ && \
+    cp -R scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/ && \
     cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
