@@ -54,6 +54,8 @@ RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.4.0-Linux64.run &&
     #cp "/tmp/OTB-6.4.0-Linux64.run" "/opt/OTB-6.2.0-Linux64.run"  && \
     chmod +x OTB-6.4.0-Linux64.run && \
     /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.4.0-Linux64.run" -q &&\
+    mkdir -p /home/jovyan/.ipython/profile_default/startup && \
+    wget --quiet -O /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py https://raw.githubusercontent.com/wasat/JupyTEPIDE/master/scripts/startup/01-otb-paths.py && \
     rm -r OTB-6.4.0-Linux64.run
 
 RUN rm -r /tmp/*  && \

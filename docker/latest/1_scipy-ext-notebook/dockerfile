@@ -101,8 +101,6 @@ RUN cd /tmp && \
     git clone https://github.com/wasat/JupyTEPIDE.git && \
     cd JupyTEPIDE && \
     cp -R notebooks /home/jovyan/ && \
-    mkdir -p /home/jovyan/.ipython/profile_default/startup && \
-    cp -R scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/ && \
     cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
