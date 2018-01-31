@@ -50,16 +50,16 @@ USER root
 WORKDIR /opt
 # Download and install Orfeo toolbox OTB
 # Standalone install
-RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.2.0-Linux64.run && \
-    #cp "/tmp/OTB-6.2.0-Linux64.run" "/opt/OTB-6.2.0-Linux64.run"  && \
-    chmod +x OTB-6.2.0-Linux64.run && \
-    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.2.0-Linux64.run" -q &&\
-    rm -r OTB-6.2.0-Linux64.run
+RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.4.0-Linux64.run && \
+    #cp "/tmp/OTB-6.4.0-Linux64.run" "/opt/OTB-6.2.0-Linux64.run"  && \
+    chmod +x OTB-6.4.0-Linux64.run && \
+    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.4.0-Linux64.run" -q &&\
+    rm -r OTB-6.4.0-Linux64.run
 
 RUN rm -r /tmp/*  && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
-    fix-permissions "/opt/OTB-6.2.0-Linux64"
+    fix-permissions "/opt/OTB-6.4.0-Linux64"
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
