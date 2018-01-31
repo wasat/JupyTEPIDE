@@ -125,6 +125,10 @@ span#login_widget > .button, #logout {
     color: #ffffff;
 }
 
+.js-error{
+    color: #f85b28;
+}
+
 
 /*
 kolor na obramowanie wybranej celki: #6f6c75
