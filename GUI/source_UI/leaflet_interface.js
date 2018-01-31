@@ -24,7 +24,7 @@ define([
 
 ) {
 
-    //Adding this method to String.rototype to implement string formatting
+    //Adding this method to String.prototype to implement string formatting
     // (I could use template strings of course, but this I'm more sure of)
     String.prototype.format = function() {
         var formatted = this;
@@ -37,19 +37,33 @@ define([
 
     var mymap;
 
+    //*** load_map ***
+    //Used for initial map loading (not for notebook users)
+    //Jupytepide.leafletMap initialization
     var load_map = function(map_container) {
         mymap = L.map(map_container).setView([0,0], 1).on('click', onMapClick);
         Jupytepide.leafletMap = mymap;
     };
 
+
+
+    //*** load_layer ***
     //call example - look at load_mapboxLayer
-    var load_layer = function(url_,atrib) {
-        L.tileLayer(url_, atrib).addTo(Jupytepide.leafletMap);
+    var load_tileLayer = function(url_,atrib) {
+        return L.tileLayer(url_, atrib).addTo(Jupytepide.leafletMap);
     };
 
+    //*** load_wmsLayer ***
+    //example: url='https://demo.boundlessgeo.com/geoserver/ows?', atrib={layers:'ne:ne'}, more options: http://leafletjs.com/reference-1.3.0.html#tilelayer-wms
+    var load_wmsLayer = function (url_,atrib){
+        return L.tileLayer.wms(url_,atrib).addTo(Jupytepide.leafletMap);
+
+    };
+
+    //*** load_mapboxLayer ***
     //initial map loaded into Jupytepide UI
     var load_mapboxLayer = function() {
-        load_layer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+        load_tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
             maxZoom: 18,
             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
             '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
@@ -60,10 +74,43 @@ define([
         set_view([52,21],3);
     };
 
+    //*** load_initialBaseLayers ***
+    var load_initialBaseLayers = function() {
+        Jupytepide.leafletMap.layers = {};
+
+        Jupytepide.leafletMap.layers.mapbox = load_tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+            maxZoom: 18,
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+            id: 'mapbox.streets'
+        });
+
+        Jupytepide.leafletMap.layers.osm = load_tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+        });
+
+
+        var baseLayers = {
+
+            "Mapbox:streets":Jupytepide.leafletMap.layers.mapbox,
+            "OSM <a href='#'>ooo</a>":Jupytepide.leafletMap.layers.osm
+        };
+
+        var overlays ={};
+
+        Jupytepide.leafletMap.control = add_layerControls(baseLayers,overlays);
+
+        set_view([52,21],3);
+    };
+
+    //*** set_view ***
     var set_view = function(center,zoom){
         Jupytepide.leafletMap.setView(center, zoom);
     };
 
+    //*** markerIcon ***
     var markerIcon = L.icon({
         iconUrl: '/nbextensions/source_UI/img/marker-icon.png',
         iconSize: [25, 41],
@@ -74,6 +121,7 @@ define([
         shadowAnchor: [12, 41]
     });
 
+    //*** add_marker ***
         //example: center=[51.11134, 17.0343], popup_={title: 'Wrocław',text:'Miasto w Polsce'}
     var add_marker = function(center,popup_) {
         var html_popup = "<b>{0}</b><br />{1}".format(popup_.title,popup_.text);
@@ -91,16 +139,44 @@ define([
             .openOn(Jupytepide.leafletMap);
     }
 
+    //*** add_circle ***
     //center=[52.407, 21.33], radius=500, popup_="Some text", parameters_={color: 'red', fillColor: '#f03', fillOpacity: 0.5}
     var add_circle = function(center,radius,popup_,parameters_){
         L.circle(center, radius, parameters_).addTo(Jupytepide.leafletMap).bindPopup(popup_);
     };
 
+    //*** add_polygon ***
     //points=[[51.1092, 17.06108],[51.10734, 17.06698],[51.10697, 17.06587]], popup="Some text"
     var add_polygon = function(points,popup_){
         L.polygon(points).addTo(Jupytepide.leafletMap).bindPopup(popup_);
     };
 
+    //*** add_layerControls ***
+    var add_layerControls = function(baseLayers,overlays){
+        return L.control.layers(baseLayers,overlays).addTo(Jupytepide.leafletMap);
+    };
+
+    //*** add_controlBaseLayer ***
+    //Add a base layer instance to control.layers (radio button entry)
+    var add_controlBaseLayer = function(Layer,name){
+        //L.control.addBaseLayer(Layer,name);
+    };
+
+    //*** add_controlBaseLayer ***
+    //Add an overlay layer instance to control.layers (check box entry)
+    var add_controlOverlayLayer = function(Layer,name){
+        //L.control.addOverlay(Layer,name);
+    };
+
+    var remove_controlLayer = function(Layer){
+       // L.control.removeLayer(Layer);
+    };
+
+    //****** testing area *****
+
+
+    //*** load_leaflet ***
+    //function for testing purposes - delete when finished
     var load_leaflet = function () {
         mymap = L.map("map_container").setView([51.505, -0.09], 13);
         Jupytepide.leafletMap = mymap;
@@ -168,12 +244,19 @@ define([
         load_leaflet:load_leaflet,
         load_test_polygon:load_test_polygon,
         load_map:load_map,
-        load_layer:load_layer,
+        load_initialBaseLayers:load_initialBaseLayers,
+        load_tileLayer:load_tileLayer,
+        load_wmsLayer:load_wmsLayer,
         load_mapboxLayer:load_mapboxLayer,
         set_view:set_view,
         add_marker:add_marker,
         add_circle:add_circle,
-        add_polygon:add_polygon
+        add_polygon:add_polygon,
+        add_layerControls:add_layerControls,
+        add_controlBaseLayer:add_controlBaseLayer,
+        add_controlOverlayLayer:add_controlOverlayLayer,
+        remove_controlLayer:remove_controlLayer
+
     };
 
 });
