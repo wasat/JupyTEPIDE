@@ -8,6 +8,10 @@
 //TODO: dać tu zawartość modułu jupytepide_notebooks
 //TODO: pospinać jak najwięcej uniwersalnych funkcji z metodami tego obiektu
 
+//todo:dorobić funkcję deleteAllLAyers - do usuwania wszystkich za pomocą each_Layer (leafleta) - przydatne gdy ktoś nie nada nazw tworzonym warstwom  i nie będzie mógł wywalić...
+//todo:zrobić, żeby warstwy, które nie dostaną nazwy zostały ponumerowane, np.: Layer 1, itp.
+//todo:nie pozwalać na wielokrotne dodawanie warstw o tej samej nazwie, bo potem nie chca się dać usunąć
+
 var Jupytepide = Jupytepide || {};
 
 define([
@@ -56,9 +60,6 @@ define([
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_wmsLayer(url_,attrib);
         //dodaje do control.layers (do menu z checkboxem)
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
-
-        //dorobić funkcję deleteAllLAyers - do usuwania wszystkich za pomocą each_Layer (leafleta) - przydatne gdy ktoś nie nada nazw tworzonym warstwom  i nie będzie mógł wywalić...
-        //zrobić, żeby warstwy, które nie dostaną nazwy zostały ponumerowane, np.: Layer 1, itp.
      };
 
     //example:  url_='https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
@@ -67,6 +68,15 @@ define([
     Jupytepide.map_addTileLayer = function(url_,attrib,layer_name){
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_tileLayer(url_,attrib);
+        //dodaje do control.layers (do menu z checkboxem)
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+    };
+
+    //example:
+    Jupytepide.map_addGeoJsonLayer = function(data,layer_name,options){
+        options == null ? {} : options;
+        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_geoJsonLayer(data,options);
         //dodaje do control.layers (do menu z checkboxem)
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
     };
@@ -94,6 +104,8 @@ define([
     Jupytepide.map_addControlOverlayLayer = function(Layer,name){
         //Jupytepide.leafletMap.control.addOverlay(Layer,name);
     };
+
+
     // return public object
     return Jupytepide
 
