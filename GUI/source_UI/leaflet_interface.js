@@ -49,6 +49,8 @@ define([
 
     //*** load_layer ***
     //call example - look at load_mapboxLayer
+    //example:  url_='https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
+    //          atrib_={maxZoom:18, attribution:'copyrights etc...',id:'mapbox.streets'}
     var load_tileLayer = function(url_,atrib) {
         return L.tileLayer(url_, atrib).addTo(Jupytepide.leafletMap);
     };
@@ -146,9 +148,9 @@ define([
     };
 
     //*** add_polygon ***
-    //points=[[51.1092, 17.06108],[51.10734, 17.06698],[51.10697, 17.06587]], popup="Some text"
-    var add_polygon = function(points,popup_){
-        L.polygon(points).addTo(Jupytepide.leafletMap).bindPopup(popup_);
+    //points=[[51.1092, 17.06108],[51.10734, 17.06698],[51.10697, 17.06587]], popup="Some text", parameters_={color: 'red', fillColor: '#f03', fillOpacity: 0.5}
+    var add_polygon = function(points,popup_,parameters_){
+        L.polygon(points,parameters_).addTo(Jupytepide.leafletMap).bindPopup(popup_);
     };
 
     //*** add_layerControls ***
