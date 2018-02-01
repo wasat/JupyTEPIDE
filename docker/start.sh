@@ -11,4 +11,4 @@ git pull
 
 sudo mount /eodata
 
-docker run -v /eodata:/eodata -v ~/JupyTEPIDE/notebooks:/home/jovyan/notebooks-local -it --rm --user root --name "jupytepide" --link geoserver-ver_1.0:geoserver -e GRANT_SUDO=yes -p 8888:8888 jupytepide/eodata-notebook:ver_1.0.4 start-notebook.sh --NotebookApp.token=''
+docker run -v /eodata:/eodata -v ~/JupyTEPIDE/notebooks:/home/jovyan/notebooks-local -it --rm --user root --name "jupytepide" --link geoserver-ver_1.0:geoserver -e GRANT_SUDO=yes -p 8888:8888 jupytepide/eodata-notebook:ver_1.0.5 start-notebook.sh --NotebookApp.token=''
