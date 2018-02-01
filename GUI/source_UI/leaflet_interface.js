@@ -49,6 +49,8 @@ define([
 
     //*** load_layer ***
     //call example - look at load_mapboxLayer
+    //example:  url_='https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw'
+    //          atrib_={maxZoom:18, attribution:'copyrights etc...',id:'mapbox.streets'}
     var load_tileLayer = function(url_,atrib) {
         return L.tileLayer(url_, atrib).addTo(Jupytepide.leafletMap);
     };
@@ -58,6 +60,16 @@ define([
     var load_wmsLayer = function (url_,atrib){
         return L.tileLayer.wms(url_,atrib).addTo(Jupytepide.leafletMap);
 
+    };
+
+    //*** load_geoJsonLayer ***
+    var load_geoJsonLayer = function(data,options){
+        return L.geoJSON(data,options
+        ).bindPopup(function(layer){
+           return layer.feature.properties.description;
+        }).addTo(Jupytepide.leafletMap);
+
+        //return L.geoJSON(data).addTo(Jupytepide.leafletMap);
     };
 
     //*** load_mapboxLayer ***
@@ -142,13 +154,13 @@ define([
     //*** add_circle ***
     //center=[52.407, 21.33], radius=500, popup_="Some text", parameters_={color: 'red', fillColor: '#f03', fillOpacity: 0.5}
     var add_circle = function(center,radius,popup_,parameters_){
-        L.circle(center, radius, parameters_).addTo(Jupytepide.leafletMap).bindPopup(popup_);
+        return L.circle(center, radius, parameters_).addTo(Jupytepide.leafletMap).bindPopup(popup_);
     };
 
     //*** add_polygon ***
-    //points=[[51.1092, 17.06108],[51.10734, 17.06698],[51.10697, 17.06587]], popup="Some text"
-    var add_polygon = function(points,popup_){
-        L.polygon(points).addTo(Jupytepide.leafletMap).bindPopup(popup_);
+    //points=[[51.1092, 17.06108],[51.10734, 17.06698],[51.10697, 17.06587]], popup="Some text", parameters_={color: 'red', fillColor: '#f03', fillOpacity: 0.5}
+    var add_polygon = function(points,popup_,parameters_){
+        return L.polygon(points,parameters_).addTo(Jupytepide.leafletMap).bindPopup(popup_);
     };
 
     //*** add_layerControls ***
@@ -174,6 +186,26 @@ define([
 
     //****** testing area *****
 
+
+    //load JSON
+    var load_geojson = function(){
+        var geojsonFeature ={
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [ [51.1093, 17.06101],[51.10739, 17.06691],[51.10691, 17.06581] ]
+                ]
+            },
+            "properties": {
+                "description": "value0",
+                "prop1": {"this": "that"}
+            }
+        };
+
+        L.geoJSON(geojsonFeature).addTo(Jupytepide.leafletMap);
+        set_view([17.06101,51.1093],16);
+    };
 
     //*** load_leaflet ***
     //function for testing purposes - delete when finished
@@ -247,6 +279,7 @@ define([
         load_initialBaseLayers:load_initialBaseLayers,
         load_tileLayer:load_tileLayer,
         load_wmsLayer:load_wmsLayer,
+        load_geoJsonLayer:load_geoJsonLayer,
         load_mapboxLayer:load_mapboxLayer,
         set_view:set_view,
         add_marker:add_marker,
@@ -255,7 +288,8 @@ define([
         add_layerControls:add_layerControls,
         add_controlBaseLayer:add_controlBaseLayer,
         add_controlOverlayLayer:add_controlOverlayLayer,
-        remove_controlLayer:remove_controlLayer
+        remove_controlLayer:remove_controlLayer,
+        load_geojson:load_geojson
 
     };
 
