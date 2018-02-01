@@ -1,4 +1,5 @@
 from IPython.display import HTML,display
+import json
 
 class Leaflet():
 
@@ -53,8 +54,15 @@ class Leaflet():
     def addRasterLayer(self): #TODO: dorobic rastra
         pass
 
-    def addJsonLayer(self,j): #TODO: dorobic geojsona
-        pass
+    def addJsonLayer(self,geojson,name):
+
+        if isinstance(geojson,dict):
+            j=json.dumps(geojson)
+        else:
+            j=geojson
+
+        htm = '''<script type="text/javascript">Jupytepide.map_addGeoJsonLayer(%s,%s);</script>''' % (j,name)
+        display(HTML(htm))
 
     def addCircle(self,x,y,r,popup='',params=-1):
         if params==-1:
@@ -66,7 +74,7 @@ class Leaflet():
         htm = '''<script type="text/javascript">Jupytepide.map_addMarker([%f,%f],%s);</script>''' % (x, y, popup)
         display(HTML(htm))
 
-    def addPolygon(self,x,y,popup=''): #TODO: Dorobic polygona
+    def addPolygon(self,x,y,popup=''):
         """
         :param x: list of x
         :param y: list of y
@@ -112,7 +120,21 @@ class Leaflet():
 
 def Main():
     ll=Leaflet()
-    print (ll._attrib2string())
+    geojsonFeature = {
+        "type": "Feature",
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                [[17.06101, 51.1093], [17.06691, 51.10739], [17.06581, 51.10691]]
+            ]
+        },
+        "properties": {
+            "description": "value0",
+            "prop1": {"this": "that"}
+        }
+    }
+
+
 
 if __name__ == '__main__':
     Main()
