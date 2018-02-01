@@ -66,8 +66,37 @@ class Leaflet():
         htm = '''<script type="text/javascript">Jupytepide.map_addMarker([%f,%f],%s);</script>''' % (x, y, popup)
         display(HTML(htm))
 
-    def addPolygon(self,x,y): #TODO: Dorobic polygona
-        pass
+    def addPolygon(self,x,y,popup=''): #TODO: Dorobic polygona
+        """
+        :param x: list of x
+        :param y: list of y
+        :param popup: popup message
+        :return:
+        """
+        s='['
+        lista=[]
+        lx=zip(x,y)
+        for i in lx:
+            lista.append('[%f,%f]'%(i[0],i[1]))
+        s+=",".join(lista)
+        s+=']'
+        htm = '''<script type="text/javascript">Jupytepide.map_polygon(%s,%s);</script>''' % (s, popup)
+        display(HTML(htm))
+
+    def addPolygon(self,tupleXY,popup):
+        """
+        :param tupleXY: list of tuples (x,y)
+        :param popup: popup message
+        :return:
+        """
+        s = '['
+        lista = []
+        for i in tupleXY:
+            lista.append('[%f,%f]' % (i[0], i[1]))
+        s += ",".join(lista)
+        s += ']'
+        htm = '''<script type="text/javascript">Jupytepide.map_polygon(%s,%s);</script>''' % (s, popup)
+        display(HTML(htm))
 
     def addWmsLayer(self,url,name,attrib=-1):
 
