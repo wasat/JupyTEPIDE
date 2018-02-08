@@ -171,8 +171,9 @@ define([
     };
 
     //*** add_polyline ***
-    var add_polyline = function(){
-
+    //latlngs=[[17.06101,51.1093],[17.06691,51.10739],[17.06581,51.10691]], options={color:'red'}, popup='linijka'
+    var add_polyline = function(latlngs,options,popup_){
+        return L.polyline(latlngs,options).addTo(Jupytepide.leafletMap).bindPopup(popup_);
     };
 
     //*** add_layerControls ***
@@ -324,6 +325,7 @@ define([
         add_marker:add_marker,
         add_circle:add_circle,
         add_polygon:add_polygon,
+        add_polyline:add_polyline,
         add_layerControls:add_layerControls,
         add_controlBaseLayer:add_controlBaseLayer,
         add_controlOverlayLayer:add_controlOverlayLayer,
