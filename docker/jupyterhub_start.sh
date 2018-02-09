@@ -1,4 +1,4 @@
 #!/bin/bash
-docker stop jupytepide
+docker stop scipy-notebook
 
-docker run -it --rm --name "jupytepide" -p 8888:8888 jupytepide/eodata-notebook:ver_1.0.4 start-singleuser.sh
+docker run -it --rm --name "scipy-notebook" -p 8888:8889 jupyter/scipy-notebook start-singleuser.sh
