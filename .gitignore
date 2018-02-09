@@ -79,9 +79,6 @@ celerybeat-schedule
 # SageMath parsed files
 *.sage.py
 
-# dotenv
-.env
-
 # virtualenv
 .venv
 venv/
@@ -103,3 +100,5 @@ ENV/
 # Idea conf files
 .idea/
 /docker/tmp/
+/multiuser/secrets/
+/multiuser/userlist

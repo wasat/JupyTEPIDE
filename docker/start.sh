@@ -2,7 +2,6 @@
 docker stop geoserver-ver_1.0 postgis-ver_1.0 jupytepide
 docker rm geoserver-ver_1.0 postgis-ver_1.0
 
-
 docker run --name "postgis-ver_1.0" -d -t jupytepide/kartoza-postgis:ver_1.0
 docker run --name "geoserver-ver_1.0"  --link postgis-ver_1.0:postgis -p 8080:8080 -d -t jupytepide/kartoza-geoserver:ver_1.0
 

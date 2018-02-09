@@ -72,6 +72,13 @@ define([
         //return L.geoJSON(data).addTo(Jupytepide.leafletMap);
     };
 
+    //*** load_imageLayer ***
+    //example: imageUrl = '/nbextensions/source_UI/img/raster-1.jpg', imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
+    var load_imageLayer = function(imageUrl,imageBounds,options){
+        return L.imageOverlay(imageUrl,imageBounds,options).addTo(Jupytepide.leafletMap);
+
+    };
+
     //*** load_mapboxLayer ***
     //initial map loaded into Jupytepide UI
     var load_mapboxLayer = function() {
@@ -163,6 +170,12 @@ define([
         return L.polygon(points,parameters_).addTo(Jupytepide.leafletMap).bindPopup(popup_);
     };
 
+    //*** add_polyline ***
+    //latlngs=[[17.06101,51.1093],[17.06691,51.10739],[17.06581,51.10691]], options={color:'red'}, popup='linijka'
+    var add_polyline = function(latlngs,options,popup_){
+        return L.polyline(latlngs,options).addTo(Jupytepide.leafletMap).bindPopup(popup_);
+    };
+
     //*** add_layerControls ***
     var add_layerControls = function(baseLayers,overlays){
         return L.control.layers(baseLayers,overlays).addTo(Jupytepide.leafletMap);
@@ -184,8 +197,34 @@ define([
        // L.control.removeLayer(Layer);
     };
 
-    //****** testing area *****
+    //****** testing area **********************************************************************************************
 
+    //load ownTiles
+    var load_madrid = function(){
+        return L.tileLayer('/nbextensions/source_UI/madrid/{z}/{x}/{y}.png', {
+            tms:true,
+            opacity:0.8,
+            attribution: ''
+        }).addTo(Jupytepide.leafletMap)
+    };
+
+    //load IMAGE
+    var load_image = function(){
+        //ta funkcja działa z jpg, nie działa z geotiff
+        //todo: można zrobić ładowanie geotiff na podobę: https://github.com/stuartmatthews/leaflet-geotiff
+        //todo: albo pociąć na tilesy i czytać przez loadTile(): http://build-failed.blogspot.it/2012/11/zoomable-image-with-leaflet.html
+
+        //nbextensions/source_UI/img/marker-icon.png
+
+        // var imageUrl = 'http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
+        //     imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
+
+        var imageUrl = '/nbextensions/source_UI/img/raster-1.jpg',
+            imageBounds = [[51.712216, 17.22655], [51.773941, 17.12544]];
+
+        L.imageOverlay(imageUrl,imageBounds,{opacity:0.5}).addTo(Jupytepide.leafletMap);
+        set_view([51.712216, 17.22655],12);
+    };
 
     //load JSON
     var load_geojson = function(){
@@ -280,16 +319,20 @@ define([
         load_tileLayer:load_tileLayer,
         load_wmsLayer:load_wmsLayer,
         load_geoJsonLayer:load_geoJsonLayer,
+        load_imageLayer:load_imageLayer,
         load_mapboxLayer:load_mapboxLayer,
         set_view:set_view,
         add_marker:add_marker,
         add_circle:add_circle,
         add_polygon:add_polygon,
+        add_polyline:add_polyline,
         add_layerControls:add_layerControls,
         add_controlBaseLayer:add_controlBaseLayer,
         add_controlOverlayLayer:add_controlOverlayLayer,
         remove_controlLayer:remove_controlLayer,
-        load_geojson:load_geojson
+        load_geojson:load_geojson,
+        load_image:load_image,
+        load_madrid:load_madrid
 
     };
 
