@@ -7,7 +7,7 @@ version: "2"
 services:
   hub-db:
     image: postgres:9.5
-    container_name: jupyterhub-db
+    container_name: jupytepide-hub-db
     restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -26,8 +26,8 @@ services:
       args:
         JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
     restart: always
-    image: jupyterhub
-    container_name: jupyterhub
+    image: jupytepide-hub
+    container_name: jupytepide-hub
     volumes:
       # Bind Docker socket on the host so we can connect to the daemon from
       # within the container

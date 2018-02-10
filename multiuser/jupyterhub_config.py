@@ -43,7 +43,7 @@ c.DockerSpawner.remove_containers = True
 c.DockerSpawner.debug = True
 
 # User containers will access hub by container name on the Docker network
-c.JupyterHub.hub_ip = 'jupyterhub'
+c.JupyterHub.hub_ip = 'jupytepide-hub'
 c.JupyterHub.hub_port = 8080
 
 # TLS config
