@@ -1,7 +1,5 @@
+from IPython.display import HTML,display
 import json
-
-from IPython.display import HTML, display
-
 
 class Leaflet():
 
@@ -63,7 +61,7 @@ class Leaflet():
         else:
             j=geojson
 
-        htm = '''<script type="text/javascript">Jupytepide.map_addGeoJsonLayer(%s,%s);</script>''' % (j,name)
+        htm = '''<script type="text/javascript">Jupytepide.map_addGeoJsonLayer(%s,"%s");</script>''' % (j,name)
         display(HTML(htm))
 
     def addCircle(self,x,y,r,popup='',params=-1):
@@ -117,10 +115,21 @@ class Leaflet():
         else:
             attrib=self._dict2string(attrib)
 
-        htm = '''<script type="text/javascript">Jupytepide.map_addWmsLayer(%s,{%s},%s);</script>''' % (url, attrib, name)
+        htm = '''<script type="text/javascript">Jupytepide.map_addWmsLayer(%s,{%s},"%s");</script>''' % (url, attrib, name)
         display(HTML(htm))
+	
+	def addTileLayer(self,url,name,attrib=-1):
+        if attrib==-1:
+            attrib=self._attrib2string()
+        elif isinstance(attrib,str):
+            pass
+        else:
+            attrib=self._dict2string(attrib)
+        htm = '''<script type="text/javascript">Jupytepide.map_addTileLayer('%s',{%s},"%s");</script>''' % (url, attrib, name)
+        display(HTML(htm))
+	
 
-
+	
 def Main():
     ll=Leaflet()
     geojsonFeature = {
@@ -136,6 +145,7 @@ def Main():
             "prop1": {"this": "that"}
         }
     }
+
 
 
 if __name__ == '__main__':

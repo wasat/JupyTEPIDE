@@ -402,7 +402,8 @@ define([
 
 
         //Nagłówek listy
-        var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        //var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        var naglowek2 = $('<div/>').addClass('list_container');
         $('#2karta').append(naglowek2);
 
 
@@ -431,7 +432,8 @@ define([
 //Karta Snippets
 
         //Nagłówek listy
-        var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        //var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        var naglowek3 = $('<div/>').addClass('list_container');
         $('#1karta').append(naglowek3);
 
 
