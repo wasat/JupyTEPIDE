@@ -1,5 +1,7 @@
-from IPython.display import HTML,display
 import json
+
+from IPython.display import HTML, display
+
 
 class Leaflet():
 
@@ -118,6 +120,7 @@ class Leaflet():
         htm = '''<script type="text/javascript">Jupytepide.map_addWmsLayer(%s,{%s},%s);</script>''' % (url, attrib, name)
         display(HTML(htm))
 
+
 def Main():
     ll=Leaflet()
     geojsonFeature = {
@@ -133,7 +136,6 @@ def Main():
             "prop1": {"this": "that"}
         }
     }
-
 
 
 if __name__ == '__main__':

@@ -46,8 +46,6 @@ RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.4.0-Linux64.run &&
     #cp "/tmp/OTB-6.4.0-Linux64.run" "/opt/OTB-6.2.0-Linux64.run"  && \
     chmod +x OTB-6.4.0-Linux64.run && \
     /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.4.0-Linux64.run" -q &&\
-    mkdir -p /home/jovyan/.ipython/profile_default/startup && \
-    wget --quiet -O /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py https://raw.githubusercontent.com/wasat/JupyTEPIDE/master/scripts/startup/01-otb-paths.py && \
     rm -r OTB-6.4.0-Linux64.run
 
 # Install JupyTEP IDE UI layout and enable it
@@ -59,6 +57,9 @@ RUN rm -r /tmp/*  && \
     cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
+    mkdir -p /home/jovyan/.ipython/profile_default/startup && \
+    cp scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
+    cp scripts/Leaflet/__init__.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
     rm -rf JupyTEPIDE
 
 RUN rm -r /tmp/*  && \
