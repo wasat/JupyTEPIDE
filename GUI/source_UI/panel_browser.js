@@ -415,8 +415,7 @@ define([
         for (i=0;i<notebooksList.length;i++){
 
             rowItemArray[i] = {name:notebooksList[i],link:utils.url_path_join(notebookPath, notebooksList[i]),time:'yesterday'};
-        };
-
+        }
         for (i = 0; i < rowItemArray.length; i++) {
             $('#2karta').append(make_row_item(rowItemArray[i]));
         }
@@ -444,8 +443,7 @@ define([
         for (i=0;i<snippetsList.length;i++){
 
             rowItemArray[i] = {name:snippetsList[i],link:'#',time:'yesterday',snippet_name:snippetsList[i],on_click:code_snippets.insert_snippet_cell};
-        };
-
+        }
         for (i = 0; i < rowItemArray.length; i++) {
             $('#1karta').append(make_row_item(rowItemArray[i]));
         }
