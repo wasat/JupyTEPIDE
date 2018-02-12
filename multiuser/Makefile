@@ -61,7 +61,6 @@ jupytep_user_notebook: pull singleuser/Dockerfile
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
 		singleuser
 
-
 build: check-files network volumes
 	docker-compose build
 

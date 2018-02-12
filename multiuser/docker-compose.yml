@@ -22,9 +22,9 @@ services:
       - hub-db
     build:
       context: .
-      dockerfile: Dockerfile.jupyterhub
+      dockerfile: Dockerfile.jupytepidehub
       args:
-        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+        DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE}
     restart: always
     image: jupytepide-hub
     container_name: jupytepide-hub
