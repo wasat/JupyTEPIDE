@@ -1,0 +1,168 @@
+{
+  "code_snippets": [
+    {
+      "name": "Load product",
+      "code": [
+        "import snappy",
+        "import numpy as np",
+        "import matplotlib.pyplot as plt",
+        "#parameters for atithmetic transformation",
+        "a=1.15",
+        "b=0",
+        "#source image",
+        "file='/eodata/Envisat/Meris/FRS/2012/04/08/MER_FRS_1PPEPA20120408_105857_000005063113_00267_52867_0978.N1'"
+      ]
+    },
+    {
+      "name": "Get WPS info",
+      "code": [
+        "from owslib.wps import WebProcessingService, monitorExecution, printInputOutput",
+        "from os import system",
+        "import time",
+        "from owslib.etree import etree",
+        "",
+        "wps_url = 'http://localhost:8080/geoserver/wps'",
+        "wps = WebProcessingService(url=wps_url, verbose=False)",
+        "print (wps.identification.title + ':' + wps.version)"
+      ]
+    },
+    {
+      "name": "Connect WMS",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "print(wms.identification.type)",
+        "print(wms.identification.title)",
+        "print(list(wms.contents))",
+        "print(wms['Raster'].boundingBox)"
+      ]
+    },
+    {
+      "name": "Display image",
+      "code": [
+        "import matplotlib.image as mpimg",
+        "fig, ax = plt.subplots(figsize=(20, 10))",
+        "img=mpimg.imread('tmp.jpg')",
+        "imgplot = plt.imshow(img)",
+        "plt.show()"
+      ]
+    },
+    {
+      "name": "Snappy GPT example",
+      "code": [
+        "from snappyhelpers import pyHashMap",
+        "from snappy import ProductIO, GPF",
+        "",
+        "p = ProductIO.readProduct('/eodata/Sentinel-2/MSI/L1C/2017/09/13/S2A_MSIL1C_20170913T024941_N0205_R046_T49MHM_20170913T024944.SAFE')",
+        "print(p.getProductReader())",
+        "GPF.getDefaultInstance().getOperatorSpiRegistry().loadOperatorSpis() # Load all available operators",
+        "parameters=pyHashMap({'greenFactor': 1,",
+        "  'greenSourceBand': 'B1',",
+        "  'nirFactor': 1,",
+        "  'nirSourceBand': 'B2'})",
+        "",
+        "refl_product = GPF.createProduct('GndviOp', parameters.giveHashMap(), p) # compute the product from input called sub_product",
+        "# op = SubsetOp()",
+        "for i in refl_product.getBandNames():",
+        "    print(i)"
+      ]
+    },
+    {
+      "name": "Setup OTB",
+      "code": [
+        "import sys",
+        "import os",
+        "sys.path.append('/usr/lib/otb/python')",
+        "try:",
+        "    user_paths = os.environ['PYTHONPATH'].split(os.pathsep)",
+        "except KeyError:",
+        "",
+        "    user_paths = []",
+        "os.environ['OTB_APPLICATION_PATH']='/usr/lib/otb/applications'",
+        "import otbApplication"
+      ]
+    },
+    {
+      "name": "OTB ROI",
+      "code": [
+        "from PIL import Image as PILImage",
+        "import numpy as np",
+        "import matplotlib.pyplot as plt",
+        "",
+        "pilimage = PILImage.open('obrazek.tiff')",
+        "plt.imshow(pilimage)",
+        "plt.show()",
+        "",
+        "npimage = np.asarray(pilimage)",
+        "ExtractROI = otbApplication.Registry.CreateApplication('ExtractROI')",
+        "ExtractROI.SetVectorImageFromNumpyArray('in', npimage)",
+        "ExtractROI.SetParameterInt('startx', 140)",
+        "ExtractROI.SetParameterInt('starty', 120)",
+        "ExtractROI.SetParameterInt('sizex', 150)",
+        "ExtractROI.SetParameterInt('sizey', 150)",
+        "ExtractROI.Execute()",
+        "ExtractOutput = ExtractROI.GetVectorImageAsNumpyArray('out')",
+        "output_pil_image = PILImage.fromarray(np.uint8(ExtractOutput))",
+        "imshow(output_pil_image)",
+        "plt.show()"
+      ]
+    },
+    {
+      "name": "Web Map Browser",
+      "code": [
+        "from IPython.display import clear_output, Javascript, display",
+        "from nbformat import current",
+        "",
+        "import io",
+        "import os, fnmatch",
+        "from datetime import datetime",
+        "import urllib.request",
+        "from urllib.parse import quote",
+        "from pprint import pprint",
+        "import json",
+        "import subprocess",
+        "",
+        "import ipywidgets as widgets",
+        "from ipywidgets import Layout, Box, HBox,DatePicker,interact",
+        "",
+        "",
+        "",
+        "html_metadata=widgets.HTML(",
+        "    value=''",
+        ")",
+        "from ipyleaflet import TileLayer",
+        "from ipyleaflet import (",
+        "    Map,",
+        "    Marker,",
+        "    TileLayer, ImageOverlay,",
+        "    Polyline, Polygon, Rectangle, Circle, CircleMarker,",
+        "    GeoJSON,",
+        "    DrawControl,",
+        ")",
+        "",
+        "# slider = widgets.slider(4)",
+        "",
+        "t=TileLayer()",
+        "t.url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'",
+        "t.opacity=0.6",
+        "m=Map(zoom=1)",
+        "",
+        "wkt=''",
+        "layers=[]",
+        "lop=[]",
+        "m.add_layer(t)",
+        "",
+        "",
+        "def h(opacity):    ",
+        "    m.remove_layer(t) ",
+        "    t.opacity=opacity/100",
+        "    m.add_layer(t)    ",
+        "    ",
+        "",
+        "interact(h, opacity=(0,100));",
+        "m"
+      ]
+    }
+
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "user_notebooks": [
+    {
+      "folder": "tree/notebooks",
+      "filename": "click_on_map.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "eo_cloud_resto_1st_try.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "hashmap.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "input widgets.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "listdirs.ipynb"
+    },
+
+    {
+      "folder": "tree/notebooks",
+      "filename": "N1read_metadata.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "NDVI2.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "NDVI.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "SAVI.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "Universal metadata to reader.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "wps_deltares.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "WPS.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "WPS_urllib_request.ipynb"
+    },
+    {
+      "folder": "tree/notebooks",
+      "filename": "write_list_of_N1_to_file.ipynb"
+    }
+
+  ]
+}

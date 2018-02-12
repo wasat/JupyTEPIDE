@@ -1,0 +1,114 @@
+# Copyright (c) JupyTEP IDE Development Team.
+# Distributed under the terms of the Modified BSD License.
+FROM jupyter/scipy-notebook:033056e6d164
+
+LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
+
+USER root
+
+# Fix sh
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+# apt-get installs
+RUN apt-get update -qq && \
+    apt-get install -y -qq --no-install-recommends software-properties-common apt-utils nano mc && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install JDK 8 Oracle
+RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections > /dev/null 2>&1 && \
+    add-apt-repository -y ppa:webupd8team/java > /dev/null 2>&1 && \
+    apt-get -qq update && \
+    apt-get install -qq -y oracle-java8-installer tar && \
+    apt-get install -qq -y oracle-java8-set-default && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /var/cache/oracle-jdk8-installer
+
+# Define commonly used JAVA_HOME variable
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+
+WORKDIR /tmp
+
+# Add JAI and ImageIO for great speedy speed.
+# A little logic that will fetch the JAI and JAI ImageIO tar file if it
+# is not available locally in the resources dir
+RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
+    wget --quiet http://download.java.net/media/jai/builds/release/1_1_3/jai-1_1_3-lib-linux-amd64.tar.gz -P ./resources;\
+    fi; \
+    if [ ! -f /tmp/resources/jai_imageio-1_1-lib-linux-amd64.tar.gz ]; then \
+    wget --quiet http://download.java.net/media/jai-imageio/builds/release/1.1/jai_imageio-1_1-lib-linux-amd64.tar.gz -P ./resources;\
+    fi; \
+    mv resources/jai-1_1_3-lib-linux-amd64.tar.gz ./ && \
+    mv resources/jai_imageio-1_1-lib-linux-amd64.tar.gz ./ && \
+    gunzip -c --quiet jai-1_1_3-lib-linux-amd64.tar.gz | tar xf - && \
+    gunzip -c --quiet jai_imageio-1_1-lib-linux-amd64.tar.gz | tar xf - && \
+    mv /tmp/jai-1_1_3/lib/*.jar $JAVA_HOME/jre/lib/ext/ && \
+    mv /tmp/jai-1_1_3/lib/*.so $JAVA_HOME/jre/lib/amd64/ && \
+    mv /tmp/jai_imageio-1_1/lib/*.jar $JAVA_HOME/jre/lib/ext/ && \
+    mv /tmp/jai_imageio-1_1/lib/*.so $JAVA_HOME/jre/lib/amd64/ && \
+    rm /tmp/jai-1_1_3-lib-linux-amd64.tar.gz && \
+    rm -r /tmp/*
+
+ENV PATH="/opt/conda/bin:${PATH}"
+
+# Conda installs
+RUN conda install --quiet --yes -c anaconda-cluster \
+    'apache-maven=3.3.3*' && conda clean -tipsy && \
+    conda install --quiet --yes -c anaconda \
+    'numpy=1.12.1*' && conda clean -tipsy && \
+    conda install --quiet --yes -c conda-forge \
+    'ipyleaflet=0.5.3*' \
+    'ipywidgets=7.1.0*' \
+    'ipyparallel=6.0.2*' \
+    'jupyter_contrib_nbextensions=0.3.3*' \
+    'jupyter_nbextensions_configurator=0.3.0*' \
+    'matplotlib=2.1.1*' \
+    'nb_conda=2.2.1*' \
+    'nb_conda_kernels=2.1.0*' && \
+    # Activate ipywidgets extension in the environment that runs the notebook server
+    jupyter contrib nbextension install --user && \
+    jupyter nbextensions_configurator enable --user && \
+    conda clean -tipsy && fix-permissions $CONDA_DIR
+
+# Create a Python 2.x environment using conda including at least the ipython kernel
+# and the kernda utility. Add any additional packages you want available for use
+# in a Python 2 notebook to the first line here (e.g., pandas, matplotlib, etc.)
+RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel numpy matplotlib kernda && \
+    conda clean -tipsy && \
+# Create a global kernelspec in the image and modify it so that it properly activates
+# the python2 conda environment.
+    $CONDA_DIR/envs/python27/bin/python -m ipykernel install && \
+    /bin/bash -c "source activate python27 && kernda -o -y /opt/conda/envs/python27/share/jupyter/kernels/python2/kernel.json && source deactivate python27" && \
+# Create a Python 3.4 environment using conda including at least the ipython kernel
+# and the kernda utility. Add any additional packages you want available for use
+# in a Python 3.4 notebook to the first line here (e.g., pandas, matplotlib, etc.)
+    conda create --quiet --yes -p $CONDA_DIR/envs/python34 python=3.4 ipython ipykernel numpy matplotlib ipyleaflet ipywidgets && \
+    conda clean -tipsy && \
+# Create a global kernelspec in the image and modify it so that it properly activates
+# the python34 conda environment.
+    $CONDA_DIR/envs/python34/bin/python -m ipykernel install && \
+    /bin/bash -c "source activate python34" && \
+    conda clean -tipsy
+    # conda install --quiet --yes -c anaconda \
+    #'numpy' && \
+    # conda install --quiet --yes -c conda-forge \
+    # 'matplotlib' \
+    # 'ipyleaflet' \
+    # 'ipywidgets'
+
+# Install JupyTEP IDE UI layout and enable it
+RUN cd /tmp && \
+    git clone https://github.com/wasat/JupyTEPIDE.git && \
+    cd JupyTEPIDE && \
+    cp -R notebooks /home/jovyan/ && \
+    cd GUI && \
+    jupyter nbextension install source_UI --user && \
+    jupyter nbextension enable source_UI/main --sys-prefix && \
+    rm -rf JupyTEPIDE && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
+
+WORKDIR /home/$NB_USER
+USER $NB_USER
+
+

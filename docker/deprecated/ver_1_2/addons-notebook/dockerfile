@@ -1,0 +1,28 @@
+# Copyright (c) JupyTEP IDE Development Team.
+# Distributed under the terms of the Modified BSD License.
+FROM jupytepide/scipy-clean-gui
+
+LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
+
+USER root
+
+# apt-get installs
+RUN apt-get update -qq && \
+    apt-get install -qy --no-install-recommends mc nano && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+USER $NB_USER
+
+# Conda installs
+RUN conda install --quiet --yes -c conda-forge \
+    'nb_conda_kernels' \
+    'ipyleaflet' \
+    'ipywidgets' && \
+    fix-permissions $CONDA_DIR
+
+# Add Live slideshows with RISE
+RUN wget https://github.com/pdonorio/RISE/archive/master.tar.gz \
+    && tar xvzf *.gz && cd master && python3 setup.py install
+
+USER $NB_USER
