@@ -402,7 +402,8 @@ define([
 
 
         //Nagłówek listy
-        var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        //var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        var naglowek2 = $('<div/>').addClass('list_container');
         $('#2karta').append(naglowek2);
 
 
@@ -414,8 +415,7 @@ define([
         for (i=0;i<notebooksList.length;i++){
 
             rowItemArray[i] = {name:notebooksList[i],link:utils.url_path_join(notebookPath, notebooksList[i]),time:'yesterday'};
-        };
-
+        }
         for (i = 0; i < rowItemArray.length; i++) {
             $('#2karta').append(make_row_item(rowItemArray[i]));
         }
@@ -431,7 +431,8 @@ define([
 //Karta Snippets
 
         //Nagłówek listy
-        var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        //var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        var naglowek3 = $('<div/>').addClass('list_container');
         $('#1karta').append(naglowek3);
 
 
@@ -442,8 +443,7 @@ define([
         for (i=0;i<snippetsList.length;i++){
 
             rowItemArray[i] = {name:snippetsList[i],link:'#',time:'yesterday',snippet_name:snippetsList[i],on_click:code_snippets.insert_snippet_cell};
-        };
-
+        }
         for (i = 0; i < rowItemArray.length; i++) {
             $('#1karta').append(make_row_item(rowItemArray[i]));
         }

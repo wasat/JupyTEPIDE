@@ -1,13 +1,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG JUPYTERHUB_VERSION
-FROM jupyterhub/jupyterhub-onbuild:$JUPYTERHUB_VERSION
-
-# apt-get installs
-RUN apt-get update -qq && \
-    apt-get install -qqy mc nano && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+ARG DOCKER_NOTEBOOK_IMAGE
+FROM $DOCKER_NOTEBOOK_IMAGE
 
 # Install dockerspawner, oauth, postgres
 RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
@@ -21,7 +15,11 @@ ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
 ENV SSL_KEY /srv/jupyterhub/secrets/jupyterhub.key
 COPY ./secrets/*.crt $SSL_CERT
 COPY ./secrets/*.key $SSL_KEY
+COPY ./userlist /srv/jupyterhub/userlist
+
+USER root
 RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
-COPY ./userlist /srv/jupyterhub/userlist
+WORKDIR /home/$NB_USER
+USER $NB_USER
