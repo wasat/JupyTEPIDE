@@ -257,6 +257,28 @@ define([
         delete Jupytepide.leafletMap.layers[layer_name];
     };
 
+    //*** map_layerMoveUp ***
+    Jupytepide.map_layerMoveUp = function(layer_name){
+        var zIndex = Jupytepide.leafletMap.layers[layer_name].options.zIndex;
+        zIndex = zIndex+1;
+        Jupytepide.leafletMap.layers[layer_name].setZIndex(zIndex);
+
+        //todo: to może nie działać dla warstw wektorowych, wtedy można wypróbować dodawanie warstw wektorowych do grupy i przekładanie ich wtedy jako grup
+
+    }
+
+    //*** map_layerMoveUp ***
+    Jupytepide.map_layerMoveDown = function(layer_name){
+        var zIndex = Jupytepide.leafletMap.layers[layer_name].options.zIndex;
+        zIndex = zIndex-1;
+        Jupytepide.leafletMap.layers[layer_name].setZIndex(zIndex);
+
+        //todo: to może nie działać dla warstw wektorowych, wtedy można wypróbować dodawanie warstw wektorowych do grupy i przekładanie ich wtedy jako grup
+
+    }
+
+    //*** map_layerMoveDown ***
+
     Jupytepide.map_addLayerControls = function(baseLayers,overlays){
         Jupytepide.leafletMap.control = leaflet_interface.add_layerControls(baseLayers,overlays);
     };
