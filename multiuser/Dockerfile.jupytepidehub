@@ -17,12 +17,8 @@ COPY ./secrets/*.crt $SSL_CERT
 COPY ./secrets/*.key $SSL_KEY
 COPY ./userlist /srv/jupyterhub/userlist
 
-USER root
 RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
-
-ONBUILD ADD jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
-CMD ["jupyterhub", "-f", "/srv/jupyterhub/jupyterhub_config.py"]
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
