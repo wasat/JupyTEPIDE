@@ -22,8 +22,7 @@ define([
         'jquery',
         'require'
     ],
-    function (
-              jupy,
+    function (jupy,
               menu,
               toolbar_items,
               panel_browser,

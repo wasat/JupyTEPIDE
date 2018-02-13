@@ -56,18 +56,18 @@ define([
 
         //OpenLayers style and scripts
         $('head').append($('<link/>', {
-                href: 'https://openlayers.org/en/v4.4.2/css/ol.css',
-                rel: 'stylesheet',
-                type: 'text/css'
-            }));
-     //       The script below is only needed for old environments like Internet Explorer and Android 4.x
-        $('head').append($('<script/>',{
-            src:'https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL'
+            href: 'https://openlayers.org/en/v4.4.2/css/ol.css',
+            rel: 'stylesheet',
+            type: 'text/css'
         }));
-            //OpenLayers script
-     //   $('head').append($('<script/>',{
-     //       src:'https://openlayers.org/en/v4.4.2/build/ol.js'
-     //   }));
+        //       The script below is only needed for old environments like Internet Explorer and Android 4.x
+        $('head').append($('<script/>', {
+            src: 'https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL'
+        }));
+        //OpenLayers script
+        //   $('head').append($('<script/>',{
+        //       src:'https://openlayers.org/en/v4.4.2/build/ol.js'
+        //   }));
 
         //new combobox in bootstrap style
         //$('select').appendTo('<div/>');
@@ -120,6 +120,6 @@ define([
 
     return {
         load_ipython_extension: load_ipython_extension,
-        load_jupytepide_theme:load_style
+        load_jupytepide_theme: load_style
     };
 });

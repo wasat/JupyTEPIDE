@@ -23,8 +23,7 @@ define([
              require,
              code_snippets,
              map_browser,
-             leaflet
-) {
+             leaflet) {
     //***
     //*** Action Handlers ***
     //Function objects for handling actions performed by tool-buttons click
@@ -37,9 +36,9 @@ define([
     };
 
     //testowanie Leafleta na WebMap browserze - odłączyć
-    var testowanie_leaflet_handler = function(){
-       //var leafletMap=map_browser.getLeafletMap();
-        var leafletMap=Jupytepide.leafletMap;
+    var testowanie_leaflet_handler = function () {
+        //var leafletMap=map_browser.getLeafletMap();
+        var leafletMap = Jupytepide.leafletMap;
         leaflet.polygon([
             [51.51368, -0.15776],
             [51.5219, -0.15724],
@@ -54,8 +53,8 @@ define([
         //var indx = Jupyter.notebook.get_selected_index();
         //alert(indx);
 
-        var new_cell = Jupyter.notebook.insert_cell_at_index('code',1);
-        $('.input').last().css({display:"none"});//.atr('style','display:none');
+        var new_cell = Jupyter.notebook.insert_cell_at_index('code', 1);
+        $('.input').last().css({display: "none"});//.atr('style','display:none');
 
         var tekst;
         tekst = code_snippets.getWebMapBrowserText();
@@ -63,14 +62,14 @@ define([
         //alert(tekst);
 
         //###
-      //  var WMBText;
-      //  $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
-      //      $.each(data['code_snippets'], function (key, snippet) {
-      //          if (snippet['name']=="Web Map Browser"){
-      //              WMBText = snippet['code'].join('\n');
-      //          };
-      //      });
-      //  });
+        //  var WMBText;
+        //  $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+        //      $.each(data['code_snippets'], function (key, snippet) {
+        //          if (snippet['name']=="Web Map Browser"){
+        //              WMBText = snippet['code'].join('\n');
+        //          };
+        //      });
+        //  });
         //###
 
 

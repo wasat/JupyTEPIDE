@@ -1,8 +1,9 @@
 #!/opt/anaconda/anaconda3/envs/python34/bin/python
 
-import pandas as pd
 import sys
 from collections import OrderedDict
+
+import pandas as pd
 
 
 class N1Metadata:
@@ -109,7 +110,7 @@ class N1Metadata:
         return '<div style="float: left"><p><b>SPH:</b></p>' + df1 + '<div style="float: left"><p><b>MPH:</b></p>' + df2 + '<div style="float: left"><p><b>DSD:</b></p>' + df3 + '<div style="float: left"><p><b>Quality_ADS:</b></p>' + df4 + '<div style="float: left"><p><b>Scaling_Factor_GADS:</b></p>' + df5 + '<div style="float: left"><p><b>Tie_points_ADS</b></p>' + df6
 
     def __repr__(self):
-        from pprint import pprint, pformat
+        from pprint import pprint
         from io import StringIO
         s = StringIO()
         pprint(self.SPH, s)
