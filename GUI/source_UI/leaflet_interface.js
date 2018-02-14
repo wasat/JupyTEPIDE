@@ -41,6 +41,7 @@ define([
     var load_map = function (map_container) {
         mymap = L.map(map_container).setView([0, 0], 1).on('click', onMapClick);
         Jupytepide.leafletMap = mymap;
+        L.control.scale().addTo(Jupytepide.leafletMap);
     };
 
 
@@ -126,6 +127,16 @@ define([
         Jupytepide.leafletMap.setView(center, zoom);
     };
 
+    // //*** layer_moveUp ***
+    // var layer_moveUp = function(layer){
+    //     layer.options.zIndex = layer.options.zIndex+1;
+    // };
+    //
+    // //*** layer_moveDown ***
+    // var layer_moveDown = function(layer){
+    //     layer.options.zIndex = layer.options.zIndex-1;
+    // };
+
     //*** markerIcon ***
     var markerIcon = L.icon({
         iconUrl: '/nbextensions/source_UI/img/marker-icon.png',
@@ -174,8 +185,8 @@ define([
     };
 
     //*** add_layerControls ***
-    var add_layerControls = function (baseLayers, overlays) {
-        return L.control.layers(baseLayers, overlays).addTo(Jupytepide.leafletMap);
+    var add_layerControls = function(baseLayers,overlays){
+        return L.control.layers(baseLayers,overlays,{collapsed:false}).addTo(Jupytepide.leafletMap);
     };
 
     //*** add_controlBaseLayer ***

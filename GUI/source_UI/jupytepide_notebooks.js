@@ -11,8 +11,9 @@ define([
     'base/js/namespace',
     'base/js/dialog',
     'base/js/utils',
-    'services/config'
-], function ($, Jupyter, dialog, utils, configmod) {
+    'services/config',
+    'require'
+], function ($, Jupyter, dialog, utils, configmod, require) {
     "use strict";
 
     //daje listę nazw notebooków z pliku notebooks.json
@@ -25,7 +26,12 @@ define([
 
         var NotebooksList = [];
         //czytanie jsona
-        $.getJSON("/nbextensions/source_UI/notebooks.json", function (data) {
+        //katalog z plikami json
+        //var cfgPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/cfg');
+        //konkretny plik json
+        //var jsonFileName = "/notebooks.json";
+
+        $.getJSON(require.toUrl('./notebooks.json'), function (data) {
 
             $.each(data['user_notebooks'], function (key, notebookName) {
                 NotebooksList.push(notebookName['filename']);

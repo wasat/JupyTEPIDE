@@ -10,8 +10,9 @@ define([
     'base/js/namespace',
     'base/js/dialog',
     'base/js/utils',
-    'services/config'
-], function ($, Jupyter, dialog, utils, configmod) {
+    'services/config',
+    'require'
+], function ($, Jupyter, dialog, utils, configmod, require) {
     "use strict";
 
     // create config object to load parameters
@@ -30,7 +31,12 @@ define([
     function load_extension() {
         config.load(); // trigger loading config parameters
 
-        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+        //katalog z plikami json
+        //var cfgPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/cfg');
+        //konkretny plik json
+        //var jsonFileName = "/code_snippets.json";
+
+        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
             // Add the header as the top option, does nothing on click
             var option = $("<option></option>")
                 .attr("id", "snippet_header")
@@ -77,8 +83,9 @@ define([
         //handle function passed IN parameter
         var snippet_name = name.data.snippet_name;
 
-        //czytanie jsona
-        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+        //czytanie jsona "/nbextensions/source_UI/code_snippets.json"
+
+        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
             // Insert snippet from JSON file named "snippet_name"
             $.each(data['code_snippets'], function (key, snippet) {
                 if (snippet['name'] == snippet_name) {
@@ -104,7 +111,7 @@ define([
 
         var snippetsNames = [];
         //czytanie jsona
-        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
             // Insert snippet from JSON file named "snippet_name"
             $.each(data['code_snippets'], function (key, snippet) {
                 snippetsNames.push(snippet['name']);
@@ -129,7 +136,7 @@ define([
         var snippet_name = "Web Map Browser";
         var WMBText = "";
         //czytanie jsona
-        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
             $.each(data['code_snippets'], function (key, snippet) {
                 if (snippet['name'] == snippet_name) {
                     WMBText = snippet['code'].join('\n');

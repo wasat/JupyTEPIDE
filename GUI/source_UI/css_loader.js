@@ -73,7 +73,7 @@ define([
         //$('select').appendTo('<div/>');
 
         //logo
-        $('#ipython_notebook img').attr('src', '/nbextensions/source_UI/img/logo_jupytepide.png').attr('alt', 'JupyTEP IDE');
+        $('#ipython_notebook img').attr('src', require.toUrl('./img/logo_jupytepide.png')).attr('alt', 'JupyTEP IDE');
 
         //Leaflet map JS library style
         $('head').append($('<link/>').attr('href', require.toUrl('./css/' + 'leaflet' + '.css'))
