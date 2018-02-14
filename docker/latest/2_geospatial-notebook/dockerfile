@@ -1,6 +1,7 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupytepide/scipy-ext-notebook:dev
+ARG DOCKER_VER
+FROM jupytepide/scipy-ext-notebook:$DOCKER_VER
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 

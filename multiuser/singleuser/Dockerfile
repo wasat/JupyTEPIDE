@@ -8,20 +8,9 @@ FROM $DOCKER_REG/$DOCKER_NOTEBOOK_IMAGE
 USER root
 
 # Install JupyTEP IDE UI layout and enable it
-RUN cd /tmp && \
-    git clone https://github.com/wasat/JupyTEPIDE.git && \
-    cd JupyTEPIDE && \
-    cp -R notebooks /home/jovyan/ && \
-    cd GUI && \
-    jupyter nbextension install source_UI --user && \
-    jupyter nbextension enable source_UI/main --sys-prefix && \
-    mkdir -p /home/jovyan/.ipython/profile_default/startup && \
-    cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
-    cp /tmp/JupyTEPIDE/scripts/Leaflet/__init__.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
-    rm -rf JupyTEPIDE && \
-    rm -rf /tmp/
-
-RUN rm -rf /tmp/  && \
+RUN cd /opt && \
+    git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
+    rm -rf /tmp/  && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
