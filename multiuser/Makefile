@@ -48,7 +48,7 @@ endif
 check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 
 pull:
-	docker pull $(DOCKER_NOTEBOOK_IMAGE)
+	docker pull $(DOCKER_REG)/$(DOCKER_NOTEBOOK_IMAGE)
 
 notebook_image: pull singleuser/Dockerfile
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
@@ -59,6 +59,7 @@ notebook_image: pull singleuser/Dockerfile
 jupytep_user_notebook: pull singleuser/Dockerfile
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
+		--build-arg DOCKER_REG=$(DOCKER_REG) \
 		singleuser
 
 build: check-files network volumes
