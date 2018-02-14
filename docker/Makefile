@@ -50,8 +50,8 @@ geo_notebook_push:
 eo_notebook_push:
     docker push $(DOCKER_REG)$(DOCKER_EO_IMAGE):$(DOCKER_VER)
 
-push_all: scipy_notebook_push geo_notebook_push eo_notebook_push:
+push_all: scipy_notebook_push geo_notebook_push eo_notebook_push
 
-all: build_all push_all
+run_all: build_all push_all
 
 .PHONY: pull notebook_image
