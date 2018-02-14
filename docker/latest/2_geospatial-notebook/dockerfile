@@ -30,7 +30,8 @@ RUN conda install --quiet --yes -c conda-forge \
 
 USER root
 
-RUN fix-permissions $CONDA_DIR && \
+RUN find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
+    fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
 WORKDIR /home/$NB_USER

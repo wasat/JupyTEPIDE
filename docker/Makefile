@@ -52,6 +52,6 @@ eo_notebook_push:
 
 push_all: scipy_notebook_push geo_notebook_push eo_notebook_push
 
-run_all: build_all push_all
+all: build_all push_all
 
 .PHONY: pull notebook_image
