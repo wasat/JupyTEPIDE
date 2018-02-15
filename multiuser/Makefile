@@ -57,8 +57,9 @@ notebook_image: pull singleuser/Dockerfile
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
 		singleuser
 
-jupytep_user_notebook: pull singleuser/Dockerfile
+jupytep_user_notebook:
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
+		--file singleuser/Dockerfile \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
 		--build-arg DOCKER_REG=$(DOCKER_REG) \
 		singleuser
