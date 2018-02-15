@@ -48,7 +48,7 @@ RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
     mv /tmp/jai_imageio-1_1/lib/*.jar $JAVA_HOME/jre/lib/ext/ && \
     mv /tmp/jai_imageio-1_1/lib/*.so $JAVA_HOME/jre/lib/amd64/ && \
     rm /tmp/jai-1_1_3-lib-linux-amd64.tar.gz && \
-    rm -rf /tmp/*
+    find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
 
 ENV PATH="/opt/conda/bin:${PATH}"
 
@@ -58,8 +58,8 @@ RUN conda install --quiet --yes -c anaconda-cluster \
     conda install --quiet --yes -c anaconda \
     'numpy=1.12.1*' && conda clean -tipsy && \
     conda install --quiet --yes -c conda-forge \
-    'ipyleaflet=0.5.3*' \
-    'ipywidgets=7.1.0*' \
+    'ipyleaflet=0.6.5*' \
+    'ipywidgets=7.1.1*' \
     'ipyparallel=6.0.2*' \
     'jupyter_contrib_nbextensions=0.4.0*' \
     'jupyter_nbextensions_configurator=0.4.0*' \

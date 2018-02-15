@@ -64,6 +64,13 @@ jupytep_user_notebook:
 		--build-arg DOCKER_REG=$(DOCKER_REG) \
 		singleuser
 
+jupytep_user_custom_notebook:
+	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
+		-f singleuser_docker/Dockerfile \
+		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) .
+
+jupytep_user_custom_notebook_2: ./build2.sh
+
 build: check-files network volumes
 	docker-compose build
 
