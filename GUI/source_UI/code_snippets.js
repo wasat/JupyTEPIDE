@@ -10,8 +10,9 @@ define([
     'base/js/namespace',
     'base/js/dialog',
     'base/js/utils',
-    'services/config'
-], function ($, Jupyter, dialog, utils, configmod) {
+    'services/config',
+    'require'
+], function ($, Jupyter, dialog, utils, configmod, require) {
     "use strict";
 
     // create config object to load parameters
@@ -30,7 +31,12 @@ define([
     function load_extension() {
         config.load(); // trigger loading config parameters
 
-        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+        //katalog z plikami json
+        //var cfgPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/cfg');
+        //konkretny plik json
+        //var jsonFileName = "/code_snippets.json";
+
+        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
             // Add the header as the top option, does nothing on click
             var option = $("<option></option>")
                 .attr("id", "snippet_header")
@@ -73,28 +79,30 @@ define([
     };
 
     //*** czytanie z pliku JSON po podanej nazwie snippeta
-    function insert_cell1(name){
+    function insert_cell1(name) {
         //handle function passed IN parameter
         var snippet_name = name.data.snippet_name;
 
-        //czytanie jsona
-        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+        //czytanie jsona "/nbextensions/source_UI/code_snippets.json"
+
+        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
             // Insert snippet from JSON file named "snippet_name"
             $.each(data['code_snippets'], function (key, snippet) {
-                if (snippet['name']==snippet_name){
+                if (snippet['name'] == snippet_name) {
                     var new_cell = Jupyter.notebook.insert_cell_above('');
                     new_cell.set_text(snippet['code'].join('\n'));
                     new_cell.code_mirror.setOption('theme', 'mbo');
                     new_cell.focus_cell();
 
-                };
+                }
+                ;
 
             });
         })
     };
 
     //*** daje listę nazw snippetów z pliku JSON
-    function get_SnippetsList(){
+    function get_SnippetsList() {
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
         // (w tym przypadku tablicy snippetNames)
         $.ajaxSetup({
@@ -103,7 +111,7 @@ define([
 
         var snippetsNames = [];
         //czytanie jsona
-        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
             // Insert snippet from JSON file named "snippet_name"
             $.each(data['code_snippets'], function (key, snippet) {
                 snippetsNames.push(snippet['name']);
@@ -118,21 +126,22 @@ define([
     //*** get Web Map Browser
     // zwraca tekst snippeta Web Map Browser
     //Do wstawienia w ukrytej celce zawierającej Web Map Browser
-    function get_WebMapBrowserText(){
+    function get_WebMapBrowserText() {
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
         // (w tym przypadku tablicy snippetNames)
         $.ajaxSetup({
             async: false
         });
 
-        var snippet_name="Web Map Browser";
-        var WMBText="";
+        var snippet_name = "Web Map Browser";
+        var WMBText = "";
         //czytanie jsona
-        $.getJSON("/nbextensions/source_UI/code_snippets.json", function (data) {
+        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
             $.each(data['code_snippets'], function (key, snippet) {
-                if (snippet['name']==snippet_name){
+                if (snippet['name'] == snippet_name) {
                     WMBText = snippet['code'].join('\n');
-                };
+                }
+                ;
             });
         });
         //WMBText = "12+99";
@@ -142,8 +151,8 @@ define([
     // return public methods
     return {
         load_ipython_extension: load_extension,
-        insert_snippet_cell:insert_cell1,
-        getSnippetsList:get_SnippetsList,
-        getWebMapBrowserText:get_WebMapBrowserText
+        insert_snippet_cell: insert_cell1,
+        getSnippetsList: get_SnippetsList,
+        getWebMapBrowserText: get_WebMapBrowserText
     };
 });

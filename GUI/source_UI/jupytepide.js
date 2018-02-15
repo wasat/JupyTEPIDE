@@ -15,11 +15,11 @@
 //todo:zrobić, żeby warstwy, które nie dostaną nazwy zostały ponumerowane, np.: Layer 1, itp.
 //todo:nie pozwalać na wielokrotne dodawanie warstw o tej samej nazwie, bo potem nie chca się dać usunąć
 
- /**
-  * Jupytepide main object.
-  * @class Jupytepide
-  */
-var Jupytepide = {version:'0.1.alpha'};
+/**
+ * Jupytepide main object.
+ * @class Jupytepide
+ */
+var Jupytepide = {version: '0.1.alpha'};
 
 define([
     'jquery',
@@ -28,7 +28,7 @@ define([
     'base/js/utils',
     'services/config',
     './leaflet_interface'
-], function ($, Jupyter, dialog, utils, configmod,leaflet_interface) {
+], function ($, Jupyter, dialog, utils, configmod, leaflet_interface) {
     "use strict";
 
     /**
@@ -42,8 +42,8 @@ define([
      * @memberof: class:Jupytepide
      */
 
-    Jupytepide.map_setView = function(center,zoom){
-        leaflet_interface.set_view(center,zoom);
+    Jupytepide.map_setView = function (center, zoom) {
+        leaflet_interface.set_view(center, zoom);
     };
 
     /**
@@ -56,11 +56,12 @@ define([
      * @memberof: class:Jupytepide
      */
 
-    Jupytepide.map_addMarker = function(center,popup_){
+    Jupytepide.map_addMarker = function (center, popup_) {
         //todo: zrobić numerowanie markerów (innych elementów też, żeby je można było usuwać
-        var layer_name='tmpMarker'
+        var layer_name = 'tmpMarker'
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_marker(center,popup_);;
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_marker(center, popup_);
+        ;
     };
 
     /**
@@ -79,10 +80,10 @@ define([
      * @memberof: class:Jupytepide
      */
     //center=[52.407, 21.33], radius=500, popup_="Some text", parameters_={color: 'red', fillColor: '#f03', fillOpacity: 0.5}
-    Jupytepide.map_addCircle = function(center,radius,popup_,parameters_){
+    Jupytepide.map_addCircle = function (center, radius, popup_, parameters_) {
         var layer_name = 'tmpCircle';
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_circle(center,radius,popup_,parameters_);
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_circle(center, radius, popup_, parameters_);
 
     };
 
@@ -102,10 +103,10 @@ define([
      * @memberof: class:Jupytepide
      */
 
-    Jupytepide.map_addPolygon = function(points,popup_,parameters_){
+    Jupytepide.map_addPolygon = function (points, popup_, parameters_) {
         var layer_name = 'tmpPolygon';
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_polygon(points,popup_,parameters_);
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_polygon(points, popup_, parameters_);
 
     };
 
@@ -122,10 +123,10 @@ define([
      * @memberof: class:Jupytepide
      */
     //nazwa warstwy, do której dodana jest polilinia to 'tmpPolyline'. Podana jest na stałe i do tej nazwy należy się odwoływac podczas usuwania
-    Jupytepide.map_addPolyline = function(latlngs,options,popup_){
-        var layer_name='tmpPolyline';
+    Jupytepide.map_addPolyline = function (latlngs, options, popup_) {
+        var layer_name = 'tmpPolyline';
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_polyline(latlngs,options,popup_);
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_polyline(latlngs, options, popup_);
 
     };
 
@@ -147,12 +148,12 @@ define([
      */
 
     //example: url='https://demo.boundlessgeo.com/geoserver/ows?', atrib={layers:'ne:ne'}, more options: http://leafletjs.com/reference-1.3.0.html#tilelayer-wms
-    Jupytepide.map_addWmsLayer = function(url_,attrib,layer_name){
+    Jupytepide.map_addWmsLayer = function (url_, attrib, layer_name) {
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_wmsLayer(url_,attrib);
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_wmsLayer(url_, attrib);
         //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
-     };
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name], layer_name);
+    };
 
     /**
      * Adds a TMS (tiled) layer into the map.
@@ -170,11 +171,11 @@ define([
     //          attrib={maxZoom:18,attribution:"",id:'mapbox.streets'},
     //          layer_name="Layer name"
     //example2: url='/nbextensions/source_UI/madrid/{z}/{x}/{y}.png' - own (local) tile layer
-    Jupytepide.map_addTileLayer = function(url_,attrib,layer_name){
+    Jupytepide.map_addTileLayer = function (url_, attrib, layer_name) {
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_tileLayer(url_,attrib);
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_tileLayer(url_, attrib);
         //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name], layer_name);
     };
     /**
      * Adds a GEOJSON vector layer into the map.
@@ -207,12 +208,12 @@ define([
      * @memberof: class:Jupytepide
      */
 
-    Jupytepide.map_addGeoJsonLayer = function(data,layer_name,options){
+    Jupytepide.map_addGeoJsonLayer = function (data, layer_name, options) {
         options == null ? {} : options;
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_geoJsonLayer(data,options);
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_geoJsonLayer(data, options);
         //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name], layer_name);
     };
 
     /**
@@ -222,21 +223,21 @@ define([
      * //imageUrl = '/nbextensions/source_UI/img/raster-1.jpg',
      * //imageBounds = [[51.712216, 17.22655], [51.773941, 17.12544]];
      * Jupytepide.map_addImageLayer(
-     * 		'/nbextensions/source_UI/img/raster-1.jpg',
-     * 		[[51.712216, 17.22655], [51.773941, 17.12544]];
-     * 		{opacity: 0.5});
+     *        '/nbextensions/source_UI/img/raster-1.jpg',
+     *        [[51.712216, 17.22655], [51.773941, 17.12544]];
+     *        {opacity: 0.5});
      * @param imageUrl - URL of raster image.
      * @param imageBounds - Bounding coordinates of image in [lat,lon].
      * @param layer_name - Jupytepide layer name, which will appear on the layers list after loading.
      * @param options - Display options.
      * @memberof: class:Jupytepide
      */
-    Jupytepide.map_addImageLayer = function(imageUrl,imageBounds,layer_name,options){
+    Jupytepide.map_addImageLayer = function (imageUrl, imageBounds, layer_name, options) {
         options == null ? {} : options;
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_imageLayer(imageUrl,imageBounds,options);
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_imageLayer(imageUrl, imageBounds, options);
         //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name], layer_name);
     };
 
     /**
@@ -248,7 +249,7 @@ define([
      * @memberof: class:Jupytepide
      */
     //*** map_removeLayer ***
-    Jupytepide.map_removeLayer = function(layer_name){
+    Jupytepide.map_removeLayer = function (layer_name) {
         //remove layer from leaflet component
         Jupytepide.leafletMap.layers[layer_name].remove();
         //remove layer from control.layers
@@ -256,35 +257,56 @@ define([
         //remove layer from Jupytepide
         delete Jupytepide.leafletMap.layers[layer_name];
     };
+    //*** map_layerMoveUp ***
+    Jupytepide.map_layerMoveUp = function(layer_name){
+        var zIndex = Jupytepide.leafletMap.layers[layer_name].options.zIndex;
+        zIndex = zIndex+1;
+        Jupytepide.leafletMap.layers[layer_name].setZIndex(zIndex);
+
+        //todo: to może nie działać dla warstw wektorowych, wtedy można wypróbować dodawanie warstw wektorowych do grupy i przekładanie ich wtedy jako grup
+
+    }
+
+    //*** map_layerMoveUp ***
+    Jupytepide.map_layerMoveDown = function(layer_name){
+        var zIndex = Jupytepide.leafletMap.layers[layer_name].options.zIndex;
+        zIndex = zIndex-1;
+        Jupytepide.leafletMap.layers[layer_name].setZIndex(zIndex);
+
+        //todo: to może nie działać dla warstw wektorowych, wtedy można wypróbować dodawanie warstw wektorowych do grupy i przekładanie ich wtedy jako grup
+
+    }
+
+    //*** map_layerMoveDown ***
 
     Jupytepide.map_addLayerControls = function(baseLayers,overlays){
         Jupytepide.leafletMap.control = leaflet_interface.add_layerControls(baseLayers,overlays);
     };
 
 
-    Jupytepide.map_addControlBaseLayer = function(Layer,name){
+    Jupytepide.map_addControlBaseLayer = function (Layer, name) {
         //Jupytepide.leafletMap.control.addBaseLayer(Layer,name);
     };
 
-    Jupytepide.map_addControlOverlayLayer = function(Layer,name){
+    Jupytepide.map_addControlOverlayLayer = function (Layer, name) {
         //Jupytepide.leafletMap.control.addOverlay(Layer,name);
     };
 
-    Jupytepide.load_image = function(){
+    Jupytepide.load_image = function () {
         leaflet_interface.load_image();
     };
 
     //*** testing area ***
-    Jupytepide.load_madrid = function(){
+    Jupytepide.load_madrid = function () {
         var layer_name = "Madryt";
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_madrid();
         //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name], layer_name);
     };
 
     //method for testing
-    Jupytepide.map_LoadPolygon = function(popupText){
+    Jupytepide.map_LoadPolygon = function (popupText) {
         leaflet_interface.load_test_polygon(popupText);
     };
 

@@ -22,9 +22,9 @@ services:
       - hub-db
     build:
       context: .
-      dockerfile: Dockerfile.jupytepidehub
+      dockerfile: Dockerfile.jupyterhub
       args:
-        DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE}
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
     restart: always
     image: jupytepide-hub
     container_name: jupytepide-hub
@@ -34,6 +34,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
       # Bind Docker volume on host for JupyterHub database and cookie secrets
       - "data:${DATA_VOLUME_CONTAINER}"
+      - "eodata:${EODATA_VOLUME_CONTAINER}"
     ports:
       - "443:443"
     links:
@@ -65,6 +66,8 @@ volumes:
   db:
     external:
       name: ${DB_VOLUME_HOST}
+  eodata:
+
 
 networks:
   default:

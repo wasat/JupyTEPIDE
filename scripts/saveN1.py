@@ -1,8 +1,9 @@
 #!/opt/anaconda/anaconda3/envs/python34/bin/python
-import numpy as np
 import sys
-from PIL import Image
 from os import path
+
+import numpy as np
+from PIL import Image
 from snappy import ProductIO
 
 nowa = sys.argv[1].replace('/', '_')

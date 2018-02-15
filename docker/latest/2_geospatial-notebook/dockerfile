@@ -1,0 +1,38 @@
+# Copyright (c) JupyTEP IDE Development Team.
+# Distributed under the terms of the Modified BSD License.
+ARG DOCKER_VER
+FROM jupytepide/scipy-ext-notebook:$DOCKER_VER
+
+LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
+
+#USER root
+
+# apt-get installs
+#RUN apt-get update -qq && \
+#    apt-get install -qq -y --no-install-recommends && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/*
+
+USER $NB_USER
+
+# Conda installs
+RUN conda install --quiet --yes -c conda-forge \
+    'libgdal=2.2.3*' \
+    'gdal=2.2.3*' \
+    'shapely=1.6.3*' \
+    'fiona=1.7.10*' \
+    'geojson=2.3.0' \
+    'geopandas=0.3.0*' \
+    'geopy=1.11.0*' \
+    'gridgeo=0.2.1*' \
+    'owslib=0.16.0*' && \
+     conda clean -tipsy
+
+USER root
+
+RUN find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
+
+WORKDIR /home/$NB_USER
+USER $NB_USER
