@@ -51,25 +51,10 @@ check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 pull:
 	docker pull $(DOCKER_REG)/$(DOCKER_NOTEBOOK_IMAGE)
 
-notebook_image: pull singleuser/Dockerfile
-	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
-		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
-		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
-		singleuser
-
-jupytep_user_notebook:
-	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
-		--file singleuser/Dockerfile \
-		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
-		--build-arg DOCKER_REG=$(DOCKER_REG) \
-		singleuser
-
-jupytep_user_custom_notebook:
+jupytep_user_spawn_image:
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
 		-f spawn/dockerfile \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) .
-
-jupytep_user_custom_notebook_2: ./build2.sh
 
 build: check-files network volumes
 	docker-compose build
