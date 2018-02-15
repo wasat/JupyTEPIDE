@@ -11,9 +11,9 @@ if [ "$(which "$1")" = "/usr/local/bin/start-singleuser.sh" ]; then
   # if target directory already exists and is not empty, which likely means
   # that we've already done it, so just ignore.
   : ${NOTEBOOK_DIR:=/home/$NB_USER/work}
-  git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git \
+  ls \
     "$NOTEBOOK_DIR/notebook-dev" || true
 fi
 
 # Run the command provided
-exec "$@"
+exec "$@" 

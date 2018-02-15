@@ -66,7 +66,7 @@ jupytep_user_notebook:
 
 jupytep_user_custom_notebook:
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
-		-f singleuser_docker/Dockerfile \
+		-f spawn/dockerfile \
 		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) .
 
 jupytep_user_custom_notebook_2: ./build2.sh

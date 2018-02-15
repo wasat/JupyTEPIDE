@@ -9,13 +9,10 @@ FROM $DOCKER_NOTEBOOK_IMAGE
 USER root
 
 # Install JupyTEP IDE UI layout and enable it
-# RUN mkdir /eodata && \
-#    mkdir /opt/dev && \
-#    cd /opt/dev && \
+#RUN mkdir /home/$NB_USER/dev && \
+#    cd /home/$NB_USER/dev && \
 #    git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
 #    find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
-#    fix-permissions /opt/dev/JupyTEPIDE && \
-#    fix-permissions $CONDA_DIR && \
 #    fix-permissions /home/$NB_USER
 
 COPY docker-entrypoint.sh /srv/docker-entrypoint.sh
@@ -23,7 +20,6 @@ RUN chmod 777 /srv/docker-entrypoint.sh
 ENTRYPOINT ["tini", "--", "/srv/docker-entrypoint.sh"]
 CMD ["start-singleuser.sh"]
 
-WORKDIR /home/$NB_USER
 USER $NB_USER
 
 
