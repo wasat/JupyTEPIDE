@@ -17,9 +17,9 @@ WORKDIR /tmp
 
 # Download and install ESA SNAP toolbox (with all components)
 # Install and configure Snappy
-RUN wget --quiet http://step.esa.int/downloads/5.0/installers/esa-snap_all_unix_5_0.sh && \
-    chmod +x esa-snap_all_unix_5_0.sh && \
-    /bin/bash "esa-snap_all_unix_5_0.sh" -q && \
+RUN wget --quiet http://step.esa.int/downloads/6.0/installers/esa-snap_all_unix_6_0.sh && \
+    chmod +x esa-snap_all_unix_6_0.sh && \
+    /bin/bash "esa-snap_all_unix_6_0.sh" -q && \
     git clone https://github.com/bcdev/jpy.git && \
     cd /tmp/jpy  && \
     python setup.py --quiet --maven bdist_wheel > /dev/null 2>&1
