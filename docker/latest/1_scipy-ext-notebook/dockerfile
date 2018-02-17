@@ -80,12 +80,12 @@ RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ip
 # Create a Python 3.4 environment using conda including at least the ipython kernel
 # and the kernda utility. Add any additional packages you want available for use
 # in a Python 3.4 notebook to the first line here (e.g., pandas, matplotlib, etc.)
-    conda create --quiet --yes -p $CONDA_DIR/envs/python34 python=3.4 ipython ipykernel numpy matplotlib ipyleaflet ipywidgets && \
-    conda clean -tipsy && \
+#    conda create --quiet --yes -p $CONDA_DIR/envs/python34 python=3.4 ipython ipykernel numpy matplotlib ipyleaflet ipywidgets && \
+#    conda clean -tipsy && \
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python34 conda environment.
-    $CONDA_DIR/envs/python34/bin/python -m ipykernel install && \
-    /bin/bash -c "source activate python34" && \
+#    $CONDA_DIR/envs/python34/bin/python -m ipykernel install && \
+#    /bin/bash -c "source activate python34" && \
     conda clean -tipsy
 
 # Install JupyTEP IDE UI layout and enable it
@@ -100,6 +100,7 @@ RUN cd /tmp && \
     cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
     cp /tmp/JupyTEPIDE/scripts/Leaflet/__init__.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
     cp -R /tmp/JupyTEPIDE /opt/ && \
+    npm cache clean && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER

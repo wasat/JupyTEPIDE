@@ -12,8 +12,8 @@ USER root
 RUN mkdir /home/$NB_USER/dev && \
     cd /home/$NB_USER/dev && \
     git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
-    rm -rf /home/$NB_USER/work/notebook-dev && \
-    rm -rf /home/$NB_USER/work/notebook_count && \
+    rm -rf /home/jovyan/work/notebook-dev/ && \
+    rm -rf /home/jovyan/work/notebook_count/ && \
     fix-permissions /home/$NB_USER
 
 COPY spawn/docker-entrypoint.sh /srv/docker-entrypoint.sh
