@@ -22,6 +22,8 @@ RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true 
     apt-get -qq update && \
     apt-get install -qq -y oracle-java8-installer tar && \
     apt-get install -qq -y oracle-java8-set-default && \
+    apt-get autoremove && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/oracle-jdk8-installer
 
@@ -47,16 +49,14 @@ RUN if [ ! -f /tmp/resources/jai-1_1_3-lib-linux-amd64.tar.gz ]; then \
     mv /tmp/jai-1_1_3/lib/*.so $JAVA_HOME/jre/lib/amd64/ && \
     mv /tmp/jai_imageio-1_1/lib/*.jar $JAVA_HOME/jre/lib/ext/ && \
     mv /tmp/jai_imageio-1_1/lib/*.so $JAVA_HOME/jre/lib/amd64/ && \
-    rm /tmp/jai-1_1_3-lib-linux-amd64.tar.gz && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf
 
 ENV PATH="/opt/conda/bin:${PATH}"
 
 # Conda installs
-RUN conda install --quiet --yes -c anaconda-cluster \
-    'apache-maven=3.3.3*' && conda clean -tipsy && \
-    conda install --quiet --yes -c anaconda \
-    'numpy=1.12.1*' && conda clean -tipsy && \
+RUN conda install --quiet --yes -c anaconda \
+    'numpy=1.12.1*' && \
+    conda clean -tipsy && \
     conda install --quiet --yes -c conda-forge \
     'ipyleaflet=0.6.5*' \
     'ipywidgets=7.1.1*' \
@@ -66,7 +66,8 @@ RUN conda install --quiet --yes -c anaconda-cluster \
     'matplotlib=2.1.1*' \
     'nb_conda=2.2.1*' \
     'nb_conda_kernels=2.1.0*' && \
-    conda clean -tipsy && fix-permissions $CONDA_DIR
+    conda clean -tipsy && \
+    fix-permissions $CONDA_DIR
 
 # Create a Python 2.x environment using conda including at least the ipython kernel
 # and the kernda utility. Add any additional packages you want available for use
@@ -77,15 +78,6 @@ RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ip
 # the python2 conda environment.
     $CONDA_DIR/envs/python27/bin/python -m ipykernel install && \
     /bin/bash -c "source activate python27 && kernda -o -y /opt/conda/envs/python27/share/jupyter/kernels/python2/kernel.json && source deactivate python27" && \
-# Create a Python 3.4 environment using conda including at least the ipython kernel
-# and the kernda utility. Add any additional packages you want available for use
-# in a Python 3.4 notebook to the first line here (e.g., pandas, matplotlib, etc.)
-    conda create --quiet --yes -p $CONDA_DIR/envs/python34 python=3.4 ipython ipykernel numpy matplotlib ipyleaflet ipywidgets && \
-    conda clean -tipsy && \
-# Create a global kernelspec in the image and modify it so that it properly activates
-# the python34 conda environment.
-    $CONDA_DIR/envs/python34/bin/python -m ipykernel install && \
-    /bin/bash -c "source activate python34" && \
     conda clean -tipsy
 
 # Install JupyTEP IDE UI layout and enable it
@@ -100,9 +92,11 @@ RUN cd /tmp && \
     cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
     cp /tmp/JupyTEPIDE/scripts/Leaflet/__init__.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
     cp -R /tmp/JupyTEPIDE /opt/ && \
+    npm cache clean && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
+
 WORKDIR /home/$NB_USER
 USER $NB_USER
 
