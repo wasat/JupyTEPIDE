@@ -18,9 +18,9 @@ WORKDIR /tmp
 
 # Download and install ESA SNAP toolbox (with all components)
 # Install and configure Snappy
-COPY esa-snap_all_unix_6_0.sh /tmp/esa-snap_all_unix_6_0.sh
-# RUN wget --quiet http://step.esa.int/downloads/6.0/installers/esa-snap_all_unix_6_0.sh && \
-RUN chmod +x esa-snap_all_unix_6_0.sh && \
+# COPY esa-snap_all_unix_6_0.sh /tmp/esa-snap_all_unix_6_0.sh
+RUN wget --quiet http://step.esa.int/downloads/6.0/installers/esa-snap_all_unix_6_0.sh && \
+    chmod +x esa-snap_all_unix_6_0.sh && \
     /bin/bash "esa-snap_all_unix_6_0.sh" -q
 
 USER $NB_USER
@@ -42,9 +42,9 @@ WORKDIR /opt
 
 # Download and install Orfeo toolbox OTB
 # Standalone install
-COPY OTB-6.4.0-Linux64.run /opt/OTB-6.4.0-Linux64.run
-# RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.4.0-Linux64.run && \
-RUN chmod +x OTB-6.4.0-Linux64.run && \
+# COPY OTB-6.4.0-Linux64.run /opt/OTB-6.4.0-Linux64.run
+RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.4.0-Linux64.run && \
+    chmod +x OTB-6.4.0-Linux64.run && \
     /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.4.0-Linux64.run" -q &&\
     rm -rf OTB-6.4.0-Linux64.run
 
