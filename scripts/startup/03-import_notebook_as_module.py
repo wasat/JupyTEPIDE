@@ -2,9 +2,10 @@ import io
 import os
 import sys
 import types
+
 from IPython import get_ipython
-from nbformat import read
 from IPython.core.interactiveshell import InteractiveShell
+from nbformat import read
 
 """
 Support for importing other notebooks as modules.
