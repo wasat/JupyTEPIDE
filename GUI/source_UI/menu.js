@@ -52,13 +52,13 @@ define([
     // name:string - main menu item name
     //Out:
     //Jquery DOM object to which the menu items will be added
-    function add_menu(name) {
+    function add_menu(options_) {
         //new item in existing menu bar
         var main_menu_item = $('<li/>')
             .addClass('dropdown')
             .append(
                 $('<a href="#">')
-                    .text(name)
+                    .text(options_.name)
                     .addClass('dropdown-toggle')
                     .attr('data-toggle', 'dropdown')
                     .on('click', function (evt) {
@@ -67,7 +67,7 @@ define([
             )
             .appendTo($('.navbar-nav'));
         // empty dropdown list for new main menu item
-        var menu = $('<ul/>')
+        var menu = $('<ul/>',{id:options_.menu_id})
             .addClass('dropdown-menu')
             .appendTo($(main_menu_item)); //id elementu w istniejacym menu glownym
 
@@ -121,44 +121,75 @@ define([
             .appendTo(appendToMenu);
     }
 
+    //*** add_divider ***
+    function add_divider(appendToMenu){
+        $('<li/>')
+            .attr('class', 'divider')
+            .appendTo(appendToMenu);
+    };
+
     //***
     //tworzenie pozycji w menu głownym, przypisanie akcji
 
     function create_menu() {
         //elementy dodane do istniejacej pozycji w main menu - "Help"
-        moje_submenu = add_submenu('Moje menu 1', '#help_menu');
-        add_menu_item('Element 1', 'Opis elementu 1', '#', moje_submenu, function (evt) {
+        // moje_submenu = add_submenu('Moje menu 1', '#help_menu');
+        // add_menu_item('Element 1', 'Opis elementu 1', '#', moje_submenu, function (evt) {
+        //     evt.preventDefault();
+        //     open_notebook('moj_probny.ipynb');
+        // });
+        //
+        // add_menu_item('Element 2', 'Opis elementu 2', '#', moje_submenu, function (evt) {
+        //     evt.preventDefault();
+        // });
+        //
+        // add_menu_item('Element 3', 'Opis elementu 3', '#', moje_submenu, function (evt) {
+        //     evt.preventDefault();
+        // });
+        //
+        // add_menu_item('Element 4', 'Opis elementu 4', '#', moje_submenu, function (evt) {
+        //     evt.preventDefault();
+        // });
+        //
+        // add_menu_item('www.wp.pl', 'Idz do wp.pl', 'http://www.wp.pl', moje_submenu, function (evt) {
+        //     //jak chcemy odpalić href, to onclick musi być pusty, jak tu;
+        // });
+
+
+
+        //Nowa pozycja na pasku Menu o nazwie "Jupytepide"
+        moje_menu = add_menu({name:'Jupytepide',menu_id:'jupytepide_menu'});
+
+        //Snippets
+        add_menu_item('Snippets', 'Choose snippets', '#', moje_menu, function (evt) {
             evt.preventDefault();
-            open_notebook('moj_probny.ipynb');
+            //open_notebook('moj_probny.ipynb');
         });
 
-        add_menu_item('Element 2', 'Opis elementu 2', '#', moje_submenu, function (evt) {
+        //Notebooks
+        add_menu_item('Notebooks', 'Choose notebooks', '#', moje_menu, function (evt) {
             evt.preventDefault();
         });
 
-        add_menu_item('Element 3', 'Opis elementu 3', '#', moje_submenu, function (evt) {
+        //Map
+        moje_submenu = add_submenu('Map', '#jupytepide_menu');
+            //Add layer
+        add_menu_item('Add layer', 'Add new layer', '#', moje_submenu, function (evt) {
+            evt.preventDefault();
+        });
+            //Settings
+        add_menu_item('Settings', 'Map settings', '#', moje_submenu, function (evt) {
             evt.preventDefault();
         });
 
-        add_menu_item('Element 4', 'Opis elementu 4', '#', moje_submenu, function (evt) {
+        add_divider(moje_menu);
+
+        //About Jupytepide
+        add_menu_item('About Jupytepide', 'About Jupytepide', '#', moje_menu, function (evt) {
             evt.preventDefault();
         });
 
-        add_menu_item('www.wp.pl', 'Idz do wp.pl', 'http://www.wp.pl', moje_submenu, function (evt) {
-            //jak chcemy odpalić href, to onclick musi być pusty, jak tu;
-        });
 
-        //Nowa pozycja na pasku Menu o nazwie "Nowe menu"
-        moje_menu = add_menu('Nowe menu');
-
-        add_menu_item('Otworz probny notebook', 'Otworz probny notebook', '#', moje_menu, function (evt) {
-            evt.preventDefault();
-            open_notebook('moj_probny.ipynb');
-        });
-
-        add_menu_item('Element 1', 'Opis elementu 1', '#', moje_menu, function (evt) {
-            evt.preventDefault();
-        });
 
     }
 

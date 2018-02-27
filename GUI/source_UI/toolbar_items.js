@@ -123,7 +123,7 @@ define([
         var test = make_action('test', 'my_ext2', 'fa-comment-o', 'testuj', 'testuj', testowanie_handler);
         var test_leaflet = make_action('test_leaflet', 'my_ext2', 'fa-comment-o', 'testuj_leaflet', 'testuj_leaflet', testowanie_leaflet_handler);
         //Load buttons to UI
-        Jupyter.toolbar.add_buttons_group([komunikat, komunikat2, test, test_leaflet]);
+        //Jupyter.toolbar.add_buttons_group([komunikat, komunikat2, test, test_leaflet]);
 
     }
 
