@@ -1,6 +1,7 @@
 #!/opt/anaconda/anaconda3/envs/python34/bin/python
-import snappy
 import sys
+
+import snappy
 
 
 def main(x):
@@ -19,4 +20,4 @@ def main(x):
 
 
 if __name__ == '__main__':
-    print (main(sys.argv[1]))
+    print(main(sys.argv[1]))

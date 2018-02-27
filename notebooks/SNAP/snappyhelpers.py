@@ -1,4 +1,4 @@
-from snappy import ProductIO, GPF, jpy
+from snappy import jpy
 
 
 class pyHashMap(dict):
