@@ -115,7 +115,7 @@ define([
         var baseLayers = {
 
             "Mapbox:streets":Jupytepide.leafletMap.layers.mapbox,
-            "OSM <a href='#'>ooo</a>":Jupytepide.leafletMap.layers.osm
+            "OSM":Jupytepide.leafletMap.layers.osm
         };
 
         var overlays ={};
@@ -189,7 +189,8 @@ define([
 
     //*** add_layerControls ***
     var add_layerControls = function(baseLayers,overlays){
-        return L.control.layers(baseLayers,overlays,{collapsed:false}).addTo(Jupytepide.leafletMap);
+        return L.control.layers(baseLayers,overlays,{collapsed:true}).addTo(Jupytepide.leafletMap);
+
     };
 
     //*** add_controlBaseLayer ***

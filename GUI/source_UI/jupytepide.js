@@ -171,16 +171,27 @@ define([
     //          layer_name="Layer name"
     //example2: url='/nbextensions/source_UI/madrid/{z}/{x}/{y}.png' - own (local) tile layer
     Jupytepide.map_addTileLayer = function(url_,attrib,layer_name){
+       // attrib == null ? {} : attrib;
+        //tworzy nowy PANE dla warstwy
+        //attrib.pane = layer_name; //gdy ta opcja jest ustawiona, warstwa zostanie dodana do tego pane, zamiast do domyślnego
+        //Jupytepide.leafletMap.createPane(attrib.pane);
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_tileLayer(url_,attrib);
         //dodaje do control.layers (do menu z checkboxem)
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+
+        //oznacz element listy klasą
+        $( document ).ready(function() {
+            $('.leaflet-control-layers-overlays label div').addClass('l-layer');
+        });
     };
     /**
      * Adds a GEOJSON vector layer into the map.
      * The simple example is provided here, but there are much more possibilities of usage.
      * Jupytepide leaflet-based map uses [lat,lon] while GEOJSON uses [lon,lat] coordinates.
      * More at: <a href="http://leafletjs.com/examples/geojson/">http://leafletjs.com/examples/geojson/</a>
+     * The layer added with map_addGeoJsonLayer method has already binded a popup (to each feature), which
+     * text is loaded from GEOJSON's feature.properties.description attribute.
      * @example
      * //first GEOJSON feature
      * var geojsonFeature ={
@@ -209,10 +220,78 @@ define([
 
     Jupytepide.map_addGeoJsonLayer = function(data,layer_name,options){
         options == null ? {} : options;
+        //tworzy nowy PANE dla warstwy - to sprawia, że dodanie i usunięcie warstwy powoduje, że za kolejnym razem załaduje się pusta....(tylko geojson tak robi)
+        //options.pane = layer_name; //gdy ta opcja jest ustawiona, warstwa zostanie dodana do tego pane, zamiast do domyślnego
+        //Jupytepide.leafletMap.createPane(options.pane);
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_geoJsonLayer(data,options);
+
         //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+         var optClick = $('<a/>',{href:'#',
+                                  id:'optLayer_'+layer_name,
+                                  onclick:'Jupytepide.alertTest'
+         }).html('opcje'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
+
+        // var optBody = $('<div/>',{id:'optBody_'+layer_name}).html('Tu będą opcje'+layer_name);
+
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name+" "+optClick[0].outerHTML);
+    //    $('#optLayer_'+layer_name).append(optBody);
+        $( document ).ready(function() {
+            if (!$('.leaflet-control-layers-overlays label').is('#lbl_' + layer_name)) {
+                $('.leaflet-control-layers-overlays label').attr('id', 'lbl_' + layer_name)
+            };
+
+        });
+        //TRZEBA TO OBSŁUŻYĆ POZA FUNKCJĄ DODAWANIA WARSTWY.....
+
+        //trzeba "złapać" ten dodany <a> z identyfikatorem i odwołać się do jego "parentów", żeby nadać
+        // elementowi <label> id o nazwie warstwy, wtedy będzie można przypisać onclick indywidualnie...
+
+        //nie może tak być jak poniżej, bo on robi to na wszystkiech elementach na raz
+        // $( document ).ready(function() {
+        //     $('.leaflet-control-layers-overlays label div').addClass('l-layer');
+        //
+        //      //$('.leaflet-control-layers-overlays label').append(optBody);
+        //
+        //
+        //     $('#optLayer').click(function(){
+        //         $('#optBody').slideToggle('medium');
+        //     });
+        //
+        //     //optBody.hide();
+        //
+        // });
+    };
+    //************************************************************
+
+    Jupytepide.layersTest = function (){
+        //var optClick = $('<a/>',{href:'#',id:'optLayer_'+layer_name}).html('opcje'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
+        var optBody = $('<div/>',{id:'optBody'}).html('Tu będą opcje');
+
+        //$('#optLayer_GEOJSON_MADRID1').append(optBody);
+//optBody i optLayer muszą mieć suffix z nazwy warstwy, wtedy połaczę je w pary i onclick zadziała tylko na jedną na raz
+// zatem do tej funkcji musi wejśc nazwa warstwy, a warstwy trzeba przejść w pętli i zaaplikować to na wszystkich.
+//dodawać optBody zaraz po elemencie $('.leaflet-control-layers-overlays label #lbl_'+layer_name)
+        $( document ).ready(function() {
+            //$('.leaflet-control-layers-overlays label div').addClass('l-layer');
+
+            $('#lbl_GEOJSON_MADRID1').append(optBody);
+
+
+            $('#optLayer_GEOJSON_MADRID1').click(function(){
+                $('#optBody').slideToggle('medium');
+            });
+
+            //optBody.hide();
+
+        });
+    };
+
+    //To wszystko nie działa.... on sobie jakoś to odświeża i wychodzi lipa.
+    //Spróbować dać taką funkcję onClick, żeby dawała wartość klikniętego elementu (niech da nazwę warstwy)
+
+    Jupytepide.alertTest = function (){
+        alert("Działa");
     };
 
     /**
@@ -255,6 +334,13 @@ define([
         Jupytepide.leafletMap.control.removeLayer(Jupytepide.leafletMap.layers[layer_name]);
         //remove layer from Jupytepide
         delete Jupytepide.leafletMap.layers[layer_name];
+
+        //remove pane created (in DOM) for that layer (if exists)
+        if ($('.leaflet-'+layer_name+'-pane')) {
+            $('.leaflet-'+layer_name+'-pane').remove();
+        };
+
+        // ale najpierw spr czy istnieje
     };
 
     //*** map_layerMoveUp ***

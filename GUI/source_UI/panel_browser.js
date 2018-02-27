@@ -54,7 +54,7 @@ define([
 //****
     var side_panel_min_rel_width = 10;
     var side_panel_max_rel_width = 90;
-    var side_panel_start_width = 28;
+    var side_panel_start_width = 22;
 
     var build_side_panel = function (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
@@ -499,7 +499,7 @@ define([
 
         var action = {
             icon: 'fa-film', // a font-awesome class used on buttons, etc
-            help: 'Pokaz panel boczny',
+            help: 'Toggle side panel',
             help_index: 'to by mogla byc pomoc',
             handler: togglePanel
         };
