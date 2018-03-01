@@ -129,6 +129,12 @@ span#login_widget > .button, #logout {
     color: #f85b28;
 }
 
+/*wysokość całej apki zmniejszymy, bo musi się zmieścić na dole pasek mapy*/
+#ipython-main-app {
+    height:94%;
+}
+
+
 /*
 kolor na obramowanie wybranej celki: #6f6c75
 div.cell.selected, div.cell.selected.jupyter-soft-selected
