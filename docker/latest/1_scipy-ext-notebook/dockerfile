@@ -12,7 +12,7 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 # apt-get installs
 RUN apt-get update -qq && \
-    apt-get install -y -qq --no-install-recommends software-properties-common apt-utils nano mc && \
+    apt-get install -y -qq --no-install-recommends software-properties-common apt-utils nano mc python-autopep8 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
