@@ -66,13 +66,17 @@ RUN conda install --quiet --yes -c anaconda \
     'matplotlib=2.1.1*' \
     'nb_conda=2.2.1*' \
     'nb_conda_kernels=2.1.0*' && \
+    pip install -q --no-cache-dir --upgrade autopep8 &&\
+    jupyter nbextension enable code_prettify/autopep8 --user &&\
+    jupyter nbextension enable --py latex_envs --user &&\
+    jupyter nbextension enable table_beautifier/main --user &&\
     conda clean -tipsy && \
     fix-permissions $CONDA_DIR
 
 # Create a Python 2.x environment using conda including at least the ipython kernel
 # and the kernda utility. Add any additional packages you want available for use
 # in a Python 2 notebook to the first line here (e.g., pandas, matplotlib, etc.)
-RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel numpy matplotlib kernda && \
+RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel numpy matplotlib pip autopep8 kernda && \
     conda clean -tipsy && \
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
