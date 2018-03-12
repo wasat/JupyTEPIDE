@@ -189,7 +189,8 @@ define([
         var map_panel = build_map_panel();
 
         //existing notebook UI element
-        var main_panel = $('#notebook-container'); //albo wstawiać go za tym elementem, albo za site...
+        //var main_panel = $('#notebook-container'); //albo wstawiać go za tym elementem, albo za site...
+        var main_panel = $('#notebook_panel'); //albo wstawiać go za tym elementem, albo za site...
 
         //#flip_map //,style:'background-color:#1c1c1c;width:100%;height:30px;'
         var flip = $('<div/>', {id: 'flip_map', class: 'container toolbar'});
@@ -201,10 +202,14 @@ define([
         //TODO jeżeli ma to być pod notebook to zrobić przewijanie okna do mapy z guzika na toolbarze
         //TODO pomyśleć jeszcze jak najlepiej umieścić okno mapy
 
+        $('#ipython-main-app',{style:'height:94%;'});
+
         flip.insertAfter(main_panel);
+        //wstawienie panelu z mapą
         map_panel.insertAfter(flip);
         map_panel.show();
-        var visible = true;
+        map_panel.slideToggle('medium');
+        var visible = false;
 
         //load_ol_map();
         //załadowanie leafleta
