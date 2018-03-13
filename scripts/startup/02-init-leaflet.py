@@ -1,5 +1,4 @@
 import json
-
 from IPython.display import HTML, display
 
 
@@ -132,6 +131,7 @@ class Leaflet():
         display(HTML(htm))
 
 
+
 class WMSLayer():
     htm = ''
     wmsAttribs = {
@@ -170,6 +170,40 @@ class WMSLayer():
 
     def changeAttributes(self, name, value):
         self.wmsAttribs[name] = value
+
+
+class ImageLayer():
+    htm = ''
+    attribs = {'opacity': '0.3'}
+    name = ''
+    url = ''
+    bounds = ''
+
+    def attributesTostring(self):
+        wynik = ''
+        for k, v in self.attribs.items():
+            wynik += k + ":'" + v + "',"
+        return (wynik[:-1])
+
+    def addImageLayer(self, url, bounds, name, attrib=-1):
+        if (attrib != -1):
+            self.wmsAttribs = attrib
+        self.name = name
+        self.url = url
+        self.bounds = bounds
+
+    def showLayer(self):
+        self.htm = '''<script type="text/javascript">Jupytepide.map_addImageLayer("%s",%s,'%s',{%s});</script>''' \
+                   % (self.url, self.bounds, self.name, self.attributesTostring())
+        display(HTML(self.htm))
+
+    def removeLayer(self):
+        htm = '''<script type="text/javascript">Jupytepide.map_removeLayer("%s");</script>''' %self.name
+        display(HTML(htm))
+
+    def changeAttributes(self, name, value):
+        self.attribs[name] = value
+
 
 
 def Main():
