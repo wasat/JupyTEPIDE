@@ -2,15 +2,22 @@ import os
 
 from oauthenticator.google import GoogleOAuthenticator
 
+c = get_config()
+
 c.JupyterHub.authenticator_class = GoogleOAuthenticator
-c.GoogleOAuthenticator.oauth_callback_url = 'http://server_url.com/hub/oauth_callback'
-c.GoogleOAuthenticator.client_id = ''
-c.GoogleOAuthenticator.client_secret = ''
+c.GoogleOAuthenticator.oauth_callback_url = 'http://jupytepide-swarm.wasat.pl/hub/oauth_callback'
+c.GoogleOAuthenticator.client_id = '484740039031-okb9brgs9b8saj00u6asltastmbd4ko1.apps.googleusercontent.com'
+c.GoogleOAuthenticator.client_secret = 'wfFbhwoDlMfcgeVcENcH-SaT'
+
+# c.JupyterHub.authenticator_class = 'oauthenticator.GitHubOAuthenticator'
+# c.GitHubOAuthenticator.oauth_callback_url = 'https://185.52.193.12/hub/oauth_callback'
+# c.GitHubOAuthenticator.client_id = 'b68114058cb019b0a42e'
+# c.GitHubOAuthenticator.client_secret = '770dfe07a7a75fd9d02a27a19f24534610e17cd8'
 
 ## The public facing port of the proxy
-c.JupyterHub.port = 8000
+c.JupyterHub.port = 9080
 ## The public facing ip of the whole application (the proxy)
-c.JupyterHub.ip = '0.0.0.0'
+c.JupyterHub.ip = '89.250.194.14'
 ## The ip for this process
 c.JupyterHub.hub_ip = '0.0.0.0'
 #  Defaults to an empty set, in which case no user has admin access.
@@ -32,7 +39,7 @@ mounts = [{'type': 'volume',
                'name': 'local',
                'options': {
                    'type': 'nfs4',
-                   'o': 'addr=SERVER_IP,rw',
+                   'o': 'addr=192.168.1.200,rw',
                    'device': ':/var/nfs/{username}/'
                }
            },
@@ -41,7 +48,7 @@ mounts = [{'type': 'volume',
 c.SwarmSpawner.container_spec = {
     # The command to run inside the service
     'args': ['/usr/local/bin/start-singleuser.sh'],  # (string or list)
-    'Image': 'jupyter/datascience-notebook:latest',
+    'Image': 'jupytepide/eodata-notebook:latest',
     # Replace mounts with [] to disable permanent storage
     'mounts': mounts
 }
