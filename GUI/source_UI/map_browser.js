@@ -29,8 +29,7 @@ define([
             undefinedHTML: '&nbsp;'
         });
         return mousePositionControl;
-    };
-
+    }
     //** OpenLayers map loading ***
     function load_ol_map() {
 
@@ -64,8 +63,7 @@ define([
                 zoom: 10
             })
         });
-    };
-
+    }
     //*** Leaflet map loading ***
     //Loading map with leaflet JS script, embeded in Jupytepide
 
@@ -95,7 +93,7 @@ define([
         //    .bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 
         leaflet.marker([51.5, -0.09], {icon: myIcon}).addTo(mymap)
-            .bindPopup("<b>Hello world!</b><br />I am a popup.")
+            .bindPopup("<b>Hello world!</b><br />I am a popup.");
 
         leaflet.circle([51.508, -0.11], 500, {
             color: 'red',
@@ -126,8 +124,7 @@ define([
         //$.getScript(require.toUrl('./' + 'leaflet_interface' + '.js'));
         //$.getScript('/nbextensions/source_UI/leaflet_interface.js');
 
-    };
-
+    }
     //*** ładowanie mapy z użyciem rozszerzenia ipyleaflet ***
     //Mapa ładowana jest do nowo dodanej celki, jej kod źródłowy jest ukrywany
     function load_ipyleaflet_map() {
@@ -147,8 +144,7 @@ define([
         new_cell.unselect(true);
         var first_cell = Jupyter.notebook.get_cell(0);
         first_cell.select();
-    };
-
+    }
     function build_map_panel() {
         //#map_panel - for map containing
         //openlayers scripts and CSS - look at css_loader.js
@@ -176,14 +172,12 @@ define([
         //html('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel lorem. Etiam pellentesque aliquet tellus. Phasellus pharetra nulla ac diam. Quisque semper justo at risus. Donec venenatis, turpis vel hendrerit interdum, dui ligula ultricies purus, sed posuere libero dui id orci. Nam congue, pede vitae dapibus aliquet, elit magna vulputate arcu, vel tempus metus leo non est. Etiam sit amet lectus quis est congue mollis. Phasellus congue lacus eget neque. Phasellus ornare, ante vitae consectetuer consequat, purus sapien ultricies dolor, et mollis pede metus eget nisi. Praesent sodales velit quis augue. Cras suscipit, urna at aliquam rhoncus, urna quam viverra nisi, in interdum massa nibh nec erat.');
 
         return map_panel;
-    };
-
+    }
     var leafletMap;
 
     function getLeafletMap() {
         return this.leafletMap;
-    };
-
+    }
     function load_extension() {
         //load_ipyleaflet_map();
         var map_panel = build_map_panel();
@@ -243,8 +237,7 @@ define([
             //alert(map_panel.position().top);
         });
 
-    };
-
+    }
     // return public methods
     return {
         load_ipython_extension: load_extension,

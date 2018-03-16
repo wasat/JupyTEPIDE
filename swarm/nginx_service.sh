@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 docker service create \
   --name nginx \
   --constraint 'node.role == manager' \
