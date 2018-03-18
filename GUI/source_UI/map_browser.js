@@ -164,7 +164,7 @@ define([
         });
 
         //mapa
-        var map_container = $('<div/>', {id: 'map_container', style: 'width:100%;height:400px;position:relative;'});
+        var map_container = $('<div/>', {id: 'map_container', style: 'width:100%;height:100%;position:relative;'});
         //elementy leafleta - można ich nie dodawać
         //map_container.append($('<div/>',{class:'leaflet-pane leaflet-map-pane',style:'transform: translate3d(-32px, -14px, 0px);'}));
         //map_container.append($('<div/>',{class:'leaflet-control-container'}));

@@ -346,7 +346,7 @@ define([
 
         side_panel_inner.append(tabsUl);
         // zawartość zakładek
-        var tabContDiv = $('<div/>').addClass('tab-content');
+        var tabContDiv = $('<div/>').addClass('tab-content').css({height:'85%'});
         //make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
         //make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
         //make_tab_div('tab-pane', '3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
@@ -493,12 +493,9 @@ define([
         //map_panel.slideToggle('medium');
         leaflet_interface.load_map("map_container");
         leaflet_interface.load_initialBaseLayers();
-        //alert("dodano dane karty");
         //Jupytepide.leafletMap.invalidateSize();
-     //   $( document ).ready(function() {
-       //     leaflet_interface.map_invalidateSize();
-     //       Jupytepide.leafletMap.invalidateSize();
-        //});
+
+
 //kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
 
 
