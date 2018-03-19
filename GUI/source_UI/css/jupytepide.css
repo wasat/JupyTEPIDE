@@ -129,11 +129,11 @@ span#login_widget > .button, #logout {
     color: #f85b28;
 }
 
-/*wysokość całej apki zmniejszymy, bo musi się zmieścić na dole pasek mapy*/
+/*wysokość całej apki zmniejszymy - jeżeli chcemy na dole dodać pasek (np. rozwijalny)
 #ipython-main-app {
     height:94%;
 }
-
+*/
 
 /*
 kolor na obramowanie wybranej celki: #6f6c75

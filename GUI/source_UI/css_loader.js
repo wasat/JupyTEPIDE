@@ -87,6 +87,7 @@ define([
             .attr('rel', 'stylesheet')
             .attr('type', 'text/css'));
 
+       // $('body').append($('<script/>')).text('Jupytepide.leafletMap.invalidateSize();');
     };
 
     //*** make_action ***

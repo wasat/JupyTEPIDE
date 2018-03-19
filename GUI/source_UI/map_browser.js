@@ -17,6 +17,8 @@ define([
              leaflet,
              leaflet_interface) {
 
+    //var MapBrowser={}
+
     function getMousePos() {
         //Mouse position obtaining
         var mousePositionControl = new ol.control.MousePosition({
@@ -158,11 +160,11 @@ define([
         var map_panel = $('<div/>', {
             id: 'map_panel',
             class: 'map_panel',
-            style: 'background-color:white; width:100%;position:relative;'
+            style: 'background-color:white; width:100%;height:100%;position:relative;'
         });
 
         //mapa
-        var map_container = $('<div/>', {id: 'map_container', style: 'width:100%;height:400px;position:relative;'});
+        var map_container = $('<div/>', {id: 'map_container', style: 'width:100%;height:100%;position:relative;'});
         //elementy leafleta - można ich nie dodawać
         //map_container.append($('<div/>',{class:'leaflet-pane leaflet-map-pane',style:'transform: translate3d(-32px, -14px, 0px);'}));
         //map_container.append($('<div/>',{class:'leaflet-control-container'}));
@@ -184,6 +186,7 @@ define([
         return this.leafletMap;
     };
 
+    //to jest na razie odłączone od ładowania z main.js. Mapa wczytuje się w panel_browser.js
     function load_extension() {
         //load_ipyleaflet_map();
         var map_panel = build_map_panel();
@@ -202,7 +205,6 @@ define([
         //TODO jeżeli ma to być pod notebook to zrobić przewijanie okna do mapy z guzika na toolbarze
         //TODO pomyśleć jeszcze jak najlepiej umieścić okno mapy
 
-        $('#ipython-main-app',{style:'height:94%;'});
 
         flip.insertAfter(main_panel);
         //wstawienie panelu z mapą
@@ -214,6 +216,7 @@ define([
         //load_ol_map();
         //załadowanie leafleta
         leaflet_interface.load_map("map_container");
+
         //warstwa inicjalizacyjna mapy
         //leaflet_interface.load_mapboxLayer();
         leaflet_interface.load_initialBaseLayers();
@@ -248,7 +251,8 @@ define([
     // return public methods
     return {
         load_ipython_extension: load_extension,
-        getLeafletMap: getLeafletMap
+        getLeafletMap: getLeafletMap,
+        build_map_panel: build_map_panel
 
     };
 });
