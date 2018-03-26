@@ -40,15 +40,14 @@ define([
 
         //Jupyter theme style (look at folder ./css/)
         var $link = $('<link/>');
-        $('head').append($link);
-
-        $link.attr('href', require.toUrl('./css/' + 'bootstrap.min' + '.css'))
-            .attr('rel', 'stylesheet')
-            .attr('type', 'text/css');
+        //$('head').append($link);
+        //$link.attr('href', require.toUrl('./css/' + 'bootstrap.min' + '.css'))
+        //   .attr('rel', 'stylesheet')
+        //    .attr('type', 'text/css');
 
         //jupyTEPIDE style
         var $jlink = $('<link/>');
-        $('head').append($jlink);
+        //$('head').append($jlink);
 
         $jlink.attr('href', require.toUrl('./css/' + 'jupytepide' + '.css'))
             .attr('rel', 'stylesheet')
