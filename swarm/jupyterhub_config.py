@@ -37,7 +37,7 @@ mounts = [{'type': 'volume',
                'name': 'local',
                'options': {
                    'type': 'nfs4',
-                   'o': 'addr=89.250.194.14,rw',
+                   'o': 'addr=192.168.1.200,rw',
                    'device': ':/var/nfs/{username}/'
                }
            },
