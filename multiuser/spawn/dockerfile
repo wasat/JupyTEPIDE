@@ -17,12 +17,12 @@ RUN mkdir /home/$NB_USER/dev && \
     fix-permissions /home/$NB_USER
 
 # Testing RUN block for remove!!!
-RUN pip install --upgrade autopep8 &&\
-    /bin/bash -c "source activate python27 && pip install -q --no-cache-dir --upgrade autopep8 && source deactivate python27" && \
-    # $CONDA_DIR/envs/python27/bin/python pip install -q --no-cache-dir --upgrade autopep8 &&\
-    jupyter nbextension enable code_prettify/autopep8 --user &&\
-    jupyter nbextension enable --py latex_envs --user &&\
-    jupyter nbextension enable table_beautifier/main --user
+# RUN pip install --upgrade autopep8 &&\
+#    /bin/bash -c "source activate python27 && pip install -q --no-cache-dir --upgrade autopep8 && source deactivate python27" && \
+#    # $CONDA_DIR/envs/python27/bin/python pip install -q --no-cache-dir --upgrade autopep8 &&\
+#    jupyter nbextension enable code_prettify/autopep8 --user &&\
+#    jupyter nbextension enable --py latex_envs --user &&\
+#    jupyter nbextension enable table_beautifier/main --user
 
 COPY spawn/docker-entrypoint.sh /srv/docker-entrypoint.sh
 RUN chmod 777 /srv/docker-entrypoint.sh
@@ -31,5 +31,3 @@ CMD ["start-singleuser.sh"]
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
-
-
