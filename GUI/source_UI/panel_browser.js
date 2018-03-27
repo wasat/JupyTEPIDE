@@ -179,7 +179,9 @@ define([
             };
         }
 
-        side_panel.animate({width: desired_width + '%'}, anim_opts).promise().then(function(){Jupytepide.leafletMap.invalidateSize();});//invalidateSize odpali po zakończeniu animacji
+        side_panel.animate({width: desired_width + '%'}, anim_opts).promise().then(function () {
+            Jupytepide.leafletMap.invalidateSize();
+        });//invalidateSize odpali po zakończeniu animacji
 
 
         return visible;
@@ -346,7 +348,7 @@ define([
 
         side_panel_inner.append(tabsUl);
         // zawartość zakładek
-        var tabContDiv = $('<div/>').addClass('tab-content').css({height:'85%'});
+        var tabContDiv = $('<div/>').addClass('tab-content').css({height: '85%'});
         //make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
         //make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
         //make_tab_div('tab-pane', '3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
@@ -369,7 +371,9 @@ define([
 
 
         //dla leafleta - odswiezanie mapy
-        $('.nav-tabs a').on('shown.bs.tab', function(event){Jupytepide.leafletMap.invalidateSize()});
+        $('.nav-tabs a').on('shown.bs.tab', function (event) {
+            Jupytepide.leafletMap.invalidateSize()
+        });
 
 
         var rowItemArray = [];
@@ -486,7 +490,7 @@ define([
 //Karta Map
         //var map_panel = map_browser.build_map_panel();
 
-        $('#1karta').append(map_panel).css({height:'100%'});
+        $('#1karta').append(map_panel).css({height: '100%'});
 
         //map_panel.show();
         //map_panel.slideToggle('medium');
@@ -519,15 +523,12 @@ define([
         var visible = slide_side_panel(main_panel, side_panel);
         //side_panel.finish();
         //alert("sdfdsds");
-       // Jupytepide.leafletMap.invalidateSize();
+        // Jupytepide.leafletMap.invalidateSize();
 
         if (params.help_panel_add_toolbar_button) {
             $('#btn_help_panel').toggleClass('active', visible);
 
-        };
-
-
-
+        }
         return visible;
     };
 
@@ -569,8 +570,8 @@ define([
         togglePanel();
 
         //$( document ).ready(function() {
-            //leaflet_interface.map_invalidateSize();
-            //Jupytepide.leafletMap.invalidateSize();
+        //leaflet_interface.map_invalidateSize();
+        //Jupytepide.leafletMap.invalidateSize();
         //});
 
     }

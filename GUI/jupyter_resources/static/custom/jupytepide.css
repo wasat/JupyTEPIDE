@@ -24,7 +24,6 @@ body {
     font-size: 12px;
 }
 
-
 .notebook_app {
     background-color: #3C3F41;
 }
@@ -54,6 +53,7 @@ body {
 .list_container > div {
     border-bottom: 1px dashed #3b3b3e;
 }
+
 /*
 .col-md-12:hover {
     background-color:#282828;
@@ -61,7 +61,7 @@ body {
 */
 
 .list_item:hover {
-    background-color:#3b3b3e;
+    background-color: #3b3b3e;
 }
 
 .list_header > div, .list_item > div {
