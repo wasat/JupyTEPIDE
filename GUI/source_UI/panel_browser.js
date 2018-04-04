@@ -325,6 +325,19 @@ define([
 
     };
 
+    var make_snippets_menu_item = function(element){
+
+        var menu_snippets_item_header = $('<a/>',{href:'#'}).addClass('menu_snippets_item_header').html(element.group_name).append($('<br>'));
+        var menu_snippets_item_content = $('<div/>').addClass('menu_snippets_item_content');
+        var item = {header:menu_snippets_item_header,content:menu_snippets_item_content};
+
+         menu_snippets_item_header.click(function(){
+            menu_snippets_item_content.slideToggle();
+         });
+
+        return item;
+    };
+
     //proste wstawianie do panelu
     // w tej metodzie dodać tworzenie całej zawartości panelu - czyli zakładki tu
     var insert_into_side_panel;
@@ -463,7 +476,21 @@ define([
         //var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
         var naglowek3 = $('<div/>').addClass('list_container');
         $('#2karta').append(naglowek3);
+        var menu_snippets = $('<div/>').addClass('menu_snippets');
+        //var menu_snippets_item_header = $('<a/>',{href:'#'}).addClass('menu_snippets_item_header').html('NAZWA GRUPY');
+        //var menu_snippets_item_content = $('<div/>').addClass('menu_snippets_item_content');
 
+        var menu_item;
+        for (i=0;i<3;i++){
+        menu_item = make_snippets_menu_item({group_name:'Nazwa grupy'+i});
+        menu_snippets.append(menu_item.header).append(menu_item.content);
+        menu_item={};
+        }
+       // menu_snippets_item_header.click(function(){
+       //    menu_snippets_item_content.slideToggle();
+       // });
+
+        $('#2karta').append(menu_snippets);
 
         //Load snippets from JSON
         var snippetsList = [];
@@ -480,7 +507,7 @@ define([
             };
         }
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#2karta').append(make_row_item(rowItemArray[i]));
+            $('.menu_snippets_item_content').append(make_row_item(rowItemArray[i]));
         }
 
 //Karta Map
