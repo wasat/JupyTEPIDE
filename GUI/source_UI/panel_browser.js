@@ -327,14 +327,14 @@ define([
 
     var make_snippets_menu_item = function(element){
 
-        var menu_snippets_item_header = $('<a/>',{href:'#'}).addClass('menu_snippets_item_header').html(element.group_name).append($('<br>'));
-        var menu_snippets_item_content = $('<div/>').addClass('menu_snippets_item_content');
+        var menu_snippets_item_header = $('<a/>',{href:'#',id:element.id}).addClass('menu_snippets_item_header').html(element.group_name).append($('<br>'));
+        var menu_snippets_item_content = $('<div/>',{id:element.id}).addClass('menu_snippets_item_content');
         var item = {header:menu_snippets_item_header,content:menu_snippets_item_content};
 
          menu_snippets_item_header.click(function(){
             menu_snippets_item_content.slideToggle();
          });
-
+        menu_snippets_item_content.hide();
         return item;
     };
 
@@ -472,43 +472,42 @@ define([
 
 //Karta Snippets
 
-        //Nagłówek listy
-        //var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
         var naglowek3 = $('<div/>').addClass('list_container');
         $('#2karta').append(naglowek3);
         var menu_snippets = $('<div/>').addClass('menu_snippets');
-        //var menu_snippets_item_header = $('<a/>',{href:'#'}).addClass('menu_snippets_item_header').html('NAZWA GRUPY');
-        //var menu_snippets_item_content = $('<div/>').addClass('menu_snippets_item_content');
 
         var menu_item;
-        for (i=0;i<3;i++){
-        menu_item = make_snippets_menu_item({group_name:'Nazwa grupy'+i});
-        menu_snippets.append(menu_item.header).append(menu_item.content);
-        menu_item={};
-        }
-       // menu_snippets_item_header.click(function(){
-       //    menu_snippets_item_content.slideToggle();
-       // });
+        var menu_groupsList = code_snippets.getSnippetsGroups();
+
+        //loading snippets groups from JSON, making headers and empty content DOM elements
+        //creating empty menu with groups headers
+        for (i=0;i<menu_groupsList.length;i++){
+            var group_name = menu_groupsList[i].group_name;
+            var group_id = menu_groupsList[i].group_id;
+            menu_item = make_snippets_menu_item({group_name:group_name,id:group_id});
+            menu_snippets.append(menu_item.header).append(menu_item.content);
+            menu_item={};
+        };
 
         $('#2karta').append(menu_snippets);
 
         //Load snippets from JSON
+        //loading menu snippets items content (snippets names) into appropriate groups
+        //creating menu with groups headers and grouped items
         var snippetsList = [];
-
-        snippetsList = code_snippets.getSnippetsList();
+        snippetsList = code_snippets.getSnippetsList1();
         for (i = 0; i < snippetsList.length; i++) {
-
-            rowItemArray[i] = {
-                name: snippetsList[i],
+            var id=snippetsList[i].group;
+            $('#'+id+'.menu_snippets_item_content').append(make_row_item({
+                name: snippetsList[i].name,
                 link: '#',
                 time: 'yesterday',
-                snippet_name: snippetsList[i],
+                snippet_name: snippetsList[i].name,
                 on_click: code_snippets.insert_snippet_cell
-            };
+            }));
+
         }
-        for (i = 0; i < rowItemArray.length; i++) {
-            $('.menu_snippets_item_content').append(make_row_item(rowItemArray[i]));
-        }
+
 
 //Karta Map
         //var map_panel = map_browser.build_map_panel();

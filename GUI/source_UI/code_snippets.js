@@ -137,7 +137,7 @@ define([
             // Insert snippet from JSON file named "snippet_name"
             $.each(data['code_snippets'], function (key, snippet) {
                 //snippetsNames.push(snippet['name']);
-                snippetsNames.push({group:snippet['group'],name:snippet['name'],link:'#',time:'yesterday',snippet_name:'Example1'});
+                snippetsNames.push({group:snippet['group'],name:snippet['name']});
 
             });
         });
@@ -158,7 +158,7 @@ define([
             // Insert snippet from JSON file named "snippet_name"
             $.each(data['groups'], function (key, snippet) {
                 //snippetsNames.push(snippet['name']);
-                snippetsGroups.push({group_name:snippet['group_name'],group_level:snippet['group_level']});
+                snippetsGroups.push({group_id:snippet['group_id'],group_name:snippet['group_name'],group_level:snippet['group_level']});
 
             });
         });
