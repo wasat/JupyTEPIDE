@@ -177,6 +177,11 @@ div.menu_snippets_item a{
     text-decoration:none;
 }
 
+div.menu_snippets_item:hover{
+    background-color:#555;
+
+}
+
 .menu_snippets_item_content {
 }
 
@@ -189,6 +194,11 @@ div.menu_snippets_item a{
 }
 
 div.menu_snippets_item_header, a:hover{
+    text-decoration:none;
+
+}
+
+div.menu_snippets_item_header, a:focus{
     text-decoration:none;
 
 }
