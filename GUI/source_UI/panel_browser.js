@@ -389,8 +389,8 @@ define([
         var i;
 //Karta Files
         //Nagłówek listy
-        var naglowek = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        $('#4karta').append(naglowek);
+        //var naglowek = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        //$('#4karta').append(naglowek);
 
 
         //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
@@ -442,8 +442,8 @@ define([
 
         //Nagłówek listy
         //var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        var naglowek2 = $('<div/>').addClass('list_container');
-        $('#3karta').append(naglowek2);
+        //var naglowek2 = $('<div/>').addClass('list_container');
+       // $('#3karta').append(naglowek2);
 
 
 //>>>>>
@@ -472,8 +472,8 @@ define([
 
 //Karta Snippets
 
-        var naglowek3 = $('<div/>').addClass('list_container');
-        $('#2karta').append(naglowek3);
+        //var naglowek3 = $('<div/>').addClass('list_container');
+        //$('#2karta').append(naglowek3);
         var menu_snippets = $('<div/>').addClass('menu_snippets');
 
         var menu_item;
@@ -498,13 +498,28 @@ define([
         snippetsList = code_snippets.getSnippetsList1();
         for (i = 0; i < snippetsList.length; i++) {
             var id=snippetsList[i].group;
-            $('#'+id+'.menu_snippets_item_content').append(make_row_item({
-                name: snippetsList[i].name,
-                link: '#',
-                time: 'yesterday',
-                snippet_name: snippetsList[i].name,
-                on_click: code_snippets.insert_snippet_cell
-            }));
+            var snippet_item = $('<div/>').addClass('menu_snippets_item');
+            snippet_item.append($('<a/>',{href:'#'}).html(snippetsList[i].name).bind('click', {snippet_name: snippetsList[i].name},
+                code_snippets.insert_snippet_cell)) ;
+
+            //$('#'+id+'.menu_snippets_item_content').append($('<a/>').html('ffff'));
+            $('#'+id+'.menu_snippets_item_content').append(snippet_item);
+
+
+            //&&&
+            // if (row_item.on_click) {
+            //     a_link.bind('click', {snippet_name: row_item.snippet_name},
+            //         row_item.on_click);
+            // }
+            //&&&
+
+            // $('#'+id+'.menu_snippets_item_content').append(make_row_item({
+            //     name: snippetsList[i].name,
+            //     link: '#',
+            //     time: 'yesterday',
+            //     snippet_name: snippetsList[i].name,
+            //     on_click: code_snippets.insert_snippet_cell
+            // }));
 
         }
 
