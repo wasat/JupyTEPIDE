@@ -27,8 +27,9 @@ define([
     'base/js/dialog',
     'base/js/utils',
     'services/config',
-    './leaflet_interface'
-], function ($, Jupyter, dialog, utils, configmod,leaflet_interface) {
+    './leaflet_interface',
+    './code_snippets'
+], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets) {
     "use strict";
 
     /**
@@ -382,7 +383,15 @@ define([
         leaflet_interface.load_image();
     };
 
-    //*** testing area ***
+    //.:*** testing area ***:.
+    Jupytepide.getSnippetsList1 = function(){
+        return code_snippets.getSnippetsList1();
+    };
+
+    Jupytepide.getSnippetsGroups = function(){
+        return code_snippets.getSnippetsGroups();
+    };
+
     Jupytepide.load_madrid = function(){
         var layer_name = "Madryt";
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
