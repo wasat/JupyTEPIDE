@@ -1,29 +1,6 @@
 {
-  "groups":[
-    {
-      "group_id":1,
-      "group_name":"Grupa1",
-      "group_level":0
-    },
-    {
-      "group_id":2,
-      "group_name":"Grupa2",
-      "group_level":0
-    },
-    {
-      "group_id":3,
-      "group_name":"Grupa3",
-      "group_level":0
-    },
-    {
-      "group_id":4,
-      "group_name":"Grupa4",
-      "group_level":0
-    }
-  ],
   "code_snippets": [
     {
-      "group":1,
       "name": "Load product",
       "code": [
         "import snappy",
@@ -37,7 +14,6 @@
       ]
     },
     {
-      "group":1,
       "name": "Get WPS info",
       "code": [
         "from owslib.wps import WebProcessingService, monitorExecution, printInputOutput",
@@ -51,7 +27,6 @@
       ]
     },
     {
-      "group":2,
       "name": "Connect WMS",
       "code": [
         "from owslib.wms import WebMapService",
@@ -63,7 +38,6 @@
       ]
     },
     {
-      "group":2,
       "name": "Display image",
       "code": [
         "import matplotlib.image as mpimg",
@@ -74,7 +48,6 @@
       ]
     },
     {
-      "group":3,
       "name": "Snappy GPT example",
       "code": [
         "from snappyhelpers import pyHashMap",
@@ -95,7 +68,6 @@
       ]
     },
     {
-      "group":3,
       "name": "Setup OTB",
       "code": [
         "import sys",
@@ -111,7 +83,6 @@
       ]
     },
     {
-      "group":4,
       "name": "OTB ROI",
       "code": [
         "from PIL import Image as PILImage",
@@ -137,7 +108,6 @@
       ]
     },
     {
-      "group":4,
       "name": "Web Map Browser",
       "code": [
         "from IPython.display import clear_output, Javascript, display",

@@ -123,50 +123,6 @@ define([
         return snippetsNames;
     };
 
-    //*** Druga wersja - daje listę nazw snippetów w grupach
-    function get_SnippetsList1(){
-        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
-        // (w tym przypadku tablicy snippetNames)
-        $.ajaxSetup({
-            async: false
-        });
-
-        var snippetsNames = [];
-        //czytanie jsona
-        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
-            // Insert snippet from JSON file named "snippet_name"
-            $.each(data['code_snippets'], function (key, snippet) {
-                //snippetsNames.push(snippet['name']);
-                snippetsNames.push({group:snippet['group'],name:snippet['name']});
-
-            });
-        });
-
-        return snippetsNames;
-    };
-
-    //*** daje same grupy z obiektu "groups" JSON
-    function get_SnippetsGroups(){
-        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
-        // (w tym przypadku tablicy snippetNames)
-        $.ajaxSetup({
-            async: false
-        });
-        var snippetsGroups = [];
-        //czytanie jsona
-        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
-            // Insert snippet from JSON file named "snippet_name"
-            $.each(data['groups'], function (key, snippet) {
-                //snippetsNames.push(snippet['name']);
-                snippetsGroups.push({group_id:snippet['group_id'],group_name:snippet['group_name'],group_level:snippet['group_level']});
-
-            });
-        });
-
-        return snippetsGroups;
-
-    };
-
     //*** get Web Map Browser
     // zwraca tekst snippeta Web Map Browser
     //Do wstawienia w ukrytej celce zawierającej Web Map Browser
@@ -197,8 +153,6 @@ define([
         load_ipython_extension: load_extension,
         insert_snippet_cell: insert_cell1,
         getSnippetsList: get_SnippetsList,
-        getSnippetsList1: get_SnippetsList1,
-        getSnippetsGroups:get_SnippetsGroups,
         getWebMapBrowserText: get_WebMapBrowserText
     };
 });
