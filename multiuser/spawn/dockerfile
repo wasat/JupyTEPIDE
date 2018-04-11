@@ -19,7 +19,7 @@ RUN mkdir /home/$NB_USER/dev && \
     fix-permissions /home/$NB_USER
 
 RUN cd "/opt/conda/lib/python3.6/site-packages/notebook/static/custom/" && \
-    ls
+    ls -R
 
 # Testing RUN block for remove!!!
 # RUN pip install --upgrade autopep8 &&\
