@@ -12,9 +12,14 @@ USER root
 RUN mkdir /home/$NB_USER/dev && \
     cd /home/$NB_USER/dev && \
     git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
+    ls /home/jovyan/dev/JupyTEPIDE/GUI/jupyter_resources/static/custom && \
+    cp -rf /home/jovyan/dev/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
     rm -rf /home/jovyan/work/notebook-dev/ && \
     rm -rf /home/jovyan/work/notebook_count/ && \
     fix-permissions /home/$NB_USER
+
+RUN cd "/opt/conda/lib/python3.6/site-packages/notebook/static/custom/" && \
+    ls -R
 
 # Testing RUN block for remove!!!
 # RUN pip install --upgrade autopep8 &&\
