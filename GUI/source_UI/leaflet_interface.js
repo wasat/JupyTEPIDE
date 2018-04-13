@@ -1,4 +1,4 @@
-// file source_UI/leaflet_interface.js
+// File source_UI/leaflet_interface.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //

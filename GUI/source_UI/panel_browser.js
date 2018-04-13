@@ -1,4 +1,4 @@
-// file source_UI/panel_browser.js
+// File source_UI/panel_browser.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //

@@ -1,4 +1,4 @@
-// file source_UI/css_loader.js
+// File source_UI/css_loader.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //

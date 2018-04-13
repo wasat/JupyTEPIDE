@@ -4,7 +4,7 @@
 //  * Distributed under the terms of the BSD License.
 //  * ---------------------------------------------------------------------------
 //  * Jupytepide main object
-//  */
+//  * /
 
 //Generowanie dokumentacji:  jsdoc -d=doc jupytepide.js
 
