@@ -35,7 +35,14 @@ notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/jovyan/work'
 c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
 # notebook directory in the container
-c.DockerSpawner.volumes = {'jupyterhub-user-{username}': notebook_dir}
+# c.DockerSpawner.volumes = {'jupyterhub-user-{username}': notebook_dir}
+c.DockerSpawner.volumes = {
+    'jupyterhub-user-{username}': notebook_dir,
+    '/eodata': '/eodata',
+    '/eodata-link': '/home/jovyan/eodata',
+    '/pub/shared': '/home/jovyan/shared',
+    '/opt/dev/JupyTEPIDE/notebooks': '/home/jovyan/shared/notebooks-dev'}
+# Also should be added     '/eodata': '/home/jovyan/eodata' as a alias
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped
 c.DockerSpawner.remove_containers = True
@@ -66,7 +73,6 @@ c.JupyterHub.db_url = 'postgresql://postgres:{password}@{host}/{db}'.format(
     password=os.environ['POSTGRES_PASSWORD'],
     db=os.environ['POSTGRES_DB'],
 )
-#postgresql://postgres:DlaTestu2017@hub-db/jupyterhub
 
 # Whitlelist users and admins
 c.Authenticator.whitelist = whitelist = set()

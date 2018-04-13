@@ -102,3 +102,4 @@ ENV/
 /docker/tmp/
 **/multiuser/secrets/
 **/multiuser/userlist
+/docker/logs/

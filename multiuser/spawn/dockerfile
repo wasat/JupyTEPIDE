@@ -1,0 +1,38 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+
+# Pin to version of notebook image that includes start-singleuser.sh script
+ARG DOCKER_NOTEBOOK_IMAGE
+FROM $DOCKER_NOTEBOOK_IMAGE
+
+# Use custom startup script
+USER root
+
+# Install JupyTEP IDE UI layout and enable it
+RUN mkdir /home/$NB_USER/dev && \
+    cd /home/$NB_USER/dev && \
+    git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
+    ls /home/jovyan/dev/JupyTEPIDE/GUI/jupyter_resources/static/custom && \
+    cp -rf /home/jovyan/dev/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
+    rm -rf /home/jovyan/work/notebook-dev/ && \
+    rm -rf /home/jovyan/work/notebook_count/ && \
+    fix-permissions /home/$NB_USER
+
+RUN cd "/opt/conda/lib/python3.6/site-packages/notebook/static/custom/" && \
+    ls -R
+
+# Testing RUN block for remove!!!
+# RUN pip install --upgrade autopep8 &&\
+#    /bin/bash -c "source activate python27 && pip install -q --no-cache-dir --upgrade autopep8 && source deactivate python27" && \
+#    # $CONDA_DIR/envs/python27/bin/python pip install -q --no-cache-dir --upgrade autopep8 &&\
+#    jupyter nbextension enable code_prettify/autopep8 --user &&\
+#    jupyter nbextension enable --py latex_envs --user &&\
+#    jupyter nbextension enable table_beautifier/main --user
+
+COPY spawn/docker-entrypoint.sh /srv/docker-entrypoint.sh
+RUN chmod 777 /srv/docker-entrypoint.sh
+ENTRYPOINT ["tini", "--", "/srv/docker-entrypoint.sh"]
+CMD ["start-singleuser.sh"]
+
+WORKDIR /home/$NB_USER
+USER $NB_USER

@@ -1,0 +1,58 @@
+# Copyright (c) JupyTEP IDE Development Team.
+# Distributed under the terms of the Modified BSD License.
+ARG DOCKER_VER
+FROM jupytepide/geospatial-notebook:$DOCKER_VER
+
+LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
+
+USER root
+
+# apt-get installs
+RUN apt-get update -qq && \
+    apt-get install -qqy --no-install-recommends --allow-unauthenticated file && \
+    apt-get autoremove && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /tmp
+
+# Download and install ESA SNAP toolbox (with all components)
+# Install and configure Snappy
+COPY esa-snap_all_unix_6_0.sh /tmp/esa-snap_all_unix_6_0.sh
+# RUN wget --quiet http://step.esa.int/downloads/6.0/installers/esa-snap_all_unix_6_0.sh && \
+RUN chmod +x esa-snap_all_unix_6_0.sh && \
+    /bin/bash "esa-snap_all_unix_6_0.sh" -q
+
+USER $NB_USER
+
+RUN mkdir .snap && \
+    mkdir .snap/snap-python && \
+    mkdir .snap/snap-python/snappy && \
+    wget --quiet https://github.com/wasat/JupyTEPIDE/raw/dev/libs/jpy-0.9.0-cp36-cp36m-linux_x86_64.whl -P "/home/jovyan/.snap/snap-python/snappy" && \
+    cd /opt/snap/bin && \
+    ./snappy-conf /opt/conda/bin/python /home/jovyan/.snap/snap-python && \
+    rm -rf /home/jovyan/.snap/snap-python/snappy/testdata && \
+    cp -R /home/jovyan/.snap/snap-python/snappy /opt/conda/lib/python3.6/site-packages/ && \
+    rm -rf /home/jovyan/.snap/snap-python
+
+ENV PATH="/opt/conda/bin:${PATH}"
+
+USER root
+WORKDIR /opt
+
+# Download and install Orfeo toolbox OTB
+# Standalone install
+COPY OTB-6.4.0-Linux64.run /opt/OTB-6.4.0-Linux64.run
+# RUN wget --quiet https://www.orfeo-toolbox.org/packages/OTB-6.4.0-Linux64.run && \
+RUN chmod +x OTB-6.4.0-Linux64.run && \
+    /bin/bash -c "OTB_PYTHON_EXE=/opt/conda/envs/python27/bin/python2.7 ./OTB-6.4.0-Linux64.run" -q &&\
+    rm -rf OTB-6.4.0-Linux64.run
+
+RUN find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
+    npm cache clean && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER && \
+    fix-permissions "/opt/OTB-6.4.0-Linux64"
+
+WORKDIR /home/$NB_USER
+USER $NB_USER

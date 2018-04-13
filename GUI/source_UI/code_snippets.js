@@ -132,6 +132,7 @@ define([
         return snippetsNames;
     };
 
+
     //*** Druga wersja - daje listę nazw snippetów w grupach
     function get_SnippetsList1(){
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
@@ -207,8 +208,6 @@ define([
         load_ipython_extension: load_extension,
         insert_snippet_cell: insert_cell1,
         getSnippetsList: get_SnippetsList,
-        getSnippetsList1: get_SnippetsList1,
-        getSnippetsGroups:get_SnippetsGroups,
         getWebMapBrowserText: get_WebMapBrowserText
     };
 });

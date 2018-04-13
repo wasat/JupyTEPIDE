@@ -11,6 +11,7 @@ network:
 volumes:
 	@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
 	@docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DB_VOLUME_HOST)
+	@docker volume inspect $(EODATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(EODATA_VOLUME_HOST)
 
 self-signed-cert:
 	# make a self-signed cert
@@ -50,17 +51,10 @@ check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 pull:
 	docker pull $(DOCKER_REG)/$(DOCKER_NOTEBOOK_IMAGE)
 
-notebook_image: pull singleuser/Dockerfile
+jupytep_user_spawn_image:
 	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
-		--build-arg JUPYTERHUB_VERSION=$(JUPYTERHUB_VERSION) \
-		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
-		singleuser
-
-jupytep_user_notebook: pull singleuser/Dockerfile
-	docker build -t $(LOCAL_NOTEBOOK_IMAGE) \
-		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) \
-		--build-arg DOCKER_REG=$(DOCKER_REG) \
-		singleuser
+		-f spawn/dockerfile \
+		--build-arg DOCKER_NOTEBOOK_IMAGE=$(DOCKER_NOTEBOOK_IMAGE) .
 
 build: check-files network volumes
 	docker-compose build
