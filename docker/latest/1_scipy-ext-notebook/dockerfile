@@ -89,6 +89,7 @@ RUN cd /tmp && \
     git clone https://github.com/wasat/JupyTEPIDE.git && \
     cd JupyTEPIDE && \
     cp -R notebooks /home/jovyan/ && \
+    cp -rf /tmp/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
     cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
