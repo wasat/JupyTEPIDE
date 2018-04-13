@@ -101,6 +101,15 @@ define([
         })
     };
 
+    //*** zapis dowolnego tekstu jako snippeta **
+    function save_asSnippet(text){
+
+    };
+
+    //*** zapis celki jako snippeta ***
+
+
+
     //*** daje listę nazw snippetów z pliku JSON
     function get_SnippetsList() {
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
@@ -164,6 +173,7 @@ define([
         });
 
         return snippetsGroups;
+
 
     };
 

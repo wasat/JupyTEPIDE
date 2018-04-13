@@ -30,7 +30,7 @@
         "import numpy as np",
         "import matplotlib.pyplot as plt",
         "#parameters for atithmetic transformation",
-        "a=1.15",
+        "a= 1.15",
         "b=0",
         "#source image",
         "file='/eodata/Envisat/Meris/FRS/2012/04/08/MER_FRS_1PPEPA20120408_105857_000005063113_00267_52867_0978.N1'"
