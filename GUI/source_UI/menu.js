@@ -173,11 +173,11 @@ define([
 
         //Map
         moje_submenu = add_submenu('Map', '#jupytepide_menu');
-            //Add layer
+        //Add layer
         add_menu_item('Add layer', 'Add new layer', '#', moje_submenu, function (evt) {
             evt.preventDefault();
         });
-            //Settings
+        //Settings
         add_menu_item('Settings', 'Map settings', '#', moje_submenu, function (evt) {
             evt.preventDefault();
         });
