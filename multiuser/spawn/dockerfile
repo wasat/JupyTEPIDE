@@ -8,30 +8,18 @@ FROM $DOCKER_NOTEBOOK_IMAGE
 # Use custom startup script
 USER root
 
+# apt-get installs
+RUN apt-get update -qq && \
+    apt-get install -y -qq --no-install-recommends python3-mapnik && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install JupyTEP IDE UI layout and enable it
 RUN mkdir /home/$NB_USER/dev && \
     cd /home/$NB_USER/dev && \
     git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
-    cp -rf /home/jovyan/dev/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
     rm -rf /home/jovyan/work/notebook_count/ && \
     fix-permissions /home/$NB_USER
-
-#RUN apt-get remove --auto-remove -y grass
-## RUN su $NB_USER && \
-#RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable && \
-#    apt-get update -qq && \
-#    apt-get install -y --no-install-recommends grass grass-dev* && \
-#    apt-get autoremove && \
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/*
-
-#USER $NB_USER
-#
-#RUN wget -q https://github.com/wasat/JupyTEPIDE/raw/dev/scripts/startup/04-grass_jupyter.sh -P /home/jovyan/.ipython/profile_default/startup
-#RUN ls
-## RUN /bin/bash "/home/jovyan/.ipython/profile_default/startup/04-grass_jupyter.sh"
-#
-#USER root
 
 COPY spawn/docker-entrypoint.sh /srv/docker-entrypoint.sh
 RUN chmod 777 /srv/docker-entrypoint.sh
