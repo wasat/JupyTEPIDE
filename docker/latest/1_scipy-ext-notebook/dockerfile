@@ -97,6 +97,7 @@ RUN cd /tmp && \
     cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/02-init-leaflet.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/03-import_notebook_as_module.py /home/jovyan/.ipython/profile_default/startup/03-import_notebook_as_module.py && \
+    cp /tmp/JupyTEPIDE/scripts/startup/04-grass_jupyter.sh /home/jovyan/.ipython/profile_default/startup/04-grass_jupyter.sh && \
     cp -R /tmp/JupyTEPIDE /opt/ && \
     npm cache clean && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
@@ -105,5 +106,3 @@ RUN cd /tmp && \
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
-
-
