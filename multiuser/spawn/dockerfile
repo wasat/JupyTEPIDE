@@ -12,22 +12,32 @@ USER root
 RUN mkdir /home/$NB_USER/dev && \
     cd /home/$NB_USER/dev && \
     git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
-    ls /home/jovyan/dev/JupyTEPIDE/GUI/jupyter_resources/static/custom && \
     cp -rf /home/jovyan/dev/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
-    cp /home/jovyan/dev/JupyTEPIDE/scripts/startup/04-grass_jupyter.sh /home/jovyan/.ipython/profile_default/startup/04-grass_jupyter.sh && \
-    chmod +x /home/jovyan/.ipython/profile_default/startup/04-grass_jupyter.sh && \
-    /bin/bash "/home/jovyan/.ipython/profile_default/startup/04-grass_jupyter.sh" && \
-    rm -rf /home/jovyan/work/notebook-dev/ && \
     rm -rf /home/jovyan/work/notebook_count/ && \
     fix-permissions /home/$NB_USER
 
-# Testing RUN block for remove!!!
-# RUN pip install --upgrade autopep8 &&\
-#    /bin/bash -c "source activate python27 && pip install -q --no-cache-dir --upgrade autopep8 && source deactivate python27" && \
-#    # $CONDA_DIR/envs/python27/bin/python pip install -q --no-cache-dir --upgrade autopep8 &&\
-#    jupyter nbextension enable code_prettify/autopep8 --user &&\
-#    jupyter nbextension enable --py latex_envs --user &&\
-#    jupyter nbextension enable table_beautifier/main --user
+# apt-get installs
+#RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable && \
+#    apt-get update
+#
+#USER $NB_USER
+#
+#RUN sudo apt-get install -y grass
+#RUN wget https://github.com/wasat/JupyTEPIDE/raw/dev/scripts/startup/04-grass_jupyter.sh -P /home/jovyan/.ipython/profile_default/startup/04-grass_jupyter.sh
+#RUN chmod +x /home/jovyan/.ipython/profile_default/startup/04-grass_jupyter.sh
+#RUN /bin/bash "/home/jovyan/.ipython/profile_default/startup/04-grass_jupyter.sh"
+
+USER $NB_USER
+
+# apt-get installs
+RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable && \
+    sudo apt-get update -qq && \
+    sudo apt-get install -y --no-install-recommends grass && \
+    sudo apt-get autoremove && \
+    sudo apt-get clean && \
+    sudo rm -rf /var/lib/apt/lists/*
+
+USER root
 
 COPY spawn/docker-entrypoint.sh /srv/docker-entrypoint.sh
 RUN chmod 777 /srv/docker-entrypoint.sh
