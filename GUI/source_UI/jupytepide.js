@@ -15,10 +15,10 @@
 //todo:zrobić, żeby warstwy, które nie dostaną nazwy zostały ponumerowane, np.: Layer 1, itp.
 //todo:nie pozwalać na wielokrotne dodawanie warstw o tej samej nazwie, bo potem nie chca się dać usunąć
 
- /**
-  * Jupytepide main object.
-  * @class Jupytepide
-  */
+/**
+ * Jupytepide main object.
+ * @class Jupytepide
+ */
 var Jupytepide = {version:'0.1.alpha'};
 
 define([
@@ -27,8 +27,9 @@ define([
     'base/js/dialog',
     'base/js/utils',
     'services/config',
-    './leaflet_interface'
-], function ($, Jupyter, dialog, utils, configmod,leaflet_interface) {
+    './leaflet_interface',
+    './code_snippets'
+], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets) {
     "use strict";
 
     /**
@@ -152,7 +153,7 @@ define([
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_wmsLayer(url_,attrib);
         //dodaje do control.layers (do menu z checkboxem)
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
-     };
+    };
 
     /**
      * Adds a TMS (tiled) layer into the map.
@@ -171,7 +172,7 @@ define([
     //          layer_name="Layer name"
     //example2: url='/nbextensions/source_UI/madrid/{z}/{x}/{y}.png' - own (local) tile layer
     Jupytepide.map_addTileLayer = function(url_,attrib,layer_name){
-       // attrib == null ? {} : attrib;
+        // attrib == null ? {} : attrib;
         //tworzy nowy PANE dla warstwy
         //attrib.pane = layer_name; //gdy ta opcja jest ustawiona, warstwa zostanie dodana do tego pane, zamiast do domyślnego
         //Jupytepide.leafletMap.createPane(attrib.pane);
@@ -227,15 +228,15 @@ define([
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_geoJsonLayer(data,options);
 
         //dodaje do control.layers (do menu z checkboxem)
-         var optClick = $('<a/>',{href:'#',
-                                  id:'optLayer_'+layer_name,
-                                  onclick:'Jupytepide.alertTest'
-         }).html('opcje'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
+        var optClick = $('<a/>',{href:'#',
+            id:'optLayer_'+layer_name,
+            onclick:'Jupytepide.alertTest'
+        }).html('opcje'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
 
         // var optBody = $('<div/>',{id:'optBody_'+layer_name}).html('Tu będą opcje'+layer_name);
 
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name+" "+optClick[0].outerHTML);
-    //    $('#optLayer_'+layer_name).append(optBody);
+        //    $('#optLayer_'+layer_name).append(optBody);
         $( document ).ready(function() {
             if (!$('.leaflet-control-layers-overlays label').is('#lbl_' + layer_name)) {
                 $('.leaflet-control-layers-overlays label').attr('id', 'lbl_' + layer_name)
@@ -382,7 +383,15 @@ define([
         leaflet_interface.load_image();
     };
 
-    //*** testing area ***
+    //.:*** testing area ***:.
+    Jupytepide.getSnippetsList1 = function(){
+        return code_snippets.getSnippetsList1();
+    };
+
+    Jupytepide.getSnippetsGroups = function(){
+        return code_snippets.getSnippetsGroups();
+    };
+
     Jupytepide.load_madrid = function(){
         var layer_name = "Madryt";
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
