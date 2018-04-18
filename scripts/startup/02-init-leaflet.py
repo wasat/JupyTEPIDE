@@ -1,6 +1,8 @@
 import json
 from IPython.display import HTML, display
-
+from shutil import copyfile
+import os
+import re
 
 class Leaflet():
     wmsAttribs = {
@@ -178,6 +180,37 @@ class ImageLayer():
     name = ''
     url = ''
     bounds = ''
+
+    def __init__(self):
+        if not os.path.exists("thumbnailtmp"):
+            os.makedirs("thumbnailtmp")
+
+    def thumbnail(self,product):
+        #TODO: add support for other missions and products
+        if os.isfile(product):
+            product=os.path.dirname(product)
+        files = [f for f in os.listdir(product) if os.isfile(os.join(product, f))]
+        bbox=None
+        if 'Envisat' in product:
+            return -1
+        elif 'Landsat-5' in product:
+            for f in files:
+                if f.lower().endswith('jpg'):
+                    thumbnail=f
+                if f.lower().endswith('bp.xml'):
+                    with open(os.path.join(product,f),'r') as xml:
+                        g=xml.readlines()
+                        for i in g:
+                            if 'rep:coordList' in i:
+                                m=re.findall(r'(?<=<rep:coordList>).*?(?=</rep:coordList>)',i,re.I)
+                                if not m:
+                                    return -1
+                                else:
+                                    bbox=[float(xx) for xx in m[0].split()]
+        thumbnail=os.path.join(product,thumbnail)
+        copyfile(thumbnail, "thumbnailtmp/thumb.jpg")
+        self.addImageLayer("thumbnailtmp/thumb.jpg",bbox,"thumb")
+        self.showLayer()
 
     def attributesTostring(self):
         wynik = ''
