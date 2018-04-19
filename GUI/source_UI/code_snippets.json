@@ -29,12 +29,6 @@
   "code_snippets": [
     {
       "group": 4,
-      "name": "",
-      "code": [
-      ]
-    },
-    {
-      "group": 4,
       "name": "Simple WPS process using URLlib",
       "code": [
         "import urllib.request",
@@ -54,7 +48,7 @@
         "xx=re.search('LiteralData>(.*)</wps:LiteralData>',str(h),re.DOTALL)",
         "print(xx.group(1))"
       ]
-    },
+    },    
     {
       "group": 3,
       "name": "Read WMS Layer styles",
@@ -63,7 +57,7 @@
         "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
         "wms['Raster'].styles"
       ]
-    },
+    },    
     {
       "group": 3,
       "name": "Read WMS Layer CRS options",
@@ -72,7 +66,7 @@
         "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
         "wms['Raster'].crsOptions"
       ]
-    },
+    },    
     {
       "group": 3,
       "name": "Read WMS Layer WGS84 bounds",
@@ -81,7 +75,7 @@
         "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
         "wms['Raster'].boundingBoxWGS84"
       ]
-    },
+    },    
     {
       "group": 3,
       "name": "Check WMS Layer opacity",
@@ -90,7 +84,7 @@
         "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
         "wms['Raster'].opaque"
       ]
-    },
+    },    
     {
       "group": 3,
       "name": "Check WMS Layer queryable",
@@ -99,7 +93,7 @@
         "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
         "wms['Raster'].queryable"
       ]
-    },
+    },    
     {
       "group": 3,
       "name": "Read WMS Layer title",
@@ -108,7 +102,7 @@
         "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
         "wms['Raster'].title"
       ]
-    },
+    },    
     {
       "group": 3,
       "name": "Read WMS title",
@@ -126,7 +120,7 @@
         "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
         "list(wms.contents)"
       ]
-    },
+    },    
     {
       "group": 3,
       "name": "Read WMS type",
@@ -168,14 +162,14 @@
         "    print(i)",
         "    slownik['Bands'].append(str(i))"
       ]
-    },
+    },    
     {
       "group": 2,
       "name": "N1 Read Metadata",
       "code": [
         "import snappy",
         "class N1Metadata:",
-        "    SPH={}",
+        "    SPH={}",   
         "    MPH={}",
         "    DSD={}",
         "    Quality_ADS={}",
@@ -208,7 +202,7 @@
         "        element=metadata.getElement('Tie_points_ADS')",
         "        for i in element.getAttributes():",
         "            self.Tie_points_ADS[i.getName()]=i.getDataElems()[0]",
-        "",
+        "",        
         "    def __repr__(self):",
         "        from pprint import pprint,pformat",
         "        from io import StringIO",
@@ -230,7 +224,7 @@
         "a=N1Metadata('/eodata/Envisat/Meris/FRS/2002/05/17/MER_FRS_1PPEPA20020517_140027_000000982006_00053_01109_0979.N1')",
         "print(a)"
       ]
-    },
+    },    
     {
       "group": 1,
       "name": "Vector Data Validation",
@@ -247,13 +241,13 @@
         "VectorDataDSValidation.SetParameterString('out', 'VectorDataDSValidation.shp')",
         "VectorDataDSValidation.ExecuteAndWriteOutput()"
       ]
-    },
+    },    
     {
       "group":1,
       "name": "Line Segment Detection",
       "code": [
         "import sys",
-        "import os",
+        "import os", 
         "import otbApplication",
         "file_1 = ''",
         "LineSegmentDetection = otbApplication.Registry.CreateApplication('LineSegmentDetection')",
