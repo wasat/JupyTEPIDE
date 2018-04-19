@@ -177,7 +177,7 @@ class WMSLayer():
 
 class ImageLayer():
     htm = ''
-    attribs = {'opacity': '0.3'}
+    attribs = {'opacity': '0.8'}
     name = ''
     url = ''
     bounds = ''
@@ -214,7 +214,30 @@ class ImageLayer():
         print (bbox)
         self.addImageLayer("thumbnailtmp/thumb.jpg",bbox,"thumb")
         self.showLayer()
-
+	
+	def getbb(product):
+        #TODO: add support for other missions and products
+        if os.path.isfile(product):
+            product=os.path.dirname(product)
+        files = [f for f in os.listdir(product) if os.path.isfile(os.path.join(product, f))]
+        bbox=None
+        if 'Envisat' in product:
+            return -1
+        elif 'Landsat-5' in product:
+            for f in files:          
+                if f.lower().endswith('bp.xml'):
+                    with open(os.path.join(product,f),'r') as xml:
+                        g=xml.readlines()
+                        for i in g:
+                            if 'rep:coordList' in i:
+                                m=re.findall(r'(?<=<rep:coordList>).*?(?=</rep:coordList>)',i,re.I)
+                                if not m:
+                                    return -1
+                                else:
+                                    bbox=[float(xx) for xx in m[0].split()]        
+        bbox='''[[%f,%f],[%f,%f]]'''%(bbox[0],bbox[3],bbox[2],bbox[1])
+        return bbox        
+	
     def attributesTostring(self):
         wynik = ''
         for k, v in self.attribs.items():
