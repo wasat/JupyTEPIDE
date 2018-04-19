@@ -28,7 +28,7 @@
   ],
   "code_snippets": [
     {
-      "group":,
+      "group": 4,
       "name": "",
       "code": [
       ]
@@ -158,7 +158,7 @@
         "            slownik[str(i.getName())][str(x.getName())]=str(x.getData())",
         "            print(bcolors.BLUE+x.getName()+bcolors.ENDC,x.getData())",
         "        walk(i,slownik)",
-        ""
+        "",
         "file = '/eodata/Envisat/Meris/FRS/2012/04/08/MER_FRS_1PPEPA20120408_105857_000005063113_00267_52867_0978.N1'",
         "p = snappy.ProductIO.readProduct(file)",
         "",
