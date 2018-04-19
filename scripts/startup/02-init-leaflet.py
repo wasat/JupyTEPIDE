@@ -187,9 +187,9 @@ class ImageLayer():
 
     def thumbnail(self,product):
         #TODO: add support for other missions and products
-        if os.isfile(product):
+        if os.path.isfile(product):
             product=os.path.dirname(product)
-        files = [f for f in os.listdir(product) if os.isfile(os.join(product, f))]
+        files = [f for f in os.listdir(product) if os.path.isfile(os.path.join(product, f))]
         bbox=None
         if 'Envisat' in product:
             return -1
@@ -208,7 +208,9 @@ class ImageLayer():
                                 else:
                                     bbox=[float(xx) for xx in m[0].split()]
         thumbnail=os.path.join(product,thumbnail)
-        copyfile(thumbnail, "thumbnailtmp/thumb.jpg")
+        copyfile(thumbnail, "thumbnailtmp/thumb.jpg")        
+        bbox='''[[%f,%f],[%f,%f]]'''%(bbox[0],bbox[3],bbox[2],bbox[1])
+        print (bbox)
         self.addImageLayer("thumbnailtmp/thumb.jpg",bbox,"thumb")
         self.showLayer()
 
