@@ -86,6 +86,7 @@ RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ip
 
 # Install JupyTEP IDE UI layout and enable it
 RUN cd /tmp && \
+    ls && \
     git clone https://github.com/wasat/JupyTEPIDE.git && \
     cp -rf /tmp/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
     cd JupyTEPIDE && \

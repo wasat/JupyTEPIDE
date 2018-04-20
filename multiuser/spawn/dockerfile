@@ -9,13 +9,8 @@ FROM $DOCKER_NOTEBOOK_IMAGE
 USER root
 
 # ------------ PLACE FOR TESTING -----------------
-# apt-get installs
-RUN apt-get update -qq && \
-    apt-get install -y -qq --no-install-recommends python3-mapnik && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
-
+# RUN wget --quiet https://github.com/wasat/JupyTEPIDE/raw/dev/scripts/startup/02-init-leaflet.py -P "/home/jovyan/.ipython/profile_default/startup"
 
 # ------------ END TESTING -----------------------
 
