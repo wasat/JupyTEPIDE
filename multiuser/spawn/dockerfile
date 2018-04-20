@@ -10,17 +10,6 @@ USER root
 
 # ------------ PLACE FOR TESTING -----------------
 
-# RUN cd /tmp && \
-#    git clone https://github.com/wasat/JupyTEPIDE.git && \
-#    cp -rf /tmp/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
-#    cd JupyTEPIDE && \
-#    cd GUI && \
-#    jupyter nbextension install source_UI --user && \
-#    jupyter nbextension enable source_UI/main --sys-prefix && \
-#    npm cache clean && \
-#    find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
-#    fix-permissions /home/$NB_USER
-
 # ------------ END TESTING -----------------------
 
 # Install JupyTEP IDE UI layout and enable it
