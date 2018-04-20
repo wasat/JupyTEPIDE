@@ -214,8 +214,7 @@ class ImageLayer():
         self.addImageLayer("thumbnailtmp/thumb.jpg",bbox,"thumb")
         self.showLayer()
 	
-	def getbb(product):
-        #TODO: add support for other missions and products
+    def getbb(self,product):
         if os.path.isfile(product):
             product=os.path.dirname(product)
         files = [f for f in os.listdir(product) if os.path.isfile(os.path.join(product, f))]
