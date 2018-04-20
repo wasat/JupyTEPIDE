@@ -2,22 +2,22 @@
   "groups":[
     {
       "group_id":1,
-      "group_name": "Grupa1",
+      "group_name": "SNAP",
       "group_level":0
     },
     {
       "group_id":2,
-      "group_name": "Grupa2",
+      "group_name": "WPS",
       "group_level":0
     },
     {
       "group_id":3,
-      "group_name": "Grupa3",
+      "group_name": "OTB",
       "group_level":0
     },
     {
       "group_id":4,
-      "group_name": "Grupa4",
+      "group_name": "WMS MAPS",
       "group_level":0
     }
   ],
