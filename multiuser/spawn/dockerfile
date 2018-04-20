@@ -10,8 +10,6 @@ USER root
 
 # ------------ PLACE FOR TESTING -----------------
 
-# RUN wget --quiet https://github.com/wasat/JupyTEPIDE/raw/dev/scripts/startup/02-init-leaflet.py -P "/home/jovyan/.ipython/profile_default/startup"
-
 # ------------ END TESTING -----------------------
 
 # Install JupyTEP IDE UI layout and enable it
