@@ -10,14 +10,16 @@ USER root
 
 # ------------ PLACE FOR TESTING -----------------
 # apt-get installs
-RUN /bin/bash -c "source /opt/JupyTEPIDE/scripts/startup/04-grass_jupyter.sh"
+RUN chmod +x /opt/JupyTEPIDE/scripts/startup/04-grass_jupyter.sh && \
+    /bin/bash -c "source /opt/JupyTEPIDE/scripts/startup/04-grass_jupyter.sh"
 # ------------ END TESTING -----------------------
 
 # Install JupyTEP IDE UI layout and enable it
 RUN mkdir /home/$NB_USER/dev && \
     cd /home/$NB_USER/dev && \
     git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
-    cp /home/$NB_USER/dev/JupyTEPIDE/scripts/startup$/05-grass_source.sh /home/jovyan/.ipython/profile_default/startup/04-grass_source.sh && \
+    cp /home/$NB_USER/dev/JupyTEPIDE/scripts/startup/05-grass_source.sh /home/jovyan/.ipython/profile_default/startup/05-grass_source.sh && \
+    chmod +x /home/jovyan/.ipython/profile_default/startup/05-grass_source.sh && \
     rm -rf /home/jovyan/work/notebook_count/ && \
     fix-permissions /home/$NB_USER
 
