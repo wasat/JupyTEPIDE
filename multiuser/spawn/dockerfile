@@ -9,17 +9,20 @@ FROM $DOCKER_NOTEBOOK_IMAGE
 USER root
 
 # ------------ PLACE FOR TESTING -----------------
-# apt-get installs
-RUN chmod +x /opt/JupyTEPIDE/scripts/startup/04-grass_jupyter.sh && \
-    /bin/bash -c "source /opt/JupyTEPIDE/scripts/startup/04-grass_jupyter.sh"
+COPY "spawn/.grassrc.8888" "/home/$NB_USER/.grassrc.8888"
+ENV GISBASE=/usr/lib/grass74
+ENV GISRC="/home/$NB_USER/.grassrc.8888"
+ENV GRASS_RENDER_IMMEDIATE=png
+ENV GRASS_RENDER_TRUECOLOR=TRUE
+ENV LD_LIBRARY_PATH=/usr/lib/grass74/lib:$LD_LIBRARY_PATH
+ENV PYTHONPATH=/usr/lib/grass74/etc/python:$PYTHONPATH
+ENV PATH=/usr/lib/grass74/bin:/usr/lib/grass74/scripts:$PATH
 # ------------ END TESTING -----------------------
 
 # Install JupyTEP IDE UI layout and enable it
 RUN mkdir /home/$NB_USER/dev && \
     cd /home/$NB_USER/dev && \
     git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
-    cp /home/$NB_USER/dev/JupyTEPIDE/scripts/startup/05-grass_source.sh /home/jovyan/.ipython/profile_default/startup/05-grass_source.sh && \
-    chmod +x /home/jovyan/.ipython/profile_default/startup/05-grass_source.sh && \
     rm -rf /home/jovyan/work/notebook_count/ && \
     fix-permissions /home/$NB_USER
 
@@ -28,7 +31,7 @@ RUN chmod 777 /srv/docker-entrypoint.sh
 ENTRYPOINT ["tini", "--", "/srv/docker-entrypoint.sh"]
 CMD ["start-singleuser.sh"]
 
-CMD ["/home/jovyan/.ipython/profile_default/startup/05-grass_source.sh"]
+RUN echo $PATH
 
 WORKDIR /home/$NB_USER
 USER $NB_USER

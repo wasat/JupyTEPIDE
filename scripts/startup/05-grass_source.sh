@@ -1,1 +1,0 @@
-source /opt/JupyTEPIDE/scripts/startup/04-grass_jupyter.sh"
