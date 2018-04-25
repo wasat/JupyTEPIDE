@@ -9,14 +9,15 @@ FROM $DOCKER_NOTEBOOK_IMAGE
 USER root
 
 # ------------ PLACE FOR TESTING -----------------
-COPY "spawn/.grassrc.8888" "/home/$NB_USER/.grassrc.8888"
-ENV GISBASE=/usr/lib/grass74
-ENV GISRC="/home/$NB_USER/.grassrc.8888"
-ENV GRASS_RENDER_IMMEDIATE=png
-ENV GRASS_RENDER_TRUECOLOR=TRUE
-ENV LD_LIBRARY_PATH=/usr/lib/grass74/lib:$LD_LIBRARY_PATH
-ENV PYTHONPATH=/usr/lib/grass74/etc/python:$PYTHONPATH
-ENV PATH=/usr/lib/grass74/bin:/usr/lib/grass74/scripts:$PATH
+#COPY "spawn/.grassrc.8888" "/home/$NB_USER/.grassrc.8888"
+#
+#ENV GISBASE=/usr/lib/grass74 \
+#    GISRC="/home/$NB_USER/.grassrc.8888" \
+#    GRASS_RENDER_IMMEDIATE=png \
+#    GRASS_RENDER_TRUECOLOR=TRUE \
+#    LD_LIBRARY_PATH=/usr/lib/grass74/lib:$LD_LIBRARY_PATH \
+#    PYTHONPATH=/usr/lib/grass74/etc/python:$PYTHONPATH \
+#    PATH=/usr/lib/grass74/bin:/usr/lib/grass74/scripts:$PATH
 # ------------ END TESTING -----------------------
 
 # Install JupyTEP IDE UI layout and enable it
