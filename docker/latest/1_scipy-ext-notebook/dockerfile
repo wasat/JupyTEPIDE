@@ -82,8 +82,8 @@ RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ip
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
     $CONDA_DIR/envs/python27/bin/python -m ipykernel install && \
-    /bin/bash -c "source activate python27 && kernda -o -y /opt/conda/envs/python27/share/jupyter/kernels/python2/kernel.json" && \
-    /bin/bash -c "pip install -q --no-cache-dir --upgrade mapnik && source deactivate python27" && \
+    /bin/bash -c "source activate python27 && kernda -o -y /opt/conda/envs/python27/share/jupyter/kernels/python2/kernel.json && source deactivate python27" && \
+    /bin/bash -c "source activate python27 && pip install -q --no-cache-dir --upgrade mapnik && source deactivate python27" && \
     conda clean -tipsy
 
 # Install JupyTEP IDE UI layout and enable it
