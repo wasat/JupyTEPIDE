@@ -15,6 +15,18 @@ RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# --------------- Configuration Grass GIS -------------------
+COPY ".grassrc.8888" "/home/$NB_USER/.grassrc.8888"
+
+ENV GISBASE=/usr/lib/grass74 \
+    GISRC="/home/$NB_USER/.grassrc.8888" \
+    GRASS_RENDER_IMMEDIATE=png \
+    GRASS_RENDER_TRUECOLOR=TRUE \
+    LD_LIBRARY_PATH=/usr/lib/grass74/lib:$LD_LIBRARY_PATH \
+    PYTHONPATH=/usr/lib/grass74/etc/python:$PYTHONPATH \
+    PATH=/usr/lib/grass74/bin:/usr/lib/grass74/scripts:$PATH
+# ------------------------------------------------------------
+
 USER $NB_USER
 
 # Conda installs

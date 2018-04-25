@@ -9,7 +9,15 @@ FROM $DOCKER_NOTEBOOK_IMAGE
 USER root
 
 # ------------ PLACE FOR TESTING -----------------
-
+#COPY "spawn/.grassrc.8888" "/home/$NB_USER/.grassrc.8888"
+#
+#ENV GISBASE=/usr/lib/grass74 \
+#    GISRC="/home/$NB_USER/.grassrc.8888" \
+#    GRASS_RENDER_IMMEDIATE=png \
+#    GRASS_RENDER_TRUECOLOR=TRUE \
+#    LD_LIBRARY_PATH=/usr/lib/grass74/lib:$LD_LIBRARY_PATH \
+#    PYTHONPATH=/usr/lib/grass74/etc/python:$PYTHONPATH \
+#    PATH=/usr/lib/grass74/bin:/usr/lib/grass74/scripts:$PATH
 # ------------ END TESTING -----------------------
 
 # Install JupyTEP IDE UI layout and enable it
@@ -23,6 +31,8 @@ COPY spawn/docker-entrypoint.sh /srv/docker-entrypoint.sh
 RUN chmod 777 /srv/docker-entrypoint.sh
 ENTRYPOINT ["tini", "--", "/srv/docker-entrypoint.sh"]
 CMD ["start-singleuser.sh"]
+
+RUN echo $PATH
 
 WORKDIR /home/$NB_USER
 USER $NB_USER

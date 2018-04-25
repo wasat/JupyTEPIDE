@@ -1,0 +1,5 @@
+GISDBASE: /home/jovyan/grassdata
+LOCATION_NAME: MyLoc
+MAPSET: PERMANENT
+GRASS_GUI: text
+

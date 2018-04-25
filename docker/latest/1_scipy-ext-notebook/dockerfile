@@ -77,11 +77,13 @@ RUN conda install --quiet --yes -c anaconda \
 # and the kernda utility. Add any additional packages you want available for use
 # in a Python 2 notebook to the first line here (e.g., pandas, matplotlib, etc.)
 RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel numpy matplotlib pillow pip autopep8 kernda && \
+    conda install --quiet --yes -c mrterry -n python27 mapnik && \
     conda clean -tipsy && \
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
     $CONDA_DIR/envs/python27/bin/python -m ipykernel install && \
     /bin/bash -c "source activate python27 && kernda -o -y /opt/conda/envs/python27/share/jupyter/kernels/python2/kernel.json && source deactivate python27" && \
+    /bin/bash -c "source activate python27 && pip install -q --no-cache-dir --upgrade mapnik && source deactivate python27" && \
     conda clean -tipsy
 
 # Install JupyTEP IDE UI layout and enable it
@@ -97,7 +99,6 @@ RUN cd /tmp && \
     cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/02-init-leaflet.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/03-import_notebook_as_module.py /home/jovyan/.ipython/profile_default/startup/03-import_notebook_as_module.py && \
-    cp /tmp/JupyTEPIDE/scripts/startup/04-grass_jupyter.sh /home/jovyan/.ipython/profile_default/startup/04-grass_jupyter.sh && \
     cp -R /tmp/JupyTEPIDE /opt/ && \
     npm cache clean && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
