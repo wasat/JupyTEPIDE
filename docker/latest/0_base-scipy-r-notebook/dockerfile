@@ -8,8 +8,8 @@ LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 USER root
 
 # libav-tools for matplotlib anim
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update -qq && \
+    apt-get install -y -qq --no-install-recommends \
     libav-tools \
     fonts-dejavu \
     tzdata \

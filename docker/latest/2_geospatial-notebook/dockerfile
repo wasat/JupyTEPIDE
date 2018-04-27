@@ -35,6 +35,7 @@ RUN conda install --quiet --yes -c conda-forge \
     'gdal=2.2.3*' \
     'shapely=1.6.3*' \
     'fiona=1.7.10*' \
+    'geoalchemy2=0.4.*' \
     'geojson=2.3.0' \
     'geopandas=0.3.0*' \
     'geopy=1.11.0*' \
