@@ -1,6 +1,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM jupyter/minimal-notebook:30f16d52126f
+ARG DOCKER_STACK_VER
+FROM jupyter/minimal-notebook:$DOCKER_STACK_VER
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 

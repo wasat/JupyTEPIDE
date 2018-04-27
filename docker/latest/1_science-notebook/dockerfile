@@ -1,7 +1,7 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG DOCKER_STACK_VER
-FROM jupyter/scipy-notebook:$DOCKER_STACK_VER
+ARG DOCKER_VER
+FROM jupytepide/scipy-r_base_notebook:$DOCKER_VER
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
