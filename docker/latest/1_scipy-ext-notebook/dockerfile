@@ -59,11 +59,9 @@ RUN conda install --quiet --yes -c anaconda \
     conda clean -tipsy && \
     conda install --quiet --yes -c conda-forge \
     'ipyleaflet=0.6.5*' \
-    'ipywidgets=7.1.1*' \
     'ipyparallel=6.0.2*' \
     'jupyter_contrib_nbextensions=0.4.0*' \
     'jupyter_nbextensions_configurator=0.4.0*' \
-    'matplotlib=2.1.1*' \
     'nb_conda=2.2.1*' \
     'nb_conda_kernels=2.1.0*' && \
     pip install -q --no-cache-dir --upgrade autopep8 &&\
