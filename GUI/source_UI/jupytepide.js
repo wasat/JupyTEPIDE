@@ -405,6 +405,30 @@ define([
         leaflet_interface.load_test_polygon(popupText);
     };
 
+    Jupytepide.createFile = function(){
+        code_snippets.createFile();
+    };
+
+    Jupytepide.saveFile = function(fname,data){
+        code_snippets.saveFile(fname,data);
+    };
+
+    Jupytepide.addSnippet = function(codeSnippet){
+        return code_snippets.addSnippet(codeSnippet);
+    };
+
+    Jupytepide.addGroup = function(group){
+        return code_snippets.addGroup(group);
+    };
+
+    //Jupytepide.snippetsUrl = function(){
+    //    return code_snippets.getSnippetsUrl();
+    //};
+
+    //Jupytepide.baseUrl = function(){
+    //    return code_snippets.getBaseUrl();
+    //};
+
     // return public object
     return Jupytepide
 

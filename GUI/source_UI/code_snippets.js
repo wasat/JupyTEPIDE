@@ -7,17 +7,33 @@
 
 define([
     'jquery',
+    'contents',
     'base/js/namespace',
     'base/js/dialog',
     'base/js/utils',
     'services/config',
     'require'
-], function ($, Jupyter, dialog, utils, configmod, require) {
+], function ($, contents_service, Jupyter, dialog, utils, configmod, require) {
     "use strict";
 
+    //todo: zrobić odtwarzanie pliku code_snippets.json po usunięciu przez użytkownika
     // create config object to load parameters
     var base_url = utils.get_body_data("baseUrl");
     var config = new configmod.ConfigSection('notebook', {base_url: base_url});
+    //var snippets_url = require.toUrl('./code_snippets.json'); //katalog w ktorym jest nasz extension
+    var CODE_SNIPPETS_FN = 'code_snippets.json';
+    var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
+    var snippets_url = utils.url_path_join(
+        Jupyter.notebook.base_url, 'tree',
+        utils.encode_uri_components(parent), CODE_SNIPPETS_FN); //katalog domowy
+
+    function getBaseUrl(){
+        return base_url;
+    };
+
+    function getSnippetsUrl(){
+        return snippets_url;
+    };
 
     config.loaded.then(function () {
         var dropdown = $("<select></select>").attr("id", "snippet_picker")
@@ -36,7 +52,7 @@ define([
         //konkretny plik json
         //var jsonFileName = "/code_snippets.json";
 
-        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
+        $.getJSON(snippets_url, function (data) {
             // Add the header as the top option, does nothing on click
             var option = $("<option></option>")
                 .attr("id", "snippet_header")
@@ -85,7 +101,7 @@ define([
 
         //czytanie jsona "/nbextensions/source_UI/code_snippets.json"
 
-        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
+        $.getJSON(snippets_url, function (data) {
             // Insert snippet from JSON file named "snippet_name"
             $.each(data['code_snippets'], function (key, snippet) {
                 if (snippet['name'] == snippet_name) {
@@ -120,7 +136,7 @@ define([
 
         var snippetsNames = [];
         //czytanie jsona
-        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
+        $.getJSON(snippets_url, function (data) {
             // Insert snippet from JSON file named "snippet_name"
             $.each(data['code_snippets'], function (key, snippet) {
                 snippetsNames.push(snippet['name']);
@@ -142,7 +158,7 @@ define([
 
         var snippetsNames = [];
         //czytanie jsona
-        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
+        $.getJSON(snippets_url, function (data) {
             // Insert snippet from JSON file named "snippet_name"
             $.each(data['code_snippets'], function (key, snippet) {
                 //snippetsNames.push(snippet['name']);
@@ -161,17 +177,11 @@ define([
         $.ajaxSetup({
             async: false
         });
-        var snippetsGroups = [];
+        var snippetsGroups = {};
         //czytanie jsona
-        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
-            // Insert snippet from JSON file named "snippet_name"
-            $.each(data['groups'], function (key, snippet) {
-                //snippetsNames.push(snippet['name']);
-                snippetsGroups.push({group_id:snippet['group_id'],group_name:snippet['group_name'],group_level:snippet['group_level']});
-
-            });
+        $.getJSON(snippets_url, function (data) {
+            snippetsGroups = data.groups;
         });
-
         return snippetsGroups;
 
 
@@ -190,7 +200,7 @@ define([
         var snippet_name = "Web Map Browser";
         var WMBText = "";
         //czytanie jsona
-        $.getJSON(require.toUrl('./code_snippets.json'), function (data) {
+        $.getJSON(snippets_url, function (data) {
             $.each(data['code_snippets'], function (key, snippet) {
                 if (snippet['name'] == snippet_name) {
                     WMBText = snippet['code'].join('\n');
@@ -202,6 +212,90 @@ define([
         return WMBText;
     };
 
+    //*** createFile ***
+    //tworzenie pliku tekstowego o nazwie untitled.txt
+    function createFile(){
+        // var contents = new contents_service.Contents({
+        //     base_url: common_options.base_url,
+        //     common_config: common_config
+        // });
+
+        var contents = new contents_service.Contents({
+            base_url: base_url
+        });
+
+        contents.new_untitled('', {type: 'file', ext: '.txt'});
+    };
+
+    //*** save2 ***
+    //Additional method added to Contents.prototyme class contained in Jupyter's "content.js" module
+    //UWAGA:PUT (HTTP) nie jest obsługiwany przez wszystkie przeglądarki - może być, że nie zapiszemy snippetów - pomyśleć o PHP - ale najpierw testować
+    //trzeba zrobić tak: każde dodanie snippeta wymaga pobrania całej zawartości pliku, modyfikacji i ponownego zapisu, z tego jak działa AJAX inaczej się nie da, chyba, że będziemy używać bazy danych...
+    contents_service.Contents.prototype.save2 = function(path, model) {
+
+        var settings = {
+            processData : false,
+            type : "PUT",
+            dataType: "json",
+            data : JSON.stringify(model),
+            contentType: 'application/json',
+        };
+        var url = this.api_url(path);
+        //the below is similar to $.ajax():
+        return utils.promising_ajax(url, settings);
+    };
+
+    //** saveFile ***
+    //Saves data into file located in user's HOME directory
+    //if file doesn't extist, it will be created. Use carefully!
+    function saveFile(fname,data){
+        var contents = new contents_service.Contents({
+            base_url: base_url
+        });
+        //contents.save('untitled.txt',{path:'',type:'file', format:'text', content:"{ x: 5, y: 6 }"});
+        contents.save2(fname,{path:'',type:'file', format:'text', content:JSON.stringify(data)});
+    };
+
+    //todo: po dodaniu snippeta do struktury data - zapisać to co zwraca funkcja do pliku
+    //*** addSnippet ***
+    //{ group: 3, name: "Read WMS Layer styles", code: ["pierwsza linia kodu","druga linia", "trzecia linia"] }
+    function addSnippet(codeSnippet){
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+        // (w tym przypadku tablicy snippetNames)
+        $.ajaxSetup({
+            async: false
+        });
+
+        var JSONdata = {};
+        //czytanie jsona
+        $.getJSON(snippets_url, function (data) {
+            JSONdata = data;
+        });
+        JSONdata.code_snippets.push(codeSnippet);
+        saveFile(CODE_SNIPPETS_FN,JSONdata);
+        return JSONdata;
+    };
+
+    //*** addGroup ***
+    //{ group_id: 1, group_name: "OTB", group_level: 0 }
+    function addGroup(group){
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+        // (w tym przypadku tablicy snippetNames)
+        $.ajaxSetup({
+            async: false
+        });
+
+        var JSONdata = {};
+        //czytanie jsona
+        $.getJSON(snippets_url, function (data) {
+            JSONdata = data;
+        });
+        JSONdata.groups.push(group);
+        saveFile(CODE_SNIPPETS_FN,JSONdata);
+        return JSONdata;
+    };
+
+
     // return public methods
     return {
         load_ipython_extension: load_extension,
@@ -209,6 +303,12 @@ define([
         getSnippetsList: get_SnippetsList,
         getSnippetsList1: get_SnippetsList1,
         getSnippetsGroups:get_SnippetsGroups,
-        getWebMapBrowserText: get_WebMapBrowserText
+        getWebMapBrowserText: get_WebMapBrowserText,
+        createFile:createFile,
+        saveFile:saveFile,
+        addSnippet:addSnippet,
+        addGroup:addGroup,
+        getBaseUrl:getBaseUrl,
+        getSnippetsUrl:getSnippetsUrl
     };
 });
