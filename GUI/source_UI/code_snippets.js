@@ -255,8 +255,7 @@ define([
         //contents.save('untitled.txt',{path:'',type:'file', format:'text', content:"{ x: 5, y: 6 }"});
         contents.save2(fname,{path:'',type:'file', format:'text', content:JSON.stringify(data)});
     };
-
-    //todo: po dodaniu snippeta do struktury data - zapisać to co zwraca funkcja do pliku
+    //todo: snippety nie mogą się tak samo nazywać - albo nadawać im identyfikatory i wyświetlać wg id grupy+id snippeta
     //*** addSnippet ***
     //{ group: 3, name: "Read WMS Layer styles", code: ["pierwsza linia kodu","druga linia", "trzecia linia"] }
     function addSnippet(codeSnippet){
@@ -267,13 +266,25 @@ define([
         });
 
         var JSONdata = {};
+        var toAdd = true;
         //czytanie jsona
         $.getJSON(snippets_url, function (data) {
             JSONdata = data;
+
+            $.each(data['code_snippets'], function (key, snippet) {
+                if (snippet['name'] == codeSnippet.name) {
+                    alert('There is already a snippet with the name: "'+ codeSnippet.name +'". Please change.');
+                    toAdd = false;
+                };
+            });
         });
-        JSONdata.code_snippets.push(codeSnippet);
-        saveFile(CODE_SNIPPETS_FN,JSONdata);
-        return JSONdata;
+        if (toAdd) {
+            JSONdata.code_snippets.push(codeSnippet);
+            saveFile(CODE_SNIPPETS_FN,JSONdata);
+            return JSONdata;
+        }
+        else return false;
+
     };
 
     //*** addGroup ***
