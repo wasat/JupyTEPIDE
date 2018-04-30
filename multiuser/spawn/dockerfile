@@ -36,7 +36,5 @@ RUN chmod 777 /srv/docker-entrypoint.sh
 ENTRYPOINT ["tini", "--", "/srv/docker-entrypoint.sh"]
 CMD ["start-singleuser.sh"]
 
-RUN echo $PATH
-
 WORKDIR /home/$NB_USER
 USER $NB_USER
