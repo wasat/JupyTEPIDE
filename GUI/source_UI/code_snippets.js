@@ -11,9 +11,8 @@ define([
     'base/js/namespace',
     'base/js/dialog',
     'base/js/utils',
-    'services/config',
-    'require'
-], function ($, contents_service, Jupyter, dialog, utils, configmod, require) {
+    'services/config'
+], function ($, contents_service, Jupyter, dialog, utils, configmod) {
     "use strict";
 
     //todo: zrobić odtwarzanie pliku code_snippets.json po usunięciu przez użytkownika
@@ -255,9 +254,7 @@ define([
         //contents.save('untitled.txt',{path:'',type:'file', format:'text', content:"{ x: 5, y: 6 }"});
         contents.save2(fname,{path:'',type:'file', format:'text', content:JSON.stringify(data)});
     };
-    //todo: snippety nie mogą się tak samo nazywać - albo nadawać im identyfikatory i wyświetlać wg id grupy+id snippeta
-    //*** addSnippet ***
-    //{ group: 3, name: "Read WMS Layer styles", code: ["pierwsza linia kodu","druga linia", "trzecia linia"] }
+    //todo: zabezpieczyć przed dodaniem snippeta do nieistniejącej grupy (numeru grupy)
     function addSnippet(codeSnippet){
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
         // (w tym przypadku tablicy snippetNames)
@@ -281,11 +278,60 @@ define([
         if (toAdd) {
             JSONdata.code_snippets.push(codeSnippet);
             saveFile(CODE_SNIPPETS_FN,JSONdata);
+            addSnippetToUI(codeSnippet.group,codeSnippet.name);
             return JSONdata;
         }
         else return false;
 
     };
+
+    //*** addSnippetToUI ***
+    function addSnippetToUI(group_id,snippet_name){
+        var id=group_id;
+        var snippet_item = $('<div/>').addClass('menu_snippets_item');
+        snippet_item.append($('<a/>',{href:'#'}).html(snippet_name).bind('click', {snippet_name: snippet_name},
+            insert_cell1)) ;
+        $('#'+id+'.menu_snippets_item_content').append(snippet_item);
+    };
+
+    //*** getMaxGroupId ***
+    //do usunięcia
+    function getMaxGroupId(){
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+        // (w tym przypadku tablicy snippetNames)
+        $.ajaxSetup({
+            async: false
+        });
+        var gids = [];
+        $.getJSON(snippets_url, function (data) {
+            $.each(data['groups'], function (key, groups) {
+                gids.push(groups['group_id']);
+                            });
+        });
+        return Math.max(...gids);
+    };
+
+    //*** make_snippets_menu_item ***
+    var make_snippets_menu_item = function(element){
+
+        var menu_snippets_item_header = $('<a/>',{href:'#',id:element.id}).addClass('menu_snippets_item_header').html(element.group_name).append($('<br>'));
+        var menu_snippets_item_content = $('<div/>',{id:element.id}).addClass('menu_snippets_item_content');
+        var item = {header:menu_snippets_item_header,content:menu_snippets_item_content};
+
+        menu_snippets_item_header.click(function(){
+            menu_snippets_item_content.slideToggle();
+        });
+        menu_snippets_item_content.hide();
+        return item;
+    };
+
+    //*** addGroupToUI ***
+    function addGroupToUI(gr_name,gr_id){
+        var menu_snippets=$('.menu_snippets');
+        var menu_item = make_snippets_menu_item({group_name:gr_name,id:gr_id});
+        menu_snippets.append(menu_item.header).append(menu_item.content);
+    };
+
 
     //*** addGroup ***
     //{ group_id: 1, group_name: "OTB", group_level: 0 }
@@ -297,13 +343,35 @@ define([
         });
 
         var JSONdata = {};
+        var toAdd=true;
+        var gids = [];
+        var maxGid;
         //czytanie jsona
         $.getJSON(snippets_url, function (data) {
             JSONdata = data;
+
+            $.each(data['groups'], function (key, groups) {
+                if (groups['group_name'] == group.group_name) {
+                    alert('There is already a group menu with the name: "'+ group.group_name +'". Please change.');
+                    toAdd = false;
+                };
+                gids.push(groups['group_id']);
+            });
         });
-        JSONdata.groups.push(group);
-        saveFile(CODE_SNIPPETS_FN,JSONdata);
-        return JSONdata;
+        if (toAdd) {
+            maxGid=Math.max(...gids)+1;
+            group.group_id=maxGid;
+            JSONdata.groups.push(group);
+            //Save to JSON file
+            saveFile(CODE_SNIPPETS_FN, JSONdata);
+            //Add to interface
+            //var menu_snippets=$('.menu_snippets');
+            //var menu_item = make_snippets_menu_item({group_name:group.group_name,id:group.group_id});
+            //menu_snippets.append(menu_item.header).append(menu_item.content);
+            addGroupToUI(group.group_name,group.group_id);
+            return JSONdata;
+        }
+        else return false;
     };
 
 
@@ -319,7 +387,9 @@ define([
         saveFile:saveFile,
         addSnippet:addSnippet,
         addGroup:addGroup,
-        getBaseUrl:getBaseUrl,
-        getSnippetsUrl:getSnippetsUrl
+        getBaseUrl:getBaseUrl, //do usunięcia
+        getSnippetsUrl:getSnippetsUrl, //do usunięcia
+        getMaxGroupId:getMaxGroupId, //do usuniecia
+        make_snippets_menu_item:make_snippets_menu_item
     };
 });

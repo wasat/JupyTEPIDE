@@ -429,6 +429,14 @@ define([
     //    return code_snippets.getBaseUrl();
     //};
 
+    //Jupytepide.getMaxGroupId = function(){
+    //    return code_snippets.getMaxGroupId();
+    //};
+
+    Jupytepide.makeMenuItem = function(){
+        return code_snippets.make_snippets_menu_item({group_name:'NAZWA_GRUPY',id:12});
+    };
+
     // return public object
     return Jupytepide
 
