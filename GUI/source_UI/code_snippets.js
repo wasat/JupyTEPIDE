@@ -9,10 +9,9 @@ define([
     'jquery',
     'contents',
     'base/js/namespace',
-    'base/js/dialog',
     'base/js/utils',
     'services/config'
-], function ($, contents_service, Jupyter, dialog, utils, configmod) {
+], function ($, contents_service, Jupyter, utils, configmod) {
     "use strict";
 
     //todo: zrobić odtwarzanie pliku code_snippets.json po usunięciu przez użytkownika
@@ -246,7 +245,7 @@ define([
 
     //** saveFile ***
     //Saves data into file located in user's HOME directory
-    //if file doesn't extist, it will be created. Use carefully!
+    //if file doesn't exist, it will be created. Use carefully!
     function saveFile(fname,data){
         var contents = new contents_service.Contents({
             base_url: base_url
@@ -254,7 +253,9 @@ define([
         //contents.save('untitled.txt',{path:'',type:'file', format:'text', content:"{ x: 5, y: 6 }"});
         contents.save2(fname,{path:'',type:'file', format:'text', content:JSON.stringify(data)});
     };
-    //todo: zabezpieczyć przed dodaniem snippeta do nieistniejącej grupy (numeru grupy)
+    //todo: zabezpieczyć przed dodaniem snippeta do nieistniejącej grupy (numeru grupy) - niekoniecznie potrzebne, można to kontrolować z zewnątrz
+    //*** addSnippet ***
+    //Adds snippet to JSON file and to UI
     function addSnippet(codeSnippet){
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
         // (w tym przypadku tablicy snippetNames)
@@ -292,6 +293,63 @@ define([
         snippet_item.append($('<a/>',{href:'#'}).html(snippet_name).bind('click', {snippet_name: snippet_name},
             insert_cell1)) ;
         $('#'+id+'.menu_snippets_item_content').append(snippet_item);
+    };
+
+    //*** deleteSnippetFromUI
+    //$( "#1.menu_snippets_item_content .menu_snippets_item" ).each(function(index){console.log($(this).text())})
+    function deleteSnippetFromUI(group_id,snippet_name){
+        $( '#'+group_id+'.menu_snippets_item_content .menu_snippets_item' ).each(
+            function(index){
+                if ($(this).text()==snippet_name){
+                    $(this).remove();
+                }
+            });
+    };
+
+    //*** deleteSnippet ***
+    //deletes snippet fom file and from UI
+    function deleteSnippet(codeSnippet){
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+        // (w tym przypadku tablicy snippetNames)
+        $.ajaxSetup({
+            async: false
+        });
+
+        var JSONdata = {};
+        var deleted = 0;
+        var toDelete=[];
+        var i;
+        //czytanie jsona
+        //get snippets to delete
+        $.getJSON(snippets_url, function (data) {
+            JSONdata = data;
+
+            $.each(data['code_snippets'], function (key, snippet) {
+                if (snippet['name'] == codeSnippet.name && snippet['group'] == codeSnippet.group) {
+                    toDelete.push(snippet);
+                };
+            });
+        });
+
+        //delete snippets from JSONdata
+        for (i = 0; i < toDelete.length; i++){
+            JSONdata.code_snippets.splice(JSONdata.code_snippets.indexOf(toDelete[i]),1);
+            deleted=deleted+1;
+        };
+
+        //save to file and UI
+        if (deleted!=0){
+            //JSONdata.code_snippets.push(codeSnippet);
+            deleteSnippetFromUI(codeSnippet.group,codeSnippet.name);
+            saveFile(CODE_SNIPPETS_FN,JSONdata);
+            //addSnippetToUI(codeSnippet.group,codeSnippet.name);
+            return JSONdata;
+        };
+        if (deleted==0) {
+            alert('There is no snippet with the name: "'+ codeSnippet.name +'" in menu group number: '+codeSnippet.group);
+            return false;
+        };
+
     };
 
     //*** getMaxGroupId ***
@@ -334,6 +392,7 @@ define([
 
 
     //*** addGroup ***
+    //Adds menu snippets group to JSON file and to UI
     //{ group_id: 1, group_name: "OTB", group_level: 0 }
     function addGroup(group){
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
@@ -359,6 +418,7 @@ define([
             });
         });
         if (toAdd) {
+            //check max group ID, assign max+1 value to new group
             maxGid=Math.max(...gids)+1;
             group.group_id=maxGid;
             JSONdata.groups.push(group);
@@ -390,6 +450,8 @@ define([
         getBaseUrl:getBaseUrl, //do usunięcia
         getSnippetsUrl:getSnippetsUrl, //do usunięcia
         getMaxGroupId:getMaxGroupId, //do usuniecia
-        make_snippets_menu_item:make_snippets_menu_item
+        make_snippets_menu_item:make_snippets_menu_item,
+        deleteSnippet:deleteSnippet
+
     };
 });

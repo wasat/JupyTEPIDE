@@ -437,6 +437,10 @@ define([
         return code_snippets.make_snippets_menu_item({group_name:'NAZWA_GRUPY',id:12});
     };
 
+    Jupytepide.deleteSnippet = function(codeSnippet){
+        return code_snippets.deleteSnippet(codeSnippet);
+    };
+
     // return public object
     return Jupytepide
 
