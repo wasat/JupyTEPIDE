@@ -424,16 +424,80 @@ define([
             JSONdata.groups.push(group);
             //Save to JSON file
             saveFile(CODE_SNIPPETS_FN, JSONdata);
-            //Add to interface
-            //var menu_snippets=$('.menu_snippets');
-            //var menu_item = make_snippets_menu_item({group_name:group.group_name,id:group.group_id});
-            //menu_snippets.append(menu_item.header).append(menu_item.content);
             addGroupToUI(group.group_name,group.group_id);
             return JSONdata;
         }
         else return false;
     };
 
+    //*** deleteGroup ***
+    function deleteGroup(group){
+        //todo:dokończyć, przetestować, zabezpieczyć przed usunięciem grupy zawierającej snippety
+
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+        // (w tym przypadku tablicy snippetNames)
+        $.ajaxSetup({
+            async: false
+        });
+
+        var JSONdata = {};
+        var deleted = 0;
+        var toDelete=[];
+        var i;
+        var containsSnippets = false;
+
+        //czytanie jsona
+        //get groups to delete
+        $.getJSON(snippets_url, function (data) {
+            JSONdata = data;
+
+            //check if a group contains any snippets
+            if (containsSnippets==false) {
+            $.each(data['code_snippets'], function (key, snippet) {
+                if (snippet['group'] == group.group_id) {
+                    containsSnippets = true;
+                }
+                ;
+            });
+            }
+            if (containsSnippets==false){
+            $.each(data['groups'], function (key, groups) {
+                if (groups['group_name'] == group.group_name) {
+                    toDelete.push(groups);
+                };
+            });
+            }
+        });
+
+        //todo: zabezpieczyć przed usunięciem grupy zawierającej snippety
+        //delete groups from JSONdata
+        for (i = 0; i < toDelete.length; i++){
+            JSONdata.groups.splice(JSONdata.groups.indexOf(toDelete[i]),1);
+            deleted=deleted+1;
+        };
+
+        //save to file and UI
+        if (deleted!=0){
+            //JSONdata.code_snippets.push(codeSnippet);
+            deleteGroupFromUI(group.group_id);
+            saveFile(CODE_SNIPPETS_FN,JSONdata);
+            //addSnippetToUI(codeSnippet.group,codeSnippet.name);
+            return JSONdata;
+        };
+        if (deleted==0 && !containsSnippets) {
+            alert('There is no group with the name: "'+ group.group_name +'"');
+            return false;
+        }
+        else if (deleted==0 && containsSnippets) {
+            alert('This group contains snippets. Can not be deleted.');
+            return false;
+        };
+    };
+
+    function deleteGroupFromUI(group_id){
+        $( '#'+group_id+'.menu_snippets_item_header' ).remove(); //stąd wziąć text() i mam nazwę
+        $( '#'+group_id+'.menu_snippets_item_content' ).remove();
+    };
 
     // return public methods
     return {
@@ -451,7 +515,9 @@ define([
         getSnippetsUrl:getSnippetsUrl, //do usunięcia
         getMaxGroupId:getMaxGroupId, //do usuniecia
         make_snippets_menu_item:make_snippets_menu_item,
-        deleteSnippet:deleteSnippet
+        deleteSnippet:deleteSnippet,
+        deleteGroup:deleteGroup,
+        deleteGroupFromUI:deleteGroupFromUI
 
     };
 });

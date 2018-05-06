@@ -441,6 +441,14 @@ define([
         return code_snippets.deleteSnippet(codeSnippet);
     };
 
+    Jupytepide.deleteGroup = function(group){
+        return code_snippets.deleteGroup(group);
+    };
+
+    Jupytepide.deleteGroupFromUI = function(group_id){
+        return code_snippets.deleteGroupFromUI(group_id);
+    };
+
     // return public object
     return Jupytepide
 
