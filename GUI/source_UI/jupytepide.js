@@ -28,8 +28,9 @@ define([
     'base/js/utils',
     'services/config',
     './leaflet_interface',
-    './code_snippets'
-], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets) {
+    './code_snippets',
+    'base/js/keyboard'
+], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets,keyboard) {
     "use strict";
 
     /**
@@ -400,6 +401,17 @@ define([
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
     };
 
+     Jupytepide.disableKeycodes = function(event){
+
+         if (event.which === keyboard.keycodes.enter) {
+             //d.find('.btn-primary').first().click();
+             $('.btn-primary').click();
+             return false;
+         }
+
+     };
+
+
     //method for testing
     Jupytepide.map_LoadPolygon = function(popupText){
         leaflet_interface.load_test_polygon(popupText);
@@ -445,8 +457,16 @@ define([
         return code_snippets.deleteGroup(group);
     };
 
-    Jupytepide.deleteGroupFromUI = function(group_id){
-        return code_snippets.deleteGroupFromUI(group_id);
+    Jupytepide.addSnippetClick = function(data){
+        code_snippets.addSnippetClick(data);
+    };
+
+    Jupytepide.showAddSnippetWindow = function(){
+       code_snippets.showAddSnippetWindow();
+     };
+
+    Jupytepide.deleteGroupFromUI = function(gid){
+        code_snippets.deleteGroupFromUI(gid);
     };
 
     // return public object
