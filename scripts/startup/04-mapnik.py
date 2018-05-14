@@ -1,8 +1,9 @@
 import mapnik
 
 class Mapnik:
+
+    @staticmethod
     def generate_thumb(infile,resolution,outfile="mapnik_tmp.png"):
-        @staticmethod
         symb = mapnik.RasterSymbolizer()
         rule = mapnik.Rule()
         rule.symbols.append(symb)

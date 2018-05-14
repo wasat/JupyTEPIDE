@@ -208,21 +208,44 @@ class ImageLayer():
                                 else:
                                     bbox=[float(xx) for xx in m[0].split()]
         thumbnail=os.path.join(product,thumbnail)
-        copyfile(thumbnail, "thumbnailtmp/thumb.jpg")        
+        copyfile(thumbnail, "thumbnailtmp/thumb.jpg")
         bbox='''[[%f,%f],[%f,%f]]'''%(bbox[0],bbox[3],bbox[2],bbox[1])
         print (bbox)
         self.addImageLayer("thumbnailtmp/thumb.jpg",bbox,"thumb")
         self.showLayer()
-	
-    def getbb(self,product):
+
+    def getbb(self, product):
+        envprd=product
         if os.path.isfile(product):
             product=os.path.dirname(product)
         files = [f for f in os.listdir(product) if os.path.isfile(os.path.join(product, f))]
         bbox=None
         if 'Envisat' in product:
-            return -1
-        elif 'Landsat-5' in product:
-            for f in files:          
+            product=envprd
+            import snappy
+            try:
+                prod = snappy.ProductIO.readProduct(product)
+                print (prod)
+            except IOError:
+                print("Error opening file....")
+                return 0
+            print( "BANDS" )
+            for i in prod.getBandNames():
+                print (i)
+            md = prod.getMetadataRoot()
+            for i in md.getElements():
+                print('\n' + i.getName())
+                atrybuty=i.getAttributes()
+                for j in atrybuty:
+                    print(j.getName(), j.getData())
+                if i.getNumElements()>0:
+                    elementy = i.getElements()
+                    for el in elementy:
+                        print('\n' + el.getName())
+                        for z in el.getAttributes():
+                            print(z.getName() , z.getData())
+        elif 'Landsat-5' in product or 'Landsat-7' in product:
+            for f in files:
                 if f.lower().endswith('bp.xml'):
                     with open(os.path.join(product,f),'r') as xml:
                         g=xml.readlines()
@@ -232,10 +255,81 @@ class ImageLayer():
                                 if not m:
                                     return -1
                                 else:
-                                    bbox=[float(xx) for xx in m[0].split()]        
-        bbox='''[[%f,%f],[%f,%f]]'''%(bbox[0],bbox[3],bbox[2],bbox[1])
-        return bbox        
-	
+                                    bbox=[float(xx) for xx in m[0].split()]
+                        bbox='''[[%f,%f],[%f,%f]]'''%(bbox[0],bbox[3],bbox[2],bbox[1])
+        elif 'Landsat-8' in product:
+            for f in files:
+                if f.lower().endswith('mtl.txt'):
+                    with open(os.path.join(product,f),'r') as txt:
+                        g=txt.readlines()
+                    bbox=[None,None,None,None]
+                    for i in g:
+                        if 'CORNER_UL_LAT_PRODUCT' in i:
+                            bbox[0]=float(i.split('=')[-1].strip())
+                        if 'CORNER_UL_LON_PRODUCT' in i:
+                            bbox[1]=float(i.split('=')[-1].strip())
+                        if 'CORNER_LR_LAT_PRODUCT' in i:
+                            bbox[2]=float(i.split('=')[-1].strip())
+                        if 'CORNER_LR_LON_PRODUCT' in i:
+                            bbox[3]=float(i.split('=')[-1].strip())
+                            print (bbox)
+                    bbox='''[[%f,%f],[%f,%f]]'''%(bbox[2],bbox[3],bbox[0],bbox[1])
+        elif 'Sentinel-1' in product:
+            with open(os.path.join(product,'manifest.safe')) as f:
+                g=f.readlines()
+            for i in g:
+                bbox=[None,None,None,None]
+                if ('coordinates') in i:
+                    print(i)
+                    m=re.findall(r'(?<=>).*?(?=<)',i,re.I)
+                    narozniki=m[0].split()
+                    narozniki=[(float(x.split(',')[0]),float(x.split(',')[1])) for x in narozniki]
+                    lat=[x[0] for x in narozniki]
+                    lon=[x[1] for x in narozniki]
+                    bbox[0]=min(lat)
+                    bbox[1]=max(lon)
+                    bbox[2]=max(lat)
+                    bbox[3]=min(lon)
+                    bbox='''[[%f,%f],[%f,%f]]'''%(bbox[0],bbox[1],bbox[2],bbox[3])
+                    break
+        elif 'Sentinel-2' in product:
+            with open(os.path.join(product,'manifest.safe')) as f:
+                g=f.readlines()
+            for i in g:
+                bbox=[None,None,None,None]
+                if ('coordinates') in i:
+                    m=re.findall(r'(?<=coordinates>).*?(?=</gml:)',i,re.I)
+                    narozniki=m[0].split()
+                    lat=narozniki[::2]
+                    lon=narozniki[1::2]
+                    lon=[float(x) for x in lon]
+                    lat=[float(x) for x in lat]
+                    bbox[0]=min(lat)
+                    bbox[1]=max(lon)
+                    bbox[2]=max(lat)
+                    bbox[3]=min(lon)
+                    bbox='''[[%f,%f],[%f,%f]]'''%(bbox[0],bbox[1],bbox[2],bbox[3])
+                    break
+        elif 'Sentinel-3' in product:
+            with open(os.path.join(product,'xfdumanifest.xml')) as f:
+                g=f.readlines()
+            for i in g:
+                bbox=[None,None,None,None]
+                if ('posList') in i:
+                    m=re.findall(r'(?<=posList>).*?(?=</gml:)',i,re.I)
+                    narozniki=m[0].split()
+                    lat=narozniki[::2]
+                    lon=narozniki[1::2]
+                    lon=[float(x) for x in lon]
+                    lat=[float(x) for x in lat]
+                    bbox[0]=min(lat)
+                    bbox[1]=max(lon)
+                    bbox[2]=max(lat)
+                    bbox[3]=min(lon)
+                    bbox='''[[%f,%f],[%f,%f]]'''%(bbox[0],bbox[1],bbox[2],bbox[3])
+                    break
+        return bbox
+
     def attributesTostring(self):
         wynik = ''
         for k, v in self.attribs.items():
