@@ -1,7 +1,7 @@
 # Copyright (c) JupyTEP IDE Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG DOCKER_STACK_VER
-FROM jupyter/scipy-notebook:$DOCKER_STACK_VER
+ARG DOCKER_VER
+FROM jupytepide/base-scipy-r-notebook:$DOCKER_VER
 
 LABEL maintainer="JupyTEP IDE Project <jupytep@wasat.pl>"
 
@@ -59,11 +59,9 @@ RUN conda install --quiet --yes -c anaconda \
     conda clean -tipsy && \
     conda install --quiet --yes -c conda-forge \
     'ipyleaflet=0.6.5*' \
-    'ipywidgets=7.1.1*' \
     'ipyparallel=6.0.2*' \
     'jupyter_contrib_nbextensions=0.4.0*' \
     'jupyter_nbextensions_configurator=0.4.0*' \
-    'matplotlib=2.1.1*' \
     'nb_conda=2.2.1*' \
     'nb_conda_kernels=2.1.0*' && \
     pip install -q --no-cache-dir --upgrade autopep8 &&\
@@ -76,7 +74,7 @@ RUN conda install --quiet --yes -c anaconda \
 # Create a Python 2.x environment using conda including at least the ipython kernel
 # and the kernda utility. Add any additional packages you want available for use
 # in a Python 2 notebook to the first line here (e.g., pandas, matplotlib, etc.)
-RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel numpy matplotlib pip autopep8 kernda && \
+RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ipykernel numpy matplotlib pillow pip autopep8 kernda && \
     conda clean -tipsy && \
 # Create a global kernelspec in the image and modify it so that it properly activates
 # the python2 conda environment.
@@ -87,9 +85,9 @@ RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ip
 # Install JupyTEP IDE UI layout and enable it
 RUN cd /tmp && \
     git clone https://github.com/wasat/JupyTEPIDE.git && \
+    cp -rf /tmp/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
     cd JupyTEPIDE && \
     cp -R notebooks /home/jovyan/ && \
-    cp -rf /tmp/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
     cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
@@ -97,13 +95,12 @@ RUN cd /tmp && \
     cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/02-init-leaflet.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/03-import_notebook_as_module.py /home/jovyan/.ipython/profile_default/startup/03-import_notebook_as_module.py && \
+    cp /tmp/JupyTEPIDE/scripts/startup/04-mapnik.py /home/jovyan/.ipython/profile_default/startup/04-mapnik.py && \
     cp -R /tmp/JupyTEPIDE /opt/ && \
-    npm cache clean && \
+    npm cache clean --force && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
-
-
