@@ -149,6 +149,7 @@ define([
     //     layer.options.zIndex = layer.options.zIndex-1;
     // };
 
+    //todo:ikona leafleta - poprawić ścieżkę
     //*** markerIcon ***
     var markerIcon = L.icon({
         iconUrl: '/nbextensions/source_UI/img/marker-icon.png',

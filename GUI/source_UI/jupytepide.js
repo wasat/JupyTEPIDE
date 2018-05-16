@@ -28,8 +28,9 @@ define([
     'base/js/utils',
     'services/config',
     './leaflet_interface',
-    './code_snippets'
-], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets) {
+    './code_snippets',
+    'base/js/keyboard'
+], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets,keyboard) {
     "use strict";
 
     /**
@@ -400,9 +401,72 @@ define([
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
     };
 
+     Jupytepide.disableKeycodes = function(event){
+
+         if (event.which === keyboard.keycodes.enter) {
+             //d.find('.btn-primary').first().click();
+             $('.btn-primary').click();
+             return false;
+         }
+
+     };
+
+
     //method for testing
     Jupytepide.map_LoadPolygon = function(popupText){
         leaflet_interface.load_test_polygon(popupText);
+    };
+
+    Jupytepide.createFile = function(){
+        code_snippets.createFile();
+    };
+
+    Jupytepide.saveFile = function(fname,data){
+        code_snippets.saveFile(fname,data);
+    };
+
+    Jupytepide.addSnippet = function(codeSnippet){
+        return code_snippets.addSnippet(codeSnippet);
+    };
+
+    Jupytepide.addGroup = function(group){
+        return code_snippets.addGroup(group);
+    };
+
+    //Jupytepide.snippetsUrl = function(){
+    //    return code_snippets.getSnippetsUrl();
+    //};
+
+    //Jupytepide.baseUrl = function(){
+    //    return code_snippets.getBaseUrl();
+    //};
+
+    //Jupytepide.getMaxGroupId = function(){
+    //    return code_snippets.getMaxGroupId();
+    //};
+
+    Jupytepide.makeMenuItem = function(){
+        return code_snippets.make_snippets_menu_item({group_name:'NAZWA_GRUPY',id:12});
+    };
+
+    Jupytepide.deleteSnippet = function(codeSnippet){
+        return code_snippets.deleteSnippet(codeSnippet);
+    };
+
+    Jupytepide.deleteGroup = function(group){
+        return code_snippets.deleteGroup(group);
+    };
+
+    Jupytepide.addSnippetClick = function(data){
+        code_snippets.addSnippetClick(data);
+    };
+
+    Jupytepide.showAddSnippetWindow = function(){
+       code_snippets.showAddSnippetWindow();
+     };
+
+    Jupytepide.deleteGroupFromUI = function(gid){
+        code_snippets.deleteGroupFromUI(gid);
     };
 
     // return public object
