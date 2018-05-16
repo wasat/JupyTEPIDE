@@ -325,18 +325,18 @@ define([
 
     };
 
-    var make_snippets_menu_item = function(element){
-
-        var menu_snippets_item_header = $('<a/>',{href:'#',id:element.id}).addClass('menu_snippets_item_header').html(element.group_name).append($('<br>'));
-        var menu_snippets_item_content = $('<div/>',{id:element.id}).addClass('menu_snippets_item_content');
-        var item = {header:menu_snippets_item_header,content:menu_snippets_item_content};
-
-        menu_snippets_item_header.click(function(){
-            menu_snippets_item_content.slideToggle();
-        });
-        menu_snippets_item_content.hide();
-        return item;
-    };
+    // var make_snippets_menu_group = function(element){
+    //
+    //     var menu_snippets_item_header = $('<a/>',{href:'#',id:element.id}).addClass('menu_snippets_item_header').html(element.group_name).append($('<br>'));
+    //     var menu_snippets_item_content = $('<div/>',{id:element.id}).addClass('menu_snippets_item_content');
+    //     var item = {header:menu_snippets_item_header,content:menu_snippets_item_content};
+    //
+    //     menu_snippets_item_header.click(function(){
+    //         menu_snippets_item_content.slideToggle();
+    //     });
+    //     menu_snippets_item_content.hide();
+    //     return item;
+    // };
 
     //proste wstawianie do panelu
     // w tej metodzie dodać tworzenie całej zawartości panelu - czyli zakładki tu
@@ -484,7 +484,7 @@ define([
         for (i=0;i<menu_groupsList.length;i++){
             var group_name = menu_groupsList[i].group_name;
             var group_id = menu_groupsList[i].group_id;
-            menu_item = make_snippets_menu_item({group_name:group_name,id:group_id});
+            menu_item = code_snippets.make_snippets_menu_group({group_name:group_name,id:group_id});
             menu_snippets.append(menu_item.header).append(menu_item.content);
             menu_item={};
         };
@@ -497,13 +497,16 @@ define([
         var snippetsList = [];
         snippetsList = code_snippets.getSnippetsList1();
         for (i = 0; i < snippetsList.length; i++) {
-            var id=snippetsList[i].group;
-            var snippet_item = $('<div/>').addClass('menu_snippets_item');
-            snippet_item.append($('<a/>',{href:'#'}).html(snippetsList[i].name).bind('click', {snippet_name: snippetsList[i].name},
-                code_snippets.insert_snippet_cell)) ;
+            //var id=snippetsList[i].group;
+
+            code_snippets.addSnippetToUI(snippetsList[i].group,snippetsList[i].name);
+
+            //var snippet_item = $('<div/>').addClass('menu_snippets_item');
+            //snippet_item.append($('<a/>',{href:'#'}).html(snippetsList[i].name).bind('click', {snippet_name: snippetsList[i].name},
+            //    code_snippets.insert_snippet_cell)) ;
 
             //$('#'+id+'.menu_snippets_item_content').append($('<a/>').html('ffff'));
-            $('#'+id+'.menu_snippets_item_content').append(snippet_item);
+            //$('#'+id+'.menu_snippets_item_content').append(snippet_item);
 
 
             //&&&
@@ -562,10 +565,11 @@ define([
         //alert("sdfdsds");
         // Jupytepide.leafletMap.invalidateSize();
 
-        if (params.help_panel_add_toolbar_button) {
-            $('#btn_help_panel').toggleClass('active', visible);
+        //todo:poniższe odkomentowałem - wywalało błędy
+        //if (params.help_panel_add_toolbar_button) {
+        //    $('#btn_help_panel').toggleClass('active', visible);
 
-        };
+        //};
 
 
 
