@@ -1,4 +1,4 @@
-// file source_UI/jupytepide_notebooks.js
+// File source_UI/jupytepide_notebooks.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //

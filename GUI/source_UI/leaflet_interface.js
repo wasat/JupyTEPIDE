@@ -1,4 +1,4 @@
-// file source_UI/leaflet_interface.js
+// File source_UI/leaflet_interface.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //
@@ -41,9 +41,18 @@ define([
     //Used for initial map loading (not for notebook users)
     //Jupytepide.leafletMap initialization
     var load_map = function(map_container) {
-        mymap = L.map(map_container).setView([0,0], 1).on('click', onMapClick);
+        mymap = L.map(map_container);
         Jupytepide.leafletMap = mymap;
+        //Jupytepide.leafletMap.on('resize',function(){Jupytepide.leafletMap.invalidateSize();});
+        //Jupytepide.leafletMap.whenReady(function(){alert("gggggggd")});
+        Jupytepide.leafletMap.setView([0,0], 1).on('click', onMapClick);
+        //Jupytepide.leafletMap.fire('resize');
         L.control.scale().addTo(Jupytepide.leafletMap);
+    };
+
+    var map_invalidateSize = function(){
+        //Jupytepide.leafletMap.invalidateSize();
+        mymap.invalidateSize();
     };
 
 
@@ -67,7 +76,7 @@ define([
     var load_geoJsonLayer = function(data,options){
         return L.geoJSON(data,options
         ).bindPopup(function(layer){
-           return layer.feature.properties.description;
+            return layer.feature.properties.description;
         }).addTo(Jupytepide.leafletMap);
 
         //return L.geoJSON(data).addTo(Jupytepide.leafletMap);
@@ -140,6 +149,7 @@ define([
     //     layer.options.zIndex = layer.options.zIndex-1;
     // };
 
+    //todo:ikona leafleta - poprawić ścieżkę
     //*** markerIcon ***
     var markerIcon = L.icon({
         iconUrl: '/nbextensions/source_UI/img/marker-icon.png',
@@ -152,7 +162,7 @@ define([
     });
 
     //*** add_marker ***
-        //example: center=[51.11134, 17.0343], popup_={title: 'Wrocław',text:'Miasto w Polsce'}
+    //example: center=[51.11134, 17.0343], popup_={title: 'Wrocław',text:'Miasto w Polsce'}
     var add_marker = function(center,popup_) {
         var html_popup = "<b>{0}</b><br />{1}".format(popup_.title,popup_.text);
         var parameters={icon: markerIcon}
@@ -206,7 +216,7 @@ define([
     };
 
     var remove_controlLayer = function(Layer){
-       // L.control.removeLayer(Layer);
+        // L.control.removeLayer(Layer);
     };
 
     //****** testing area **********************************************************************************************
@@ -344,12 +354,12 @@ define([
         remove_controlLayer:remove_controlLayer,
         load_geojson:load_geojson,
         load_image:load_image,
-        load_madrid:load_madrid
+        load_madrid:load_madrid,
+        map_invalidateSize:map_invalidateSize
 
     };
 
 });
-
 
 
 

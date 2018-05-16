@@ -3,7 +3,7 @@
     top: 0;
     right: 0;
     height: 100%;
-    font-size: 0.9em;
+    font-size: 1em;
     overflow: auto;
     background-color: #FFFFFF;
 }
@@ -18,7 +18,7 @@
         see
         stackoverflow.com/questions/19948474
         stackoverflow.com/questions/20243767
-    */
+     */
     .col-md-6 {
         float: left;
         width: 50%;

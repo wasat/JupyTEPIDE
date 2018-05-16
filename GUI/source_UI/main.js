@@ -20,7 +20,8 @@ define([
         './css_loader',
         './code_snippets',
         'jquery',
-        'require'
+        'require',
+        './leaflet_interface'
     ],
     function (jupy,
               menu,
@@ -30,14 +31,19 @@ define([
               css_loader,
               code_snippets,
               $,
-              require) {
+              require,
+              leaflet_interface) {
         css_loader.load_jupytepide_theme();
         menu.load_ipython_extension();
-        map_browser.load_ipython_extension();
+        //map_browser.load_ipython_extension(); //ładowanie przeniesione do panel_browser
         code_snippets.load_ipython_extension();
         //css_loader.load_ipython_extension();
 
         toolbar_items.load_ipython_extension();
         panel_browser.load_ipython_extension();
+        //$( document ).ready(function() {
+        //leaflet_interface.map_invalidateSize();
+        //Jupytepide.leafletMap.invalidateSize();
+        //});
 
     });

@@ -1,4 +1,4 @@
-// file source_UI/panel_browser.js
+// File source_UI/panel_browser.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //
@@ -34,6 +34,8 @@ define([
     'base/js/page',
     './code_snippets',
     './jupytepide_notebooks',
+    './map_browser',
+    './leaflet_interface'
 ], function (require,
              $,
              IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
@@ -45,7 +47,9 @@ define([
              contents_service,
              page,
              code_snippets,
-             jupytepide_notebooks) {
+             jupytepide_notebooks,
+             map_browser,
+             leaflet_interface) {
     'use strict';
 // create config object to load parameters
     //   var base_url = utils.get_body_data('baseUrl');
@@ -54,7 +58,8 @@ define([
 //****
     var side_panel_min_rel_width = 10;
     var side_panel_max_rel_width = 90;
-    var side_panel_start_width = 22;
+    var side_panel_start_width = 32;
+    var map_panel = map_browser.build_map_panel();
 
     var build_side_panel = function (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
@@ -78,6 +83,7 @@ define([
         }).tooltip({
             placement: 'right'
         }).click(function () {
+
             var open = $(this).hasClass('fa-expand');
             var site = $('#site');
             slide_side_panel(main_panel, side_panel,
@@ -111,6 +117,8 @@ define([
             else {
                 side_panel_expand_contract.tooltip('option', 'content', tooltip_text);
             }
+            //dla leafleta - nie działa
+            Jupytepide.leafletMap.invalidateSize();
         });
 
         // bind events for resizing side panel
@@ -129,6 +137,14 @@ define([
         });
         $(document).mouseup(function (mu_evt) {
             $(document).unbind('mousemove');
+
+
+            //   $( document ).ready(function() {
+            //
+            //       Jupytepide.leafletMap.invalidateSize();
+            //});
+
+            Jupytepide.leafletMap.invalidateSize(); //to resize leaflet map
         });
 
         return side_panel;
@@ -163,7 +179,9 @@ define([
             };
         }
 
-        side_panel.animate({width: desired_width + '%'}, anim_opts);
+        side_panel.animate({width: desired_width + '%'}, anim_opts).promise().then(function(){Jupytepide.leafletMap.invalidateSize();});//invalidateSize odpali po zakończeniu animacji
+
+
         return visible;
     };
 
@@ -307,6 +325,19 @@ define([
 
     };
 
+    // var make_snippets_menu_group = function(element){
+    //
+    //     var menu_snippets_item_header = $('<a/>',{href:'#',id:element.id}).addClass('menu_snippets_item_header').html(element.group_name).append($('<br>'));
+    //     var menu_snippets_item_content = $('<div/>',{id:element.id}).addClass('menu_snippets_item_content');
+    //     var item = {header:menu_snippets_item_header,content:menu_snippets_item_content};
+    //
+    //     menu_snippets_item_header.click(function(){
+    //         menu_snippets_item_content.slideToggle();
+    //     });
+    //     menu_snippets_item_content.hide();
+    //     return item;
+    // };
+
     //proste wstawianie do panelu
     // w tej metodzie dodać tworzenie całej zawartości panelu - czyli zakładki tu
     var insert_into_side_panel;
@@ -319,14 +350,16 @@ define([
         var tabsUl = $('<ul/>', {id: 'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
         var tabsLiActive = $('<li/>').addClass('active');
 
-        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta', 'Snippets', 'true')));
-        tabsUl.append(make_tab_li().append(make_tab_a('#2karta', 'Notebooks', 'false')));
-        tabsUl.append(make_tab_li().append(make_tab_a('#3karta', 'Files', 'false')));
+
+        tabsUl.append(tabsLiActive.append(make_tab_a('#1karta', 'Map', 'true')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#2karta', 'Snippets', 'false')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#3karta', 'Notebooks', 'false')));
+        tabsUl.append(make_tab_li().append(make_tab_a('#4karta', 'Files', 'false')));
         //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
 
         side_panel_inner.append(tabsUl);
         // zawartość zakładek
-        var tabContDiv = $('<div/>').addClass('tab-content');
+        var tabContDiv = $('<div/>').addClass('tab-content').css({height:'85%'});
         //make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
         //make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
         //make_tab_div('tab-pane', '3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
@@ -334,6 +367,7 @@ define([
         make_tab_div('tab-pane active', '1karta').appendTo(tabContDiv);
         make_tab_div('tab-pane', '2karta').appendTo(tabContDiv);
         make_tab_div('tab-pane', '3karta').appendTo(tabContDiv);
+        make_tab_div('tab-pane', '4karta').appendTo(tabContDiv);
 
         //make_tab_div('tab-pane','4karta').append($('<p/>').html('Tresc zakladki 4')).appendTo(tabContDiv);
         side_panel_inner.append(tabContDiv);
@@ -347,12 +381,16 @@ define([
         //$('#1karta').load("readme.md");
 
 
+        //dla leafleta - odswiezanie mapy
+        $('.nav-tabs a').on('shown.bs.tab', function(event){Jupytepide.leafletMap.invalidateSize()});
+
+
         var rowItemArray = [];
         var i;
 //Karta Files
         //Nagłówek listy
-        var naglowek = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        $('#3karta').append(naglowek);
+        //var naglowek = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
+        //$('#4karta').append(naglowek);
 
 
         //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
@@ -383,7 +421,7 @@ define([
         rowItemArray[15] = new row_item('yeti', '/tree/anaconda3/bin', 'month ago', 'Stopped');
 
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#3karta').append(make_row_item(rowItemArray[i]));
+            $('#4karta').append(make_row_item(rowItemArray[i]));
         }
         //$('#notebook_list').addClass('list_container');
         rowItemArray = [];
@@ -404,8 +442,8 @@ define([
 
         //Nagłówek listy
         //var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        var naglowek2 = $('<div/>').addClass('list_container');
-        $('#2karta').append(naglowek2);
+        //var naglowek2 = $('<div/>').addClass('list_container');
+        // $('#3karta').append(naglowek2);
 
 
 //>>>>>
@@ -422,7 +460,7 @@ define([
             };
         }
         for (i = 0; i < rowItemArray.length; i++) {
-            $('#2karta').append(make_row_item(rowItemArray[i]));
+            $('#3karta').append(make_row_item(rowItemArray[i]));
         }
 
         rowItemArray = [];
@@ -434,30 +472,76 @@ define([
 
 //Karta Snippets
 
-        //Nagłówek listy
-        //var naglowek3 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        var naglowek3 = $('<div/>').addClass('list_container');
-        $('#1karta').append(naglowek3);
+        //var naglowek3 = $('<div/>').addClass('list_container');
+        //$('#2karta').append(naglowek3);
+        var menu_snippets = $('<div/>').addClass('menu_snippets');
 
+        var menu_item;
+        var menu_groupsList = code_snippets.getSnippetsGroups();
+
+        //loading snippets groups from JSON, making headers and empty content DOM elements
+        //creating empty menu with groups headers
+        for (i=0;i<menu_groupsList.length;i++){
+            var group_name = menu_groupsList[i].group_name;
+            var group_id = menu_groupsList[i].group_id;
+            menu_item = code_snippets.make_snippets_menu_group({group_name:group_name,id:group_id});
+            menu_snippets.append(menu_item.header).append(menu_item.content);
+            menu_item={};
+        };
+
+        $('#2karta').append(menu_snippets);
 
         //Load snippets from JSON
+        //loading menu snippets items content (snippets names) into appropriate groups
+        //creating menu with groups headers and grouped items
         var snippetsList = [];
-
-        snippetsList = code_snippets.getSnippetsList();
+        snippetsList = code_snippets.getSnippetsList1();
         for (i = 0; i < snippetsList.length; i++) {
+            //var id=snippetsList[i].group;
 
-            rowItemArray[i] = {
-                name: snippetsList[i],
-                link: '#',
-                time: 'yesterday',
-                snippet_name: snippetsList[i],
-                on_click: code_snippets.insert_snippet_cell
-            };
+            code_snippets.addSnippetToUI(snippetsList[i].group,snippetsList[i].name);
+
+            //var snippet_item = $('<div/>').addClass('menu_snippets_item');
+            //snippet_item.append($('<a/>',{href:'#'}).html(snippetsList[i].name).bind('click', {snippet_name: snippetsList[i].name},
+            //    code_snippets.insert_snippet_cell)) ;
+
+            //$('#'+id+'.menu_snippets_item_content').append($('<a/>').html('ffff'));
+            //$('#'+id+'.menu_snippets_item_content').append(snippet_item);
+
+
+            //&&&
+            // if (row_item.on_click) {
+            //     a_link.bind('click', {snippet_name: row_item.snippet_name},
+            //         row_item.on_click);
+            // }
+            //&&&
+
+            // $('#'+id+'.menu_snippets_item_content').append(make_row_item({
+            //     name: snippetsList[i].name,
+            //     link: '#',
+            //     time: 'yesterday',
+            //     snippet_name: snippetsList[i].name,
+            //     on_click: code_snippets.insert_snippet_cell
+            // }));
+
         }
-        for (i = 0; i < rowItemArray.length; i++) {
-            $('#1karta').append(make_row_item(rowItemArray[i]));
-        }
+
+
+//Karta Map
+        //var map_panel = map_browser.build_map_panel();
+
+        $('#1karta').append(map_panel).css({height:'100%'});
+
+        //map_panel.show();
+        //map_panel.slideToggle('medium');
+        //map_panel.slideToggle('medium');
+        leaflet_interface.load_map("map_container");
+        leaflet_interface.load_initialBaseLayers();
+        //Jupytepide.leafletMap.invalidateSize();
+
+
 //kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
+
 
 
     };
@@ -466,18 +550,29 @@ define([
         var main_panel = $('#notebook_panel');
         var side_panel = $('#side_panel');
 
+
         if (side_panel.length < 1) {
             side_panel = $('<div id="side_panel"/>');
             build_side_panel(main_panel, side_panel,
                 side_panel_min_rel_width, side_panel_max_rel_width);
             //populate_side_panel(side_panel);
             insert_into_side_panel(side_panel);
+
         }
 
         var visible = slide_side_panel(main_panel, side_panel);
-        if (params.help_panel_add_toolbar_button) {
-            $('#btn_help_panel').toggleClass('active', visible);
-        }
+        //side_panel.finish();
+        //alert("sdfdsds");
+        // Jupytepide.leafletMap.invalidateSize();
+
+        //todo:poniższe odkomentowałem - wywalało błędy
+        //if (params.help_panel_add_toolbar_button) {
+        //    $('#btn_help_panel').toggleClass('active', visible);
+
+        //};
+
+
+
         return visible;
     };
 
@@ -517,6 +612,12 @@ define([
         Jupyter.toolbar.add_buttons_group([full_action_name]);
 
         togglePanel();
+
+        //$( document ).ready(function() {
+        //leaflet_interface.map_invalidateSize();
+        //Jupytepide.leafletMap.invalidateSize();
+        //});
+
     }
 
     return {

@@ -1,19 +1,43 @@
 {
+  "groups":[
+    {
+      "group_id":1,
+      "group_name": "SNAP",
+      "group_level":0
+    },
+    {
+      "group_id":2,
+      "group_name": "WPS",
+      "group_level":0
+    },
+    {
+      "group_id":3,
+      "group_name": "OTB",
+      "group_level":0
+    },
+    {
+      "group_id":4,
+      "group_name": "WMS MAPS",
+      "group_level":0
+    }
+  ],
   "code_snippets": [
     {
+      "group":1,
       "name": "Load product",
       "code": [
         "import snappy",
         "import numpy as np",
         "import matplotlib.pyplot as plt",
         "#parameters for atithmetic transformation",
-        "a=1.15",
+        "a= 1.15",
         "b=0",
         "#source image",
         "file='/eodata/Envisat/Meris/FRS/2012/04/08/MER_FRS_1PPEPA20120408_105857_000005063113_00267_52867_0978.N1'"
       ]
     },
     {
+      "group": 1,
       "name": "Get WPS info",
       "code": [
         "from owslib.wps import WebProcessingService, monitorExecution, printInputOutput",
@@ -27,6 +51,7 @@
       ]
     },
     {
+      "group": 2,
       "name": "Connect WMS",
       "code": [
         "from owslib.wms import WebMapService",
@@ -38,6 +63,7 @@
       ]
     },
     {
+      "group": 2,
       "name": "Display image",
       "code": [
         "import matplotlib.image as mpimg",
@@ -48,6 +74,7 @@
       ]
     },
     {
+      "group": 3,
       "name": "Snappy GPT example",
       "code": [
         "from snappyhelpers import pyHashMap",
@@ -68,6 +95,7 @@
       ]
     },
     {
+      "group": 3,
       "name": "Setup OTB",
       "code": [
         "import sys",
@@ -83,6 +111,7 @@
       ]
     },
     {
+      "group": 4,
       "name": "OTB ROI",
       "code": [
         "from PIL import Image as PILImage",
@@ -108,6 +137,7 @@
       ]
     },
     {
+      "group": 4,
       "name": "Web Map Browser",
       "code": [
         "from IPython.display import clear_output, Javascript, display",
