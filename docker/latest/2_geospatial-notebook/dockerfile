@@ -43,7 +43,7 @@ RUN conda install --quiet --yes -c conda-forge \
     'owslib=0.16.0*' && \
      conda install --quiet --yes -c mrterry -n python27 mapnik && \
      conda clean -tipsy && \
-     /bin/bash -c "source activate python27 && pip install -q --no-cache-dir --upgrade mapnik && conda clean -tipsy && source deactivate python27"
+     /bin/bash -c "source activate python27 && pip install -q --no-cache-dir mapnik && conda clean -tipsy && source deactivate python27"
 
 USER root
 

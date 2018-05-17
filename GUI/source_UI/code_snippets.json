@@ -1,29 +1,237 @@
 {
-  "groups":[
+  "groups": [
     {
-      "group_id":1,
-      "group_name": "SNAP",
-      "group_level":0
-    },
-    {
-      "group_id":2,
-      "group_name": "WPS",
-      "group_level":0
-    },
-    {
-      "group_id":3,
+      "group_id": 1,
       "group_name": "OTB",
-      "group_level":0
+      "group_level": 0
     },
     {
-      "group_id":4,
-      "group_name": "WMS MAPS",
-      "group_level":0
+      "group_id": 2,
+      "group_name": "SNAP",
+      "group_level": 0
+    },
+    {
+      "group_id": 3,
+      "group_name": "WMS",
+      "group_level": 0
+    },
+    {
+      "group_id": 4,
+      "group_name": "WPS",
+      "group_level": 0
+    },
+    {
+      "group_name": "Other",
+      "group_id": 5
+    },
+    {
+      "group_name": "Snippets support",
+      "group_id": 6
+    },
+    {
+      "group_name": "TESTING GROUP 1",
+      "group_id": 7
     }
   ],
   "code_snippets": [
     {
-      "group":1,
+      "group": 4,
+      "name": "Simple WPS process using URLlib",
+      "code": [
+        "import urllib.request",
+        "from urllib.parse import quote, urlencode",
+        "import pprint",
+        "import re",
+        "",
+        "data=urlencode({'service':'WPS',",
+        "                'version':'1.1.0',",
+        "                'request':'execute',",
+        "                'identifier':'JTS:area',",
+        "                'datainputs':'geom=POLYGON ((0 0, 10 0, 10 10, 0 10, 0 0))'})",
+        "request='185.52.194.216:8080/geoserver/wps?'+data",
+        "request='http://'+quote(request,safe='%/:=&?~#+!$,;'@()*[]')",
+        "with urllib.request.urlopen(request) as response:",
+        "        h=response.read()",
+        "xx=re.search('LiteralData>(.*)</wps:LiteralData>',str(h),re.DOTALL)",
+        "print(xx.group(1))"
+      ]
+    },
+    {
+      "group": 3,
+      "name": "Read WMS Layer styles",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "wms['Raster'].styles"
+      ]
+    },
+    {
+      "group": 3,
+      "name": "Read WMS Layer CRS options",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "wms['Raster'].crsOptions"
+      ]
+    },
+    {
+      "group": 3,
+      "name": "Read WMS Layer WGS84 bounds",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "wms['Raster'].boundingBoxWGS84"
+      ]
+    },
+    {
+      "group": 3,
+      "name": "Check WMS Layer opacity",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "wms['Raster'].opaque"
+      ]
+    },
+    {
+      "group": 3,
+      "name": "Check WMS Layer queryable",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "wms['Raster'].queryable"
+      ]
+    },
+    {
+      "group": 3,
+      "name": "Read WMS Layer title",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "wms['Raster'].title"
+      ]
+    },
+    {
+      "group": 3,
+      "name": "Read WMS title",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "wms.identification.type"
+      ]
+    },
+    {
+      "group": 3,
+      "name": "List WMS contents",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "list(wms.contents)"
+      ]
+    },
+    {
+      "group": 3,
+      "name": "Read WMS type",
+      "code": [
+        "from owslib.wms import WebMapService",
+        "wms = WebMapService('http://mapy.geoportal.gov.pl/wss/service/img/guest/ORTO/MapServer/WMSServer', version='1.1.1')",
+        "wms.identification.type"
+      ]
+    },
+    {
+      "group": 2,
+      "name": "N1 Read Metadata",
+      "code": [
+        "import snappy",
+        "class N1Metadata:",
+        "    SPH={}",
+        "    MPH={}",
+        "    DSD={}",
+        "    Quality_ADS={}",
+        "    Scaling_Factor_GADS={}",
+        "    Tie_points_ADS={}",
+        "    def __init__(self,filename):",
+        "        import snappy",
+        "        self.filename=filename",
+        "        try:",
+        "            self.product=snappy.ProductIO.readProduct(filename)",
+        "        except IOError:",
+        "            print('Error opening file....')",
+        "            return 0",
+        "        metadata=self.product.getMetadataRoot()",
+        "        element=metadata.getElement('SPH')",
+        "        for i in element.getAttributes():",
+        "            self.SPH[i.getName()]=i.getDataElems()[0]",
+        "        element=metadata.getElement('MPH')",
+        "        for i in element.getAttributes():",
+        "            self.MPH[i.getName()]=i.getDataElems()[0]",
+        "        element=metadata.getElement('DSD')",
+        "        for i in element.getAttributes():",
+        "            self.DSD[i.getName()]=i.getDataElems()[0]",
+        "        element=metadata.getElement('Quality_ADS')",
+        "        for i in element.getAttributes():",
+        "            self.Quality_ADS[i.getName()]=i.getDataElems()[0]",
+        "        element=metadata.getElement('Scaling_Factor_GADS')",
+        "        for i in element.getAttributes():",
+        "            self.Scaling_Factor_GADS[i.getName()]=i.getDataElems()[0]",
+        "        element=metadata.getElement('Tie_points_ADS')",
+        "        for i in element.getAttributes():",
+        "            self.Tie_points_ADS[i.getName()]=i.getDataElems()[0]",
+        "",
+        "    def __repr__(self):",
+        "        from pprint import pprint,pformat",
+        "        from io import StringIO",
+        "        s = StringIO()",
+        "        pprint(self.SPH, s)",
+        "        m = StringIO()",
+        "        pprint(self.SPH, m)",
+        "        d = StringIO()",
+        "        pprint(self.DSD, d)",
+        "        Q = StringIO()",
+        "        pprint(self.Quality_ADS, Q)",
+        "        Sc = StringIO()",
+        "        pprint(self.Scaling_Factor_GADS, Sc)",
+        "        T = StringIO()",
+        "        pprint(self.Tie_points_ADS, T)",
+        "        return ('SPH:\n'+s.getvalue()+'\nMPH:\n'+m.getvalue()+'\nDSD:\n'+d.getvalue()",
+        "               +'\nQuality ADS:\n'+Q.getvalue()+'\nScaling Factor GADS:\n'+Sc.getvalue()+'\nTie points:\n'+T.getvalue())",
+        "",
+        "a=N1Metadata('/eodata/Envisat/Meris/FRS/2002/05/17/MER_FRS_1PPEPA20020517_140027_000000982006_00053_01109_0979.N1')",
+        "print(a)"
+      ]
+    },
+    {
+      "group": 1,
+      "name": "Vector Data Validation",
+      "code": [
+        "import sys",
+        "import os",
+        "import otbApplication",
+        "file_1 = ''",
+        "file_2 = ''",
+        "VectorDataDSValidation = otbApplication.Registry.CreateApplication('VectorDataDSValidation')",
+        "VectorDataDSValidation.SetParameterString('in', file_1)",
+        "VectorDataDSValidation.SetParameterStringList('belsup', ['cdbTvComputePolylineFeatureFromImage_LI_NOBUIL_gt.shp'])",
+        "VectorDataDSValidation.SetParameterString('descmod', file_2)",
+        "VectorDataDSValidation.SetParameterString('out', 'VectorDataDSValidation.shp')",
+        "VectorDataDSValidation.ExecuteAndWriteOutput()"
+      ]
+    },
+    {
+      "group": 1,
+      "name": "Line Segment Detection",
+      "code": [
+        "import sys",
+        "import os",
+        "import otbApplication",
+        "file_1 = ''",
+        "LineSegmentDetection = otbApplication.Registry.CreateApplication('LineSegmentDetection')",
+        "LineSegmentDetection.SetParameterString('in', file_1)",
+        "LineSegmentDetection.SetParameterString('out', 'LineSegmentDetection.shp')",
+        "LineSegmentDetection.ExecuteAndWriteOutput()"
+      ]
+    },
+    {
+      "group": 2,
       "name": "Load product",
       "code": [
         "import snappy",
@@ -37,7 +245,7 @@
       ]
     },
     {
-      "group": 1,
+      "group": 4,
       "name": "Get WPS info",
       "code": [
         "from owslib.wps import WebProcessingService, monitorExecution, printInputOutput",
@@ -51,7 +259,7 @@
       ]
     },
     {
-      "group": 2,
+      "group": 3,
       "name": "Connect WMS",
       "code": [
         "from owslib.wms import WebMapService",
@@ -63,7 +271,7 @@
       ]
     },
     {
-      "group": 2,
+      "group": 5,
       "name": "Display image",
       "code": [
         "import matplotlib.image as mpimg",
@@ -74,7 +282,7 @@
       ]
     },
     {
-      "group": 3,
+      "group": 2,
       "name": "Snappy GPT example",
       "code": [
         "from snappyhelpers import pyHashMap",
@@ -95,7 +303,7 @@
       ]
     },
     {
-      "group": 3,
+      "group": 1,
       "name": "Setup OTB",
       "code": [
         "import sys",
@@ -111,7 +319,7 @@
       ]
     },
     {
-      "group": 4,
+      "group": 1,
       "name": "OTB ROI",
       "code": [
         "from PIL import Image as PILImage",
@@ -137,7 +345,7 @@
       ]
     },
     {
-      "group": 4,
+      "group": 5,
       "name": "Web Map Browser",
       "code": [
         "from IPython.display import clear_output, Javascript, display",
@@ -191,6 +399,27 @@
         "",
         "interact(h, opacity=(0,100));",
         "m"
+      ]
+    },
+    {
+      "group": 1,
+      "name": "Testowanie",
+      "code": [
+        "%%js\n//Jupytepide.addGroup({ group_id: 7, group_name: \"JESZCZE 59999\", group_level: 0 })\n//Jupytepide.deleteGroup({ group_id: 7, group_name: \"OTHERS\", group_level: 0 })\n//Jupytepide.addSnippet({ group: 9, name: \"nowy snippet\", code: [\"Kajko\",\"i Kokosz\", \"i Miluś\"] })\nJupytepide.deleteSnippet({ group: 1, name: \"TESTING\"})"
+      ]
+    },
+    {
+      "group": 1,
+      "name": "Jeszcze jedno",
+      "code": [
+        "%%js\n//Jupytepide.addGroup({ group_id: 7, group_name: \"JESZCZE 59999\", group_level: 0 })\n//Jupytepide.deleteGroup({ group_id: 7, group_name: \"OTHERS\", group_level: 0 })\n//Jupytepide.addSnippet({ group: 9, name: \"nowy snippet\", code: [\"Kajko\",\"i Kokosz\", \"i Miluś\"] })\nJupytepide.deleteSnippet({ group: 1, name: \"TESTING\"})"
+      ]
+    },
+    {
+      "group": 6,
+      "name": "Menu group add - sample",
+      "code": [
+        "%%js\nJupytepide.addGroup({group_name: \"TESTING GROUP 2\"})"
       ]
     }
   ]
