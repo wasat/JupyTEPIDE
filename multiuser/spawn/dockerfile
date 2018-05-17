@@ -9,19 +9,23 @@ FROM $DOCKER_NOTEBOOK_IMAGE
 USER root
 
 # ------------ PLACE FOR TESTING -----------------
-#COPY "spawn/.grassrc.8888" "/home/$NB_USER/.grassrc.8888"
-#
-#ENV GISBASE=/usr/lib/grass74 \
-#    GISRC="/home/$NB_USER/.grassrc.8888" \
-#    GRASS_RENDER_IMMEDIATE=png \
-#    GRASS_RENDER_TRUECOLOR=TRUE \
-#    LD_LIBRARY_PATH=/usr/lib/grass74/lib:$LD_LIBRARY_PATH \
-#    PYTHONPATH=/usr/lib/grass74/etc/python:$PYTHONPATH \
-#    PATH=/usr/lib/grass74/bin:/usr/lib/grass74/scripts:$PATH
-#
-#RUN conda install --quiet --yes -c mrterry -n python27 mapnik && \
-#    conda clean -tipsy && \
-#    /bin/bash -c "source activate python27 && pip install -q --no-cache-dir --upgrade mapnik && conda clean -tipsy && source deactivate python27"
+RUN cd /tmp && \
+    git clone https://github.com/wasat/JupyTEPIDE.git && \
+    cp -rf /tmp/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
+    cd JupyTEPIDE && \
+    cp -R notebooks /home/jovyan/ && \
+    cd GUI && \
+    jupyter nbextension install source_UI --user && \
+    jupyter nbextension enable source_UI/main --sys-prefix && \
+    mkdir -p /home/jovyan/.ipython/profile_default/startup && \
+    find "/home/jovyan/.ipython/profile_default/startup" -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
+    cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
+    cp /tmp/JupyTEPIDE/scripts/startup/02-init-leaflet.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
+    cp /tmp/JupyTEPIDE/scripts/startup/03-import_notebook_as_module.py /home/jovyan/.ipython/profile_default/startup/03-import_notebook_as_module.py && \
+    cp /tmp/JupyTEPIDE/scripts/startup/04-grass.py /home/jovyan/.ipython/profile_default/startup/04-grass.py && \
+    cp -R /tmp/JupyTEPIDE /opt/ && \
+    find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
+    fix-permissions /home/$NB_USER
 # ------------ END TESTING -----------------------
 
 # Install JupyTEP IDE UI layout and enable it

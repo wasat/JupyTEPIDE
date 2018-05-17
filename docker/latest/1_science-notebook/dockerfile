@@ -92,11 +92,11 @@ RUN cd /tmp && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
     mkdir -p /home/jovyan/.ipython/profile_default/startup && \
+    find /home/jovyan/.ipython/profile_default/startup -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
     cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/02-init-leaflet.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/03-import_notebook_as_module.py /home/jovyan/.ipython/profile_default/startup/03-import_notebook_as_module.py && \
-    cp /tmp/JupyTEPIDE/scripts/startup/04-mapnik.py /home/jovyan/.ipython/profile_default/startup/04-mapnik.py && \
-    cp /tmp/JupyTEPIDE/scripts/startup/05-grass.py /home/jovyan/.ipython/profile_default/startup/05-grass.py && \
+    cp /tmp/JupyTEPIDE/scripts/startup/04-grass.py /home/jovyan/.ipython/profile_default/startup/04-grass.py && \
     cp -R /tmp/JupyTEPIDE /opt/ && \
     npm cache clean --force && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
