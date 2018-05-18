@@ -23,6 +23,7 @@ RUN cd /tmp && \
     cp /tmp/JupyTEPIDE/scripts/startup/02-init-leaflet.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/03-import_notebook_as_module.py /home/jovyan/.ipython/profile_default/startup/03-import_notebook_as_module.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/04-grass.py /home/jovyan/.ipython/profile_default/startup/04-grass.py && \
+    cp /tmp/JupyTEPIDE/GUI/source_UI/code_snippets.json /home/jovyan/code_snippets.json && \
     cp -R /tmp/JupyTEPIDE /opt/ && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
     fix-permissions /home/$NB_USER
