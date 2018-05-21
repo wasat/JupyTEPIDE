@@ -433,13 +433,13 @@ define([
         return code_snippets.addGroup(group);
     };
 
-    //Jupytepide.snippetsUrl = function(){
-    //    return code_snippets.getSnippetsUrl();
-    //};
+    Jupytepide.snippetsUrl = function(){
+        return code_snippets.getSnippetsUrl();
+    };
 
-    //Jupytepide.baseUrl = function(){
-    //    return code_snippets.getBaseUrl();
-    //};
+    Jupytepide.baseUrl = function(){
+        return code_snippets.getBaseUrl();
+    };
 
     //Jupytepide.getMaxGroupId = function(){
     //    return code_snippets.getMaxGroupId();

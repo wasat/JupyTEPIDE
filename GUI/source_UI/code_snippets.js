@@ -23,9 +23,13 @@ define([
     //var snippets_url = require.toUrl('./code_snippets.json'); //katalog w ktorym jest nasz extension
     var CODE_SNIPPETS_FN = 'code_snippets.json';
     var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
+//    var snippets_url = utils.url_path_join(
+//        Jupyter.notebook.base_url, 'tree',
+//        utils.encode_uri_components(parent), CODE_SNIPPETS_FN); //katalog domowy
+
     var snippets_url = utils.url_path_join(
-        Jupyter.notebook.base_url, 'tree',
-        utils.encode_uri_components(parent), CODE_SNIPPETS_FN); //katalog domowy
+        Jupyter.notebook.base_url, 'tree', CODE_SNIPPETS_FN); //katalog domowy
+
 
     function getBaseUrl(){
         return base_url;
