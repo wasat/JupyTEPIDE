@@ -1,5 +1,4 @@
 import os
-import sys
 
 homedir = os.environ['HOME']
 
@@ -58,3 +57,5 @@ if not os.path.exists(os.path.join(homedir,'grassdata','PERMANENT')):
         f.writelines("e-w resol3: 1\n")
         f.writelines("n-s resol3: 1\n")
         f.writelines("t-b resol:  1\n")
+
+print("JupyTEP IDE 04-grass TEST")
