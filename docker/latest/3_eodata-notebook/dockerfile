@@ -49,7 +49,7 @@ RUN chmod +x OTB-6.4.0-Linux64.run && \
     rm -rf OTB-6.4.0-Linux64.run
 
 RUN find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
-    npm cache clean && \
+    npm cache clean --force && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER && \
     fix-permissions "/opt/OTB-6.4.0-Linux64"

@@ -1,4 +1,4 @@
-/*notebook */
+/*notebook*/
 .container {
     /*background-color: #1C1C1C;*/
     width: 100%;
@@ -31,7 +31,7 @@ body {
 
 /*side pannel*/
 .side_panel_inner {
-    background-color: #2c2c2c;/*#3C3F41;*/
+    background-color: #2c2c2c; /*#3C3F41;*/
 }
 
 .list_header {
@@ -54,6 +54,7 @@ body {
 .list_container > div {
     border-bottom: 1px dashed #3b3b3e;
 }
+
 /*
 .col-md-12:hover {
     background-color:#282828;
@@ -61,7 +62,7 @@ body {
 */
 
 .list_item:hover {
-    background-color:#3b3b3e;
+    background-color: #3b3b3e;
 }
 
 .list_header > div, .list_item > div {
@@ -92,7 +93,6 @@ div.input_prompt {
 
 /* toolbar kontrolki - próba
 żeby zrobić własny dropdown, trzeba go umieścić w bootstrapowym stylu - jako button dropdown (zamiast select, chociaż select też działa)
-
 */
 /*dropdowns na toolbarze*/
 .toolbar select, .toolbar label {
@@ -162,58 +162,60 @@ span#login_widget > .button, #logout {
 }
 
 /*MENU SNIPPETS*/
-.menu_snippets{
+.menu_snippets {
 
 }
-.menu_snippets_item{
+
+.menu_snippets_item {
     display: block;
     background-color: #5555;
     border-top: 1px dashed #6f6767;
     padding: 5px 2em;
 }
 
-div.menu_snippets_item a{
-    color:white;
-    text-decoration:none;
+div.menu_snippets_item a {
+    color: white;
+    text-decoration: none;
 }
 
-div.menu_snippets_item:hover{
-    background-color:#555;
+div.menu_snippets_item:hover {
+    background-color: #555;
 
 }
 
 .menu_snippets_item_content {
 }
 
-.menu_snippets_item_header{
+.menu_snippets_item_header {
     border-top: 1px solid #555;
     display: block;
     text-align: left;
     padding: 8px 16px;
-    font-weight:bold;
+    font-weight: bold;
 }
 
-div.menu_snippets_item_header, a:hover{
-    text-decoration:none;
-
-}
-
-div.menu_snippets_item_header, a:focus{
-    text-decoration:none;
+div.menu_snippets_item_header, a:hover {
+    text-decoration: none;
 
 }
 
-.menu_snippets_item_header:hover{
+div.menu_snippets_item_header, a:focus {
+    text-decoration: none;
+
+}
+
+.menu_snippets_item_header:hover {
     background-color: #3c3f41;
 }
 
-div.menu_snippets_item_header a{
-    text-decoration:none;
+div.menu_snippets_item_header a {
+    text-decoration: none;
 }
 
 div.tab-content {
-    background-color:#2c2c2c;
+    background-color: #2c2c2c;
 }
+
 /*End of MENU SNIPPETS*/
 
 /*wysokość całej apki zmniejszymy - jeżeli chcemy na dole dodać pasek (np. rozwijalny)
@@ -225,5 +227,4 @@ div.tab-content {
 /*
 kolor na obramowanie wybranej celki: #6f6c75
 div.cell.selected, div.cell.selected.jupyter-soft-selected
-
 */
