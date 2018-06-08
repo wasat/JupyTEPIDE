@@ -192,16 +192,6 @@ define([
 
 
 
-        //czytanie jsona
-        // $.getJSON(snippets_url, function (data) {
-        //     // Insert snippet from JSON file named "snippet_name"
-        //     $.each(data['code_snippets'], function (key, snippet) {
-        //         //snippetsNames.push(snippet['name']);
-        //         snippetsNames.push({group:snippet['group'],name:snippet['name']});
-        //
-        //     });
-        // });
-
         return snippetsNames;
     };
 
@@ -218,15 +208,12 @@ define([
         var snippets_data;
 
         snippets_data = readFile(CODE_SNIPPETS_PATH_HIDDEN);
-        snippetsGroups=snippets_data.groups;
+        if (snippets_data){
+            snippetsGroups=snippets_data.groups;
+        }
+        else snippetsGroups = false;
 
-         // $.getJSON(snippets_url, function (data) {
-         //    snippetsGroups = data.groups;
-         // });
 
-        // $.getJSON(snippets_data.responseJSON.content, function (data) {
-        //     snippetsGroups = data.groups;
-        // });
         return snippetsGroups;
 
 
@@ -341,17 +328,12 @@ define([
             return JSON.parse(a.responseJSON.content);
         }
         catch (err) {
-            return {};
-        }
-        //return contents.list_checkpoints(base_url);
+            console.log('Failed to load snippets from: '+fname);
+            //throw 'Unable to read file';
+            return false;
 
-         // var val=[]; //udaje się zwrocić tylko przez tablicę, ze zwykłą zmienna nie działa....
-         // var promise1=contents.read2(fname);
-         // promise1.then(function(value){val.push(JSON.parse(value.content));},function(reject_reason){alert(reject_reason)});
-         // //return promise1;
-         //
-         // return val;
-         //alert(val[0]);
+        }
+
     };
 
     //*** createSnippet ***
@@ -392,18 +374,6 @@ define([
             };
         });
 
-
-        //czytanie jsona
-        // $.getJSON(snippets_url, function (data) {
-        //     JSONdata = data;
-        //
-        //     $.each(data['code_snippets'], function (key, snippet) {
-        //         if (snippet['name'] == codeSnippet.name) {
-        //             alert('There is already a snippet with the name: "'+ codeSnippet.name +'". Please change.');
-        //             toAdd = false;
-        //         };
-        //     });
-        // });
 
         if (toAdd) {
             JSONdata.code_snippets.push(codeSnippet);
@@ -469,18 +439,6 @@ define([
         });
 
 
-        //czytanie jsona
-        //get snippets to delete
-        // $.getJSON(snippets_url, function (data) {
-        //     JSONdata = data;
-        //
-        //     $.each(data['code_snippets'], function (key, snippet) {
-        //         if (snippet['name'] == codeSnippet.data.name && snippet['group'] == codeSnippet.data.group) {
-        //             toDelete.push(snippet);
-        //         };
-        //     });
-        // });
-
         //delete snippets from JSONdata
         for (i = 0; i < toDelete.length; i++){
             JSONdata.code_snippets.splice(JSONdata.code_snippets.indexOf(toDelete[i]),1);
@@ -523,11 +481,7 @@ define([
             gids.push(groups['group_id']);
         });
 
-        // $.getJSON(snippets_url, function (data) {
-        //     $.each(data['groups'], function (key, groups) {
-        //         gids.push(groups['group_id']);
-        //                     });
-        // });
+
         return Math.max(...gids);
     };
 
@@ -664,18 +618,6 @@ define([
             gids.push(groups['group_id']);
         });
 
-        //czytanie jsona
-        // $.getJSON(snippets_url, function (data) {
-        //     JSONdata = data;
-        //
-        //     $.each(data['groups'], function (key, groups) {
-        //         if (groups['group_name'] == group.group_name) {
-        //             alert('There is already a group menu with the name: "'+ group.group_name +'". Please change.');
-        //             toAdd = false;
-        //         };
-        //         gids.push(groups['group_id']);
-        //     });
-        // });
 
         if (toAdd) {
             //check max group ID, assign max+1 value to new group
@@ -724,28 +666,6 @@ define([
             });
         }
 
-        //czytanie jsona
-        //get groups to delete
-        // $.getJSON(snippets_url, function (data) {
-        //     JSONdata = data;
-        //
-        //     //check if a group contains any snippets
-        //     if (containsSnippets==false) {
-        //     $.each(data['code_snippets'], function (key, snippet) {
-        //         if (snippet['group'] == group.data.group_id) {
-        //             containsSnippets = true;
-        //         }
-        //         ;
-        //     });
-        //     }
-        //     if (containsSnippets==false){
-        //     $.each(data['groups'], function (key, groups) {
-        //         if (groups['group_name'] == group.data.group_name) {
-        //             toDelete.push(groups);
-        //         };
-        //     });
-        //     }
-        // });
         //delete groups from JSONdata
         for (i = 0; i < toDelete.length; i++){
             JSONdata.groups.splice(JSONdata.groups.indexOf(toDelete[i]),1);
