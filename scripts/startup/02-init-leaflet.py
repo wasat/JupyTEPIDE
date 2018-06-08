@@ -1,8 +1,10 @@
 import json
-from IPython.display import HTML, display
-from shutil import copyfile
 import os
 import re
+from shutil import copyfile
+
+from IPython.display import HTML, display
+
 
 class Leaflet():
     wmsAttribs = {
@@ -356,7 +358,6 @@ class ImageLayer():
         self.attribs[name] = value
 
 
-
 def Main():
     ll = Leaflet()
     geojsonFeature = {
@@ -372,6 +373,7 @@ def Main():
             "prop1": {"this": "that"}
         }
     }
+    print("JupyTEP IDE 02-init-leaflet TEST")
 
 
 if __name__ == '__main__':

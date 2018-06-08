@@ -97,3 +97,5 @@ class NotebookLoader(object):
 
 
 sys.meta_path.append(NotebookFinder())
+
+print("JupyTEP IDE 03-import-notebooks TEST")

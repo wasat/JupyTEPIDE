@@ -481,13 +481,15 @@ define([
 
         //loading snippets groups from JSON, making headers and empty content DOM elements
         //creating empty menu with groups headers
-        for (i=0;i<menu_groupsList.length;i++){
-            var group_name = menu_groupsList[i].group_name;
-            var group_id = menu_groupsList[i].group_id;
-            menu_item = code_snippets.make_snippets_menu_group({group_name:group_name,id:group_id});
-            menu_snippets.append(menu_item.header).append(menu_item.content);
-            menu_item={};
-        };
+        if (menu_groupsList){
+            for (i=0;i<menu_groupsList.length;i++){
+             var group_name = menu_groupsList[i].group_name;
+             var group_id = menu_groupsList[i].group_id;
+             menu_item = code_snippets.make_snippets_menu_group({group_name:group_name,id:group_id});
+             menu_snippets.append(menu_item.header).append(menu_item.content);
+             menu_item={};
+            };
+
 
         $('#2karta').append(menu_snippets);
 
@@ -524,6 +526,10 @@ define([
             //     on_click: code_snippets.insert_snippet_cell
             // }));
 
+        }
+        }
+        else {
+            $('#2karta').append($('<div/>').html('Falied to load snippets. Check console log.'));
         }
 
 
