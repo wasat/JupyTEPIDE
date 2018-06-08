@@ -425,6 +425,23 @@ define([
         code_snippets.saveFile(fname,data);
     };
 
+    Jupytepide.readFile = function(fname,options){
+         // $.ajaxSetup({
+         //     async: false
+         // });
+        // var val=[];
+        // var promise1=code_snippets.readFile(fname,options);
+        // promise1.then(function(value){val.push(value.content);},function(reject_reason){alert(reject_reason)});
+        // //return promise1;
+        // //var val1 = val[0];
+        // return val;
+        // //alert(val[0]);
+
+        var a = code_snippets.readFile(fname,options);
+        return a;
+
+    };
+
     Jupytepide.addSnippet = function(codeSnippet){
         return code_snippets.addSnippet(codeSnippet);
     };
