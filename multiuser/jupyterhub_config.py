@@ -42,7 +42,8 @@ c.DockerSpawner.volumes = {
     '/eodata-demo': '/eodata-demo',
     '/eodata-link': '/home/jovyan/eodata',
     '/pub/shared': '/home/jovyan/shared',
-    '/opt/dev/JupyTEPIDE/notebooks': '/home/jovyan/shared/notebooks-dev'}
+    '/opt/dev/JupyTEPIDE/notebooks': '/home/jovyan/shared/notebooks-dev',
+    '/pub/shared-system/results': '/home/jovyan/work/results'}
 # Also should be added     '/eodata': '/home/jovyan/eodata' as a alias
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped
