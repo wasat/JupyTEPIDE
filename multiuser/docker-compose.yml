@@ -17,6 +17,16 @@ services:
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
 
+  mapnik:
+    image: "jupytepide/tilestache-mapnik"
+    container_name: jupytepide-mapnik
+    ports:
+     - "32798:22"
+     - "32799:9001"
+     - "32800:80"
+    volumes:
+     - /opt/jupytepide/mapnik-data:/etc/tilestache
+
   hub:
     depends_on:
       - hub-db
