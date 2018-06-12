@@ -62,7 +62,7 @@ define([
         //todo: zrobić numerowanie markerów (innych elementów też, żeby je można było usuwać
         var layer_name='tmpMarker'
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_marker(center,popup_);;
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_marker(center,popup_);
     };
 
     /**
@@ -485,6 +485,10 @@ define([
     Jupytepide.deleteGroupFromUI = function(gid){
         code_snippets.deleteGroupFromUI(gid);
     };
+
+    //Jupytepide.addGroup = function(){
+    //    code_snippets.showAddGroupWindow();
+    //};
 
     // return public object
     return Jupytepide
