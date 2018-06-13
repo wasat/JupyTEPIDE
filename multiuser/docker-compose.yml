@@ -45,6 +45,7 @@ services:
       # Bind Docker volume on host for JupyterHub database and cookie secrets
       - "data:${DATA_VOLUME_CONTAINER}"
       - "eodata:${EODATA_VOLUME_CONTAINER}"
+      - "mapnik:$(MAPNIK_VOLUME_CONTAINER)"
     ports:
       - "443:443"
     links:
@@ -77,7 +78,9 @@ volumes:
     external:
       name: ${DB_VOLUME_HOST}
   eodata:
-
+  mapnik:
+    external:
+      name: ${MAPNIK_VOLUME_HOST}
 
 networks:
   default:

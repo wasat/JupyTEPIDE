@@ -8,4 +8,8 @@ services:
      - "32799:9001"
      - "32800:80"
     volumes:
-     - /opt/jupytepide/mapnik-data:/etc/tilestache
+     - mapnik:/etc/tilestache
+
+volumes:
+  mapnik:
+    name: jupytepide-mapnik
