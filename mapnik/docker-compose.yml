@@ -12,4 +12,5 @@ services:
 
 volumes:
   mapnik:
-    name: jupytepide-mapnik
+    external:
+      name: jupytepide-mapnik
