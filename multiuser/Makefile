@@ -12,6 +12,7 @@ volumes:
 	@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
 	@docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DB_VOLUME_HOST)
 	@docker volume inspect $(EODATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(EODATA_VOLUME_HOST)
+	@docker volume inspect $(MAPNIK_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(MAPNIK_VOLUME_HOST)
 
 self-signed-cert:
 	# make a self-signed cert
