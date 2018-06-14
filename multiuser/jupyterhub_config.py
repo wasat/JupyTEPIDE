@@ -3,6 +3,7 @@
 
 # Configuration file for JupyterHub
 import os
+import shutil
 
 c = get_config()
 
@@ -27,10 +28,33 @@ c.DockerSpawner.use_internal_ip = True
 c.DockerSpawner.network_name = network_name
 # Pass the network name as argument to spawned containers
 c.DockerSpawner.extra_host_config = {'network_mode': network_name}
+
+
 # Explicitly set notebook directory because we'll be mounting a host volume to
 # it.  Most jupyter/docker-stacks *-notebook images run the Notebook server as
 # user `jovyan`, and set the notebook directory to `/home/jovyan/work`.
 # We follow the same convention.
+def create_dir_hook(spawner):
+    username = spawner.user.name  # get the username
+    volume_path = os.path.join('/volumes/jupyterhub', username)
+    if not os.path.exists(volume_path):
+        os.mkdir(volume_path, 0o755)
+        # now do whatever you think your user needs
+        # ...
+
+
+def clean_dir_hook(spawner):
+    username = spawner.user.name  # get the username
+    temp_path = os.path.join('/volumes/jupyterhub', username, 'temp')
+    if os.path.exists(temp_path) and os.path.isdir(temp_path):
+        shutil.rmtree(temp_path)
+
+
+# attach the hook functions to the spawner
+# c.Spawner.pre_spawn_hook = create_dir_hook
+# c.Spawner.post_stop_hook = clean_dir_hook
+
+
 notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/jovyan/work'
 c.DockerSpawner.notebook_dir = notebook_dir
 # Mount the real user's Docker volume on the host to the notebook user's
@@ -42,7 +66,8 @@ c.DockerSpawner.volumes = {
     '/eodata-link': '/home/jovyan/eodata',
     '/pub/shared': '/home/jovyan/shared',
     '/opt/dev/JupyTEPIDE/notebooks': '/home/jovyan/shared/notebooks-dev',
-    '/opt/jupytepide/mapnik-data': '/home/jovyan/results'}
+    '/opt/jupytepide/mapnik-data': '/home/jovyan/results',
+    '/volumes/jupyterhub/{username}/': '/home/jovyan/work2'}
 # Also should be added     '/eodata': '/home/jovyan/eodata' as a alias
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped

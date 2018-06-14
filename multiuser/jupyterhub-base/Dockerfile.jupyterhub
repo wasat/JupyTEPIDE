@@ -1,7 +1,6 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG JUPYTERHUB_VERSION
-FROM jupyterhub/jupyterhub-onbuild:$JUPYTERHUB_VERSION
+FROM jupyterhub/jupyterhub-onbuild:0.8.1
 
 # apt-get installs
 RUN apt-get update -qq && \

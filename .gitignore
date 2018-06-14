@@ -100,6 +100,11 @@ ENV/
 # Idea conf files
 .idea/
 /docker/tmp/
-**/multiuser/secrets/
-**/multiuser/userlist
+multiuser/jupyterhub-base/secrets/
+multiuser/jupyterhub-base/userlist
 /docker/logs/
+/multiuser/jupyterhub-base/userlist
+data_dir/
+notebooks/GDAL/
+notebooks/GEO/
+/multiuser/jupyterhub-base/secrets/
