@@ -103,3 +103,9 @@ ENV/
 **/multiuser/secrets/
 **/multiuser/userlist
 /docker/logs/
+/multiuser/jupyterhub-base/secrets/
+/multiuser/jupyterhub-base/userlist
+data_dir/
+multiuser/jupyterhub-base/
+notebooks/GDAL/
+notebooks/GEO/
