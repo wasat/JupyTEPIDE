@@ -1,0 +1,6 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+ARG JUPYTEPIDE_HUB_VERSION
+FROM jupytepide-hub:$JUPYTEPIDE_HUB_VERSION
+
+COPY ./jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
