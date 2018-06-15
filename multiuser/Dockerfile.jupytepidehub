@@ -3,4 +3,4 @@
 ARG JUPYTEPIDE_HUB_VERSION
 FROM jupytepide-hub:$JUPYTEPIDE_HUB_VERSION
 
-RUN ls -l /opt
+COPY ./jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py

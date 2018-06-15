@@ -9,5 +9,5 @@ RUN apt-get update -qq && \
 
 RUN chown 1000:100 /etc/tilestache && \
     chown -R 1000:100 /etc/tilestache/* && \
-    chmod g+rws /etc/tilestache && \
+    chmod -R g+rws /etc/tilestache/* && \
     setfacl -d -m g::rwx /etc/tilestache

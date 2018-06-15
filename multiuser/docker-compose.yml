@@ -18,7 +18,7 @@ services:
       - "db:${DB_VOLUME_CONTAINER}"
 
   mapnik:
-    image: "jupytepide/tilestache-mapnik:ver_1.0.3"
+    image: "jupytepide/tilestache-mapnik:ver_1.0.4"
     container_name: jupytepide-mapnik
     ports:
      - "32798:22"

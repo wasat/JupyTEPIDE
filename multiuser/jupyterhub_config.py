@@ -66,7 +66,7 @@ c.DockerSpawner.volumes = {
     '/eodata-link': '/home/jovyan/eodata',
     '/pub/shared': '/home/jovyan/shared',
     '/opt/dev/JupyTEPIDE/notebooks': '/home/jovyan/shared/notebooks-dev',
-    '/opt/jupytepide/mapnik-data': '/home/jovyan/results',
+    'jupytepide-mapnik': '/home/jovyan/results',
     '/volumes/jupyterhub/{username}/': '/home/jovyan/work2'}
 # Also should be added     '/eodata': '/home/jovyan/eodata' as a alias
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
