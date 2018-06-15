@@ -283,11 +283,11 @@ define([
         }).addTo(mymap);
 
         var myIcon = L.icon({
-            iconUrl: '/nbextensions/source_UI/img/marker-icon.png',
+            iconUrl: require.toUrl('./img/marker-icon.png'),//'/nbextensions/source_UI/img/marker-icon.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [0, -41],
-            shadowUrl: '/nbextensions/source_UI/img/marker-shadow.png',
+            shadowUrl:require.toUrl('./img/marker-shadow.png'),// '/nbextensions/source_UI/img/marker-shadow.png',
             shadowSize: [41, 41],
             shadowAnchor: [12, 41]
         });

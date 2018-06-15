@@ -53,13 +53,14 @@ define([
         return snippets_url;
     };
 
-    config.loaded.then(function () {
-        var dropdown = $("<select></select>").attr("id", "snippet_picker")
-            .css("margin-left", "0.75em")
-            .attr("class", "form-control select-xs")
-            .change(insert_cell);
-        Jupyter.toolbar.element.append(dropdown);
-    });
+    //combobox do ładowania snippetów - nie używany, można dostosować, nie usuwać na razie
+    // config.loaded.then(function () {
+    //     var dropdown = $("<select></select>").attr("id", "snippet_picker")
+    //         .css("margin-left", "0.75em")
+    //         .attr("class", "form-control select-xs")
+    //         .change(insert_cell);
+    //     Jupyter.toolbar.element.append(dropdown);
+    // });
 
     // will be called when the nbextension is loaded
     function load_extension() {
@@ -70,30 +71,31 @@ define([
         //konkretny plik json
         //var jsonFileName = "/code_snippets.json";
 
-        $.getJSON(snippets_url, function (data) {
-            // Add the header as the top option, does nothing on click
-            var option = $("<option></option>")
-                .attr("id", "snippet_header")
-                .text("Snippets");
-            $("select#snippet_picker").append(option);
-
-            // Add options for each code snippet in the snippets.json file
-            $.each(data['code_snippets'], function (key, snippet) {
-                var option = $("<option></option>")
-                    .attr("value", snippet['name'])
-                    .text(snippet['name'])
-                    .attr("code", snippet['code'].join('\n'));
-                $("select#snippet_picker").append(option);
-            });
-        })
-            .error(function (jqXHR, textStatus, errorThrown) {
-                // Add an error message if the JSON fails to load
-                var option = $("<option></option>")
-                    .attr("value", 'ERROR')
-                    .text('Error: failed to load snippets!')
-                    .attr("code", "");
-                $("select#snippet_picker").append(option);
-            });
+        //Ładowanie do comboboxa na pasku - można dostosować, nie usuwać na razie
+        // $.getJSON(snippets_url, function (data) {
+        //     // Add the header as the top option, does nothing on click
+        //     var option = $("<option></option>")
+        //         .attr("id", "snippet_header")
+        //         .text("Snippets");
+        //     $("select#snippet_picker").append(option);
+        //
+        //     // Add options for each code snippet in the snippets.json file
+        //     $.each(data['code_snippets'], function (key, snippet) {
+        //         var option = $("<option></option>")
+        //             .attr("value", snippet['name'])
+        //             .text(snippet['name'])
+        //             .attr("code", snippet['code'].join('\n'));
+        //         $("select#snippet_picker").append(option);
+        //     });
+        // })
+        //     .error(function (jqXHR, textStatus, errorThrown) {
+        //         // Add an error message if the JSON fails to load
+        //         var option = $("<option></option>")
+        //             .attr("value", 'ERROR')
+        //             .text('Error: failed to load snippets!')
+        //             .attr("code", "");
+        //         $("select#snippet_picker").append(option);
+        //     });
 
     }
 
@@ -394,7 +396,7 @@ define([
 
         delBtn
             .append($('<i/>').addClass('fa fa-trash'))
-            .bind('click',codeSnippet,deleteSnippet);
+            .bind('click',codeSnippet,showDeleteSnippetWindow); //todo:przypiąć funkcję otwierającą dialog
 
         snippet_item
             .append($('<a/>',{href:'#'})
@@ -445,7 +447,7 @@ define([
             deleted=deleted+1;
         };
 
-        alert("Delete snippet: "+codeSnippet.data.name+'?')
+        //alert("Delete snippet: "+codeSnippet.data.name+'?')
 
         //save to file and UI
         if (deleted!=0){
@@ -501,7 +503,7 @@ define([
                 .val("")
         );
         var d = dialog.modal({
-            title: "Create Snippet in "+element.data.group_name+' '+element.data.id,
+            title: "Create Snippet in "+element.data.group_name,//+' '+element.data.id,
             body: dialog_body,
             notebook: options.notebook,
             keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
@@ -540,6 +542,106 @@ define([
     //Confirmation of deletion snippet or group
     function showDeleteConfirmation(){
         //TODO: dokończyć
+    };
+
+    //*** showDeleteSnippetWindow ***
+    //wyświetla okno dodawania grupy
+    //element = {group_name:"group name", id:3}
+    function showDeleteSnippetWindow(codeSnippet){
+        //***
+        var options = {};
+        var dialog_body = $('<div/>').append(
+            $("<p/>").addClass("rename-message")
+                .text('Do you really want to delete snippet: '+codeSnippet.data.name+'?')
+        );
+        var d = dialog.modal({
+            title: "Delete snippet confirmation",//+' '+element.data.id,
+            body: dialog_body,
+            notebook: options.notebook,
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            default_button: "Cancel",
+            buttons : {
+                "Cancel": {},
+                "Delete": {
+                    class: "btn-primary",
+                    click: function () {
+                        deleteSnippet(codeSnippet);
+                        //addGroup({ group_name: d.find('input[type="text"]').val()});
+                        //addSnippetClick({group_id:element.data.id,snippet_name:d.find('input[type="text"]').val()});
+
+                        d.modal('hide');
+                    }
+                }
+            },
+            open : function () {
+                /**
+                 * Upon ENTER, click the OK button.
+                 */
+                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
+
+                d.find('input[type="text"]').keydown(function (event) {
+                    if (event.which === keyboard.keycodes.enter) {
+                        d.find('.btn-primary').first().click();
+                        return false;
+                    }
+                });
+                d.find('input[type="text"]').focus().select();
+            }
+        });
+        //***
+    };
+
+    //*** showAddGroupWindow ***
+    //wyświetla okno dodawania grupy
+    //element = {group_name:"group name", id:3}
+    function showAddGroupWindow(){
+        //***
+        var options = {};
+        var dialog_body = $('<div/>').append(
+            $("<p/>").addClass("rename-message")
+                .text('Enter the name of the new group below:')
+        ).append(
+            $("<br/>")
+        ).append(
+            $('<input/>').attr('type','text').attr('size','25').addClass('form-control')
+                .val("")
+        );
+        var d = dialog.modal({
+            title: "Add New Group in Snippets Menu",//+' '+element.data.id,
+            body: dialog_body,
+            notebook: options.notebook,
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            default_button: "Cancel",
+            buttons : {
+                "Cancel": {},
+                "Save": {
+                    class: "btn-primary",
+                    click: function () {
+                        addGroup({ group_name: d.find('input[type="text"]').val()});
+                        //addSnippetClick({group_id:element.data.id,snippet_name:d.find('input[type="text"]').val()});
+
+                        d.modal('hide');
+                    }
+                }
+            },
+            open : function () {
+                /**
+                 * Upon ENTER, click the OK button.
+                 */
+                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
+
+                d.find('input[type="text"]').keydown(function (event) {
+                    if (event.which === keyboard.keycodes.enter) {
+                        d.find('.btn-primary').first().click();
+                        return false;
+                    }
+                });
+                d.find('input[type="text"]').focus().select();
+            }
+        });
+        //***
     };
 
     //*** make_snippets_menu_group ***
@@ -716,6 +818,7 @@ define([
         addSnippetToUI:addSnippetToUI,
         addSnippetClick:addSnippetClick,
         showAddSnippetWindow:showAddSnippetWindow,
+        showAddGroupWindow:showAddGroupWindow,
         deleteGroupFromUI:deleteGroupFromUI,
         readFile:readFile
 
