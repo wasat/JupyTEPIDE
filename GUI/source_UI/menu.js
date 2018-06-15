@@ -20,12 +20,14 @@ define([
     'jquery',
     'require',
     'base/js/namespace',
-    'base/js/utils'
+    'base/js/utils',
+    './code_snippets'
 ], function (Jupyter,
              $,
              require,
              IPython,
-             utils) {
+             utils,
+             code_snippets) {
 
     //otwieranie notebooka, lub innego pliku - jako name można podać dowolny plik
     function open_notebook(name) {
@@ -161,8 +163,11 @@ define([
         moje_menu = add_menu({name:'Jupytepide',menu_id:'jupytepide_menu'});
 
         //Snippets
-        add_menu_item('Snippets', 'Choose snippets', '#', moje_menu, function (evt) {
+        snippets_submenu = add_submenu('Snippets', '#jupytepide_menu');
+        add_menu_item('Add Group', 'Add new menu group', '#', snippets_submenu, function (evt) {
             evt.preventDefault();
+            //code_snippets.addGroup({ group_name: "KUKURA" });
+            code_snippets.showAddGroupWindow();
             //open_notebook('moj_probny.ipynb');
         });
 
