@@ -108,3 +108,5 @@ data_dir/
 notebooks/GDAL/
 notebooks/GEO/
 /multiuser/jupyterhub-base/secrets/
+!/multiuser/jupyterhub-base/Dockerfile.jupyterhub
+multiuser/jupyterhub-base/Dockerfile.jupyterhub
