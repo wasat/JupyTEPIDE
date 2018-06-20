@@ -7,13 +7,13 @@
 
 define([
     'jquery',
-    'contents',
     'base/js/namespace',
     'base/js/utils',
     'services/config',
     'base/js/keyboard',
-    'base/js/dialog'
-], function ($, contents_service, Jupyter, utils, configmod, keyboard, dialog) {
+    'base/js/dialog',
+    './content_access'
+], function ($, Jupyter, utils, configmod, keyboard, dialog, content_access) {
     "use strict";
 
     //todo: zrobić odtwarzanie pliku code_snippets.json po usunięciu przez użytkownika
@@ -32,9 +32,6 @@ define([
     var snippets_url = utils.url_path_join(
         Jupyter.notebook.base_url, CODE_SNIPPETS_PATH, CODE_SNIPPETS_FN); //katalog domowy
 
-    var contents = new contents_service.Contents({
-        base_url: base_url
-    });
 
     //alert(snippets_url);
     ///tree/code_snippets.json
@@ -137,7 +134,7 @@ define([
         //     });
         // });
 
-        var snippets_data = readFile(CODE_SNIPPETS_PATH_HIDDEN);
+        var snippets_data = content_access.readFile(CODE_SNIPPETS_PATH_HIDDEN);
         $.each(snippets_data['code_snippets'],function(key,snippet){
             if (snippet['name'] == snippet_name) {
                 var new_cell = Jupyter.notebook.insert_cell_above('');
@@ -187,7 +184,7 @@ define([
         var snippetsNames = [];
         var snippets_data;
 
-        snippets_data = readFile(CODE_SNIPPETS_PATH_HIDDEN);
+        snippets_data = content_access.readFile(CODE_SNIPPETS_PATH_HIDDEN);
         $.each(snippets_data['code_snippets'],function(key,snippet){
             snippetsNames.push({group:snippet['group'],name:snippet['name']});
         });
@@ -209,7 +206,7 @@ define([
 
         var snippets_data;
 
-        snippets_data = readFile(CODE_SNIPPETS_PATH_HIDDEN);
+        snippets_data = content_access.readFile(CODE_SNIPPETS_PATH_HIDDEN);
         if (snippets_data){
             snippetsGroups=snippets_data.groups;
         }
@@ -246,98 +243,6 @@ define([
         return WMBText;
     };
 
-    //*** createFile ***
-    //tworzenie pliku tekstowego o nazwie untitled.txt
-    function createFile(){
-        // var contents = new contents_service.Contents({
-        //     base_url: common_options.base_url,
-        //     common_config: common_config
-        // });
-
-        var contents = new contents_service.Contents({
-            base_url: base_url
-        });
-
-        contents.new_untitled('', {type: 'file', ext: '.txt'});
-    };
-
-    //*** save2 ***
-    //Additional method added to Contents.prototyme class contained in Jupyter's "content.js" module
-    //UWAGA:PUT (HTTP) nie jest obsługiwany przez wszystkie przeglądarki - może być, że nie zapiszemy snippetów - pomyśleć o PHP - ale najpierw testować
-    //trzeba zrobić tak: każde dodanie snippeta wymaga pobrania całej zawartości pliku, modyfikacji i ponownego zapisu, z tego jak działa AJAX inaczej się nie da, chyba, że będziemy używać bazy danych...
-    contents_service.Contents.prototype.save2 = function(path, model) {
-
-        var settings = {
-            processData : false,
-            type : "PUT",
-            dataType: "json",
-            data : JSON.stringify(model),
-            contentType: 'application/json',
-        };
-        var url = this.api_url(path);
-        //the below is similar to $.ajax():
-        //alert(url);
-        return utils.promising_ajax(url, settings);
-
-    };
-
-    contents_service.Contents.prototype.read2 = function(path) {
-
-        var settings = {
-            processData : false,
-            type : "GET",
-            dataType: "json",
-            //data : JSON.stringify(model),
-            contentType: 'application/json'
-        };
-        var url = this.api_url(path);
-        //the below is similar to $.ajax():
-        //alert(url);
-        //return utils.promising_ajax(url, settings);
-        return utils.ajax(url, settings);
-    };
-
-
-    //** saveFile ***
-    //Saves data into file located in user's HOME directory
-    //if file doesn't exist, it will be created. Use carefully!
-    function saveFile(fname,data){
-        var contents = new contents_service.Contents({
-            base_url: base_url
-        });
-        //contents.save('untitled.txt',{path:'',type:'file', format:'text', content:"{ x: 5, y: 6 }"});
-        contents.save2(fname,{path:'',type:'file', format:'text', content:JSON.stringify(data)});
-    };
-
-    function readFile(fname,option_fn){
-        var contents = new contents_service.Contents({
-            base_url: base_url
-        });
-        //contents.api_url('code_snippets.json');
-
-        //var promise1 = contents.read2(fname);
-        //var returned_data="";
-        //promise1.then(function(value){returned_data = value});
-        //return returned_data;
-
-        //$.ajaxSetup({
-        //    async: false
-        //});
-
-        try {
-            var a = contents.read2(fname);
-
-            return JSON.parse(a.responseJSON.content);
-        }
-        catch (err) {
-            console.log('Failed to load snippets from: '+fname);
-            //throw 'Unable to read file';
-            return false;
-
-        }
-
-    };
-
     //*** createSnippet ***
     //Creates snippet from selected cell, returns an object codeSnippet - ready to save in file/add to UI
     function createSnippet(group_id_,snippet_name_){
@@ -367,7 +272,7 @@ define([
         var JSONdata = {};
         var toAdd = true;
 
-        var snippets_data = readFile(CODE_SNIPPETS_PATH_HIDDEN);
+        var snippets_data = content_access.readFile(CODE_SNIPPETS_PATH_HIDDEN);
         JSONdata = snippets_data;
         $.each(snippets_data['code_snippets'],function(key,snippet){
             if (snippet['name'] == codeSnippet.name) {
@@ -379,7 +284,7 @@ define([
 
         if (toAdd) {
             JSONdata.code_snippets.push(codeSnippet);
-            saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
+            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
             addSnippetToUI(codeSnippet.group,codeSnippet.name);
             return JSONdata;
         }
@@ -432,7 +337,7 @@ define([
         var toDelete=[];
         var i;
 
-        var snippets_data = readFile(CODE_SNIPPETS_PATH_HIDDEN);
+        var snippets_data = content_access.readFile(CODE_SNIPPETS_PATH_HIDDEN);
         JSONdata = snippets_data;
         $.each(snippets_data['code_snippets'],function(key,snippet){
             if (snippet['name'] == codeSnippet.data.name && snippet['group'] == codeSnippet.data.group) {
@@ -453,7 +358,7 @@ define([
         if (deleted!=0){
             //JSONdata.code_snippets.push(codeSnippet);
             deleteSnippetFromUI(codeSnippet.data.group,codeSnippet.data.name);
-            saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
+            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
             //addSnippetToUI(codeSnippet.group,codeSnippet.name);
             return JSONdata;
         };
@@ -478,7 +383,7 @@ define([
         });
         var gids = [];
 
-        var snippets_data = readFile(CODE_SNIPPETS_PATH_HIDDEN);
+        var snippets_data = content_access.readFile(CODE_SNIPPETS_PATH_HIDDEN);
         $.each(snippets_data['groups'],function(key,groups){
             gids.push(groups['group_id']);
         });
@@ -710,7 +615,7 @@ define([
         var gids = [];
         var maxGid;
 
-        var snippets_data = readFile(CODE_SNIPPETS_PATH_HIDDEN);
+        var snippets_data = content_access.readFile(CODE_SNIPPETS_PATH_HIDDEN);
         JSONdata = snippets_data;
         $.each(snippets_data['groups'],function(key,groups){
             if (groups['group_name'] == group.group_name) {
@@ -727,7 +632,7 @@ define([
             group.group_id=maxGid;
             JSONdata.groups.push(group);
             //Save to JSON file
-            saveFile(CODE_SNIPPETS_PATH_HIDDEN, JSONdata);
+            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN, JSONdata);
             addGroupToUI(group.group_name,group.group_id);
             return JSONdata;
         }
@@ -749,7 +654,7 @@ define([
         var i;
         var containsSnippets = false;
 
-        var snippets_data = readFile(CODE_SNIPPETS_PATH_HIDDEN);
+        var snippets_data = content_access.readFile(CODE_SNIPPETS_PATH_HIDDEN);
         JSONdata = snippets_data;
         //check if a group contains any snippets
         if (containsSnippets==false) {
@@ -778,7 +683,7 @@ define([
         if (deleted!=0){
             //JSONdata.code_snippets.push(codeSnippet);
             deleteGroupFromUI(group.data.group_id);
-            saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
+            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
             //addSnippetToUI(codeSnippet.group,codeSnippet.name);
             return JSONdata;
         };
@@ -805,8 +710,6 @@ define([
         getSnippetsList1: get_SnippetsList1,
         getSnippetsGroups:get_SnippetsGroups,
         //getWebMapBrowserText: get_WebMapBrowserText,
-        createFile:createFile,
-        saveFile:saveFile,
         addSnippet:addSnippet,
         addGroup:addGroup,
         getBaseUrl:getBaseUrl, //do usunięcia
@@ -819,8 +722,7 @@ define([
         addSnippetClick:addSnippetClick,
         showAddSnippetWindow:showAddSnippetWindow,
         showAddGroupWindow:showAddGroupWindow,
-        deleteGroupFromUI:deleteGroupFromUI,
-        readFile:readFile
+        deleteGroupFromUI:deleteGroupFromUI
 
     };
 });

@@ -29,8 +29,10 @@ define([
     'services/config',
     './leaflet_interface',
     './code_snippets',
-    'base/js/keyboard'
-], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets,keyboard) {
+    'base/js/keyboard',
+    './content_access',
+    './jupytepide_notebooks'
+], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets,keyboard, content_access,jupytepide_notebooks) {
     "use strict";
 
     /**
@@ -417,12 +419,20 @@ define([
         leaflet_interface.load_test_polygon(popupText);
     };
 
-    Jupytepide.createFile = function(){
-        code_snippets.createFile();
+    //Jupytepide.createFile = function(){
+    //    code_snippets.createFile();
+    //};
+
+    Jupytepide.getFiles = function(path,options){
+        return content_access.getFiles(path,options);
+    };
+
+    Jupytepide.getNotebooks = function(path){
+        return jupytepide_notebooks.get_NotebooksListDir(path);
     };
 
     Jupytepide.saveFile = function(fname,data){
-        code_snippets.saveFile(fname,data);
+        content_access.saveFile(fname,data);
     };
 
     Jupytepide.readFile = function(fname,options){
@@ -437,7 +447,7 @@ define([
         // return val;
         // //alert(val[0]);
 
-        var a = code_snippets.readFile(fname,options);
+        var a = content_access.readFile(fname,options);
         return a;
 
     };

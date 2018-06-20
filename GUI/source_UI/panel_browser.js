@@ -437,8 +437,12 @@ define([
 //Karta Notebooks
         var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
         //var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks', utils.encode_uri_components(parent));
-        var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks');
 
+        //var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks');
+        var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree');
+        //nazwa katalogu, w którym są notebooki preinstalowane
+        //podana bezpośrednio w odniesieniu do katalogu domowego, bo pozostałą część ścieżki dopisują funkcje z modułu content_access
+        var PREINSTALLED_NOTEBOOKS_PATH = 'notebooks';
 
         //Nagłówek listy
         //var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
@@ -448,17 +452,22 @@ define([
 
 //>>>>>
         //Load jupytepide notebooks list from JSON
-        var notebooksList = [];
+        //var notebooksList = [];
 
-        notebooksList = jupytepide_notebooks.getNotebooksList();
+         var notebooksList = jupytepide_notebooks.get_NotebooksListDir('notebooks');
+
+        //console.log(notebooksList);
         for (i = 0; i < notebooksList.length; i++) {
-
+            var timeStr=notebooksList[i].last_modified
+            timeStr=timeStr.substring(0,timeStr.search("T"));
             rowItemArray[i] = {
-                name: notebooksList[i],
-                link: utils.url_path_join(notebookPath, notebooksList[i]),
-                time: 'yesterday'
+                name: notebooksList[i].name,
+                link: utils.url_path_join(notebookPath, notebooksList[i].path),
+                time: timeStr
             };
         }
+
+
         for (i = 0; i < rowItemArray.length; i++) {
             $('#3karta').append(make_row_item(rowItemArray[i]));
         }

@@ -65,6 +65,61 @@ define([
         return utils.ajax(url, settings);
     };
 
+    /**
+     * Get a file. Modified version.
+     *
+     * @method get
+     * @param {String} path
+     * @param {Object} options
+     *    type : 'notebook', 'file', or 'directory'
+     *    format: 'text' or 'base64'; only relevant for type: 'file'
+     *    content: true or false; // whether to include the content
+     */
+
+    contents_service.Contents.prototype.get2 = function (path, options) {
+        /**
+         * We do the call with settings so we can set cache to false.
+         */
+        var settings = {
+            processData : false,
+            cache : false,
+            type : "GET",
+            dataType : "json",
+        };
+        var url = this.api_url(path);
+        var params = {};
+        if (options.type) { params.type = options.type; }
+        if (options.format) { params.format = options.format; }
+        if (options.content === false) { params.content = '0'; }
+        //return utils.promising_ajax(url + '?' + $.param(params), settings);
+        return utils.ajax(url + '?' + $.param(params), settings);
+    };
+
+    //** getFiles ***
+    //The simplest: getFiles("",{}) will return objest containig all files and dirs from base_url dir
+    //it can be used to read file contents or to list any dir
+    function getFiles(path,options){
+        var contents = new contents_service.Contents({
+            base_url: base_url
+        });
+        return contents.get2(path,options);
+    }
+
+    //** getFilesList ***
+    //returns array of objects with content of directory (path)
+    //todo:dorobić filter - do filtrowania po rozszerzeniu
+    function getFilesList(path,options) {
+       //var filesList=[];
+        try {
+           var filesList = getFiles(path, options);
+           //return filesList;
+           return filesList.responseJSON.content;
+       }
+       catch (err){
+           console.log(err);
+           return false;
+       }
+    };
 
     //** saveFile ***
     //Saves data into file located in user's HOME directory
@@ -77,6 +132,7 @@ define([
         contents.save2(fname,{path:'',type:'file', format:'text', content:JSON.stringify(data)});
     };
 
+    //** readFile **
     function readFile(fname,option_fn){
         var contents = new contents_service.Contents({
             base_url: base_url
@@ -109,7 +165,9 @@ define([
     // return public methods
     return {
         saveFile:saveFile,
-        readFile:readFile
+        readFile:readFile,
+        getFiles:getFiles,
+        getFilesList:getFilesList
     };
 
 });
