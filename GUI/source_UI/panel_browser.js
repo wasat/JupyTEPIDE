@@ -271,6 +271,11 @@ define([
     var make_row_item = function (row_item) {
         var item_row = $('<div/>').addClass('list_item row');
         var colDiv = $('<div/>').addClass('col-md-12');
+        var itemType = row_item.type;
+        var iconName = 'file_icon';
+        if (itemType=='notebook'){iconName='notebook_icon'}
+         else if(itemType=='folder'){iconName='folder_icon'};
+
         colDiv.append(
             $('<input>',
                 {
@@ -279,7 +284,9 @@ define([
                 }));
         colDiv.append(
             //jakie są inne ikony
-            $('<i/>').addClass('item_icon folder_icon icon-fixed-width')
+            //TODO: dodawać ikony w zależności od rodzaju elementu. W zakładce "Notebooks" nie dawać ikon wcale
+            //TODO: są trzy ikony: notebook_icon, file_icon, folder_icon
+            $('<i/>').addClass('item_icon ' + iconName +' icon-fixed-width')
         );
         var itemName = $('<span/>').addClass('item_name').html(row_item.name);
 
@@ -429,7 +436,7 @@ define([
 
         //$('#1karta').append(make_row_item(rowItemArray[1]).appendTo($('<div/>')));
 
-//!@!@!@!@!@!@!@!lista notebooków, którą można spr. wykorzystać do zburowania filemanagera jest w pliku:
+//!@!@!@!@!@!@!@!lista notebooków, którą można spr. wykorzystać do zbudowania filemanagera jest w pliku:
         ///home/michal/anaconda3/lib/python3.6/site-packages/notebook/static/tree/js/notebooklist.js
         //a wywołanie obiektu, który znajduje się w tym module jest w skrypcie main.js - studiować
         //spr od napisania własnego, oddzielnego filemanagera.....
@@ -440,21 +447,12 @@ define([
 
         //var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks');
         var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree');
+
         //nazwa katalogu, w którym są notebooki preinstalowane
         //podana bezpośrednio w odniesieniu do katalogu domowego, bo pozostałą część ścieżki dopisują funkcje z modułu content_access
         var PREINSTALLED_NOTEBOOKS_PATH = 'notebooks';
 
-        //Nagłówek listy
-        //var naglowek2 = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        //var naglowek2 = $('<div/>').addClass('list_container');
-        // $('#3karta').append(naglowek2);
-
-
-//>>>>>
-        //Load jupytepide notebooks list from JSON
-        //var notebooksList = [];
-
-         var notebooksList = jupytepide_notebooks.get_NotebooksListDir('notebooks');
+        var notebooksList = jupytepide_notebooks.get_NotebooksListDir('notebooks');
 
         //console.log(notebooksList);
         for (i = 0; i < notebooksList.length; i++) {
@@ -463,21 +461,16 @@ define([
             rowItemArray[i] = {
                 name: notebooksList[i].name,
                 link: utils.url_path_join(notebookPath, notebooksList[i].path),
-                time: timeStr
+                time: timeStr,
+                type: notebooksList[i].type
             };
         }
-
 
         for (i = 0; i < rowItemArray.length; i++) {
             $('#3karta').append(make_row_item(rowItemArray[i]));
         }
 
         rowItemArray = [];
-//>>>>>
-
-
-        //make_link($('#2karta'), '#', 'Link dowolny');
-        //make_parent_link($('#2karta'), 'moj_probny.ipynb', 'Pokaz notebook 1');
 
 //Karta Snippets
 
