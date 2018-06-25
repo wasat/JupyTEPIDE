@@ -110,3 +110,7 @@ notebooks/GEO/
 /multiuser/jupyterhub-base/secrets/
 !/multiuser/jupyterhub-base/Dockerfile.jupyterhub
 multiuser/jupyterhub-base/Dockerfile.jupyterhub
+/multiuser/secrets/
+multiuser/secrets/
+multiuser/userlist
+/multiuser/userlist
