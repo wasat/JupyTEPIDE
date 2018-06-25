@@ -88,19 +88,20 @@ RUN cd /tmp && \
     cp -rf /tmp/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
     cd JupyTEPIDE && \
     cp -R notebooks /home/jovyan/ && \
-    cd GUI  && \
+    cd GUI && \
     jupyter nbextension install source_UI --user && \
     jupyter nbextension enable source_UI/main --sys-prefix && \
     mkdir -p /home/jovyan/.ipython/profile_default/startup && \
-    find /home/jovyan/.ipython/profile_default/startup -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
+    find "/home/jovyan/.ipython/profile_default/startup" -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
     cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/02-init-leaflet.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/03-import_notebook_as_module.py /home/jovyan/.ipython/profile_default/startup/03-import_notebook_as_module.py && \
     cp /tmp/JupyTEPIDE/scripts/startup/04-grass.py /home/jovyan/.ipython/profile_default/startup/04-grass.py && \
+    mkdir -p /opt/jupytepide/scripts && \
+    cp /tmp/JupyTEPIDE/scripts/metadata.py /opt/jupytepide/scripts/metadata.py && \
+    cp /tmp/JupyTEPIDE/GUI/source_UI/code_snippets.json /home/jovyan/code_snippets.json && \
     cp -R /tmp/JupyTEPIDE /opt/ && \
-    npm cache clean --force && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
-    fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
 
 WORKDIR /home/$NB_USER
