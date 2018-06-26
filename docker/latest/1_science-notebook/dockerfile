@@ -63,7 +63,8 @@ RUN conda install --quiet --yes -c anaconda \
     'jupyter_contrib_nbextensions=0.4.0*' \
     'jupyter_nbextensions_configurator=0.4.0*' \
     'nb_conda=2.2.1*' \
-    'nb_conda_kernels=2.1.0*' && \
+    'nb_conda_kernels=2.1.0*' \
+    'mpi4py=3.0.0' && \
     pip install -q --no-cache-dir --upgrade autopep8 &&\
     jupyter nbextension enable code_prettify/autopep8 --user &&\
     jupyter nbextension enable --py latex_envs --user &&\
@@ -102,7 +103,8 @@ RUN cd /tmp && \
     cp /tmp/JupyTEPIDE/GUI/source_UI/code_snippets.json /home/jovyan/code_snippets.json && \
     cp -R /tmp/JupyTEPIDE /opt/ && \
     find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
-    fix-permissions /home/$NB_USER
+    fix-permissions /home/$NB_USER && \
+    fix-permissions $CONDA_DIR
 
 WORKDIR /home/$NB_USER
 USER $NB_USER
