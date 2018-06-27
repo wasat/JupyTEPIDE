@@ -1,8 +1,13 @@
 import os
+import shutil
 
 homedir = os.environ['HOME']
 
-if not os.path.exists(os.path.join(homedir,'grassdata','PERMANENT')):
+if not os.path.exists(os.path.join(homedir, 'grassdata', 'location', 'PERMANENT')):
+    try:
+        shutil.rmtree(os.path.join(homedir, 'grassdata'))
+    except:
+        pass
     os.mkdir(os.path.join(homedir,'grassdata'))
     os.mkdir(os.path.join(homedir,'grassdata','location'))
     os.mkdir(os.path.join(homedir,'grassdata','location','PERMANENT'))
@@ -57,5 +62,3 @@ if not os.path.exists(os.path.join(homedir,'grassdata','PERMANENT')):
         f.writelines("e-w resol3: 1\n")
         f.writelines("n-s resol3: 1\n")
         f.writelines("t-b resol:  1\n")
-
-print("JupyTEP IDE 04-grass TEST")

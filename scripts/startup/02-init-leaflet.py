@@ -234,16 +234,16 @@ class ImageLayer():
             md = prod.getMetadataRoot()
             corners={}
             for i in md.getElements():
-                if (i.getName()=="SPH"):                
-                    atrybuty=i.getAttributes()                    
-                    for j in atrybuty:                                                 
+                if (i.getName() == "SPH"):
+                    atrybuty = i.getAttributes()
+                    for j in atrybuty:
                         if (j.getName() in ["FIRST_FIRST_LAT", "FIRST_FIRST_LONG", "FIRST_MID_LAT", "FIRST_MID_LONG",
                                             "FIRST_LAST_LAT", "FIRST_LAST_LONG", "LAST_FIRST_LAT", "LAST_FIRST_LONG",
                                             "LAST_MID_LAT", "LAST_MID_LONG","LAST_LAST_LAT", "LAST_LAST_LONG"]):
-                            corners[j.getName()]=str(j.getData())                            
-            lats={x: float(corners[x])*1e-6 for x in corners if "LAT" in x} 
-            lons={x: float(corners[x])*1e-6 for x in corners if "LONG" in x} 
-            print(max(lats.values()))                                                   
+                            corners[j.getName()] = str(j.getData())
+            lats = {x: float(corners[x]) * 1e-6 for x in corners if "LAT" in x}
+            lons = {x: float(corners[x]) * 1e-6 for x in corners if "LONG" in x}
+            print(max(lats.values()))
             bbox='''[[%f,%f],[%f,%f]]'''%(max(lats.values()),min(lons.values()),min(lats.values()),max(lons.values()))
             return bbox
         elif 'Landsat-5' in product or 'Landsat-7' in product:
@@ -373,7 +373,6 @@ def Main():
             "prop1": {"this": "that"}
         }
     }
-    print("JupyTEP IDE 02-init-leaflet TEST")
 
 
 if __name__ == '__main__':
