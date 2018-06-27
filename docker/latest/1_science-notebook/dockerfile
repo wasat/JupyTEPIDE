@@ -83,6 +83,7 @@ RUN conda create --quiet --yes -p $CONDA_DIR/envs/python27 python=2.7 ipython ip
     /bin/bash -c "source activate python27 && kernda -o -y /opt/conda/envs/python27/share/jupyter/kernels/python2/kernel.json && source deactivate python27" && \
     conda clean -tipsy
 
+
 # Install JupyTEP IDE UI layout and enable it
 RUN cd /tmp && \
     git clone https://github.com/wasat/JupyTEPIDE.git && \
