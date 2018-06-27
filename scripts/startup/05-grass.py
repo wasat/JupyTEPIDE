@@ -1,9 +1,14 @@
 import os
 import sys
+import shutil
 
 homedir = os.environ['HOME']
 
-if not os.path.exists(os.path.join(homedir,'grassdata','PERMANENT')):
+if not os.path.exists(os.path.join(homedir,'grassdata','location','PERMANENT')):
+    try:
+        shutil.rmtree(os.path.join(homedir,'grassdata'))
+    except:
+		pass
     os.mkdir(os.path.join(homedir,'grassdata'))
     os.mkdir(os.path.join(homedir,'grassdata','location'))
     os.mkdir(os.path.join(homedir,'grassdata','location','PERMANENT'))
