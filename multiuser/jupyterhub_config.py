@@ -62,13 +62,12 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # c.DockerSpawner.volumes = {'jupyterhub-user-{username}': notebook_dir}
 c.DockerSpawner.volumes = {
     'jupyterhub-user-{username}': notebook_dir,
-    '/eodata': '/eodata',
-    '/eodata-demo': '/eodata-demo',
-    '/eodata-link': '/home/jovyan/eodata',
+    '/eodata': '/home/jovyan/eodata',
+    '/eodata-demo': '/home/jovyan/eodata-demo',
     '/pub/shared': '/home/jovyan/shared',
     '/opt/dev/JupyTEPIDE/notebooks': '/home/jovyan/shared/notebooks-dev',
     'jupytepide-mapnik': '/home/jovyan/results',
-    '/volumes/jupyterhub/{username}/': '/home/jovyan/work2'}
+    '/volumes/jupyterhub/{username}/': '/home/jovyan/permanent-data'}
 # Also should be added     '/eodata': '/home/jovyan/eodata' as a alias
 # c.DockerSpawner.extra_create_kwargs.update({ 'volume_driver': 'local' })
 # Remove containers once they are stopped
