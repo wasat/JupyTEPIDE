@@ -1,7 +1,18 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG JUPYTEPIDE_HUB_VERSION
-FROM jupytepide-hub:$JUPYTEPIDE_HUB_VERSION
+ARG JUPYTEPIDE_HUB_BASE_VERSION
+FROM jupytepide/hub-base:$JUPYTEPIDE_HUB_BASE_VERSION
+
+# Copy TLS certificate and key
+ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
+ENV SSL_KEY /srv/jupyterhub/secrets/jupyterhub.key
+COPY ./secrets/*.crt $SSL_CERT
+COPY ./secrets/*.key $SSL_KEY
+RUN mkdir /eodata && \
+    chmod 700 /srv/jupyterhub/secrets && \
+    chmod 600 /srv/jupyterhub/secrets/*
+
+COPY ./secrets/userlist /srv/jupyterhub/userlist
 
 COPY ./img/logo_jupytepide.png /opt/conda/share/jupyter/hub/static/images/jupyterhub-80.png
 COPY ./img/logo_jupytepide.png /opt/conda/share/jupyter/hub/static/images/jupyter.png

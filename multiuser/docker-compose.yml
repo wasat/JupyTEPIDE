@@ -13,7 +13,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       PGDATA: ${DB_VOLUME_CONTAINER}
     env_file:
-      - jupyterhub-base/secrets/postgres.env
+      - secrets/postgres.env
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
 
@@ -34,7 +34,7 @@ services:
       context: .
       dockerfile: Dockerfile.jupytepidehub
       args:
-        JUPYTEPIDE_HUB_VERSION: ${JUPYTEPIDE_HUB_VERSION}
+        JUPYTEPIDE_HUB_BASE_VERSION: ${JUPYTEPIDE_HUB_BASE_VERSION}
     restart: always
     image: jupytepide-hub
     container_name: jupytepide-hub
@@ -65,8 +65,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_HOST: hub-db
     env_file:
-      - jupyterhub-base/secrets/postgres.env
-      - jupyterhub-base/secrets/oauth.env
+      - secrets/postgres.env
+      - secrets/oauth.env
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
 
