@@ -8,8 +8,7 @@ ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
 ENV SSL_KEY /srv/jupyterhub/secrets/jupyterhub.key
 COPY ./secrets/*.crt $SSL_CERT
 COPY ./secrets/*.key $SSL_KEY
-RUN mkdir /eodata && \
-    chmod 700 /srv/jupyterhub/secrets && \
+RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
 COPY ./secrets/userlist /srv/jupyterhub/userlist
