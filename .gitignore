@@ -101,12 +101,9 @@ ENV/
 .idea/
 /docker/tmp/
 multiuser/secrets/
-multiuser/secrets/userlist
 /docker/logs/
 data_dir/
 notebooks/GDAL/
 notebooks/GEO/
-/multiuser/secrets/
-multiuser/secrets/
 multiuser/userlist
 /multiuser/userlist
