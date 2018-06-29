@@ -35,10 +35,11 @@ define([
     './code_snippets',
     './jupytepide_notebooks',
     './map_browser',
-    './leaflet_interface'
+    './leaflet_interface',
+    './content_access'
 ], function (require,
              $,
-             IPython, //albo Jupyter - to chyba to samo, albo zazebiaja sie przestrzenie nazw
+             IPython, //or Jupyter
              events,
              utils,
              config,
@@ -49,7 +50,8 @@ define([
              code_snippets,
              jupytepide_notebooks,
              map_browser,
-             leaflet_interface) {
+             leaflet_interface,
+             content_access) {
     'use strict';
 // create config object to load parameters
     //   var base_url = utils.get_body_data('baseUrl');
@@ -236,7 +238,7 @@ define([
         );
     };
 
-    //robi sam odnośnik
+    //makes only <a> element
     var make_tab_a = function (href_, text, expanded) {
         var tab_link = $('<a/>', {href: href_}).html(text);
         tab_link.attr('data-toggle', 'tab');
@@ -263,18 +265,13 @@ define([
         this.on_click = on_click;
     }
 
-    //to będzie funkcja ładująca HTML z plikami z serwera (czyli UI filebrowsera)
-    //korzystam z klas i całego namespace z Jupytera (z jego filebrowsera)
-    //patrz item_row.html
-    //wejście: row item, czyli obiekt produkowany przez funkcję row_item(),
-    // albo coś w postaci(dobór atrybutów dowolny): {name:'Snippet 1',link:'#',time:'yesterday'}
     var make_row_item = function (row_item) {
         var item_row = $('<div/>').addClass('list_item row');
         var colDiv = $('<div/>').addClass('col-md-12');
         var itemType = row_item.type;
         var iconName = 'file_icon';
         if (itemType=='notebook'){iconName='notebook_icon'}
-         else if(itemType=='folder'){iconName='folder_icon'};
+         else if(itemType=='directory'){iconName='folder_icon'};
 
         colDiv.append(
             $('<input>',
@@ -293,7 +290,7 @@ define([
         var a_link = $('<a/>',
             {
                 href: row_item.link  //'/tree/anaconda3/bin',
-            }).addClass('item_link').append(itemName);
+            }).addClass('item_link').append(itemName).attr('onclick',row_item.onclick);//.bind('click',{},removeTabContent);
 
         if (row_item.on_click) {
             a_link.bind('click', {snippet_name: row_item.snippet_name},
@@ -322,15 +319,73 @@ define([
         return item_row;
     };
 
-    //funkcja ładująca gotowe notebooki
-    var show_notebooks = function () {
+    //*** removeTabContent ***
+    //Function for removing content from tabs "Notebooks" and "Files"
+    function removeTabContent(options){
+        //#karta - files, #3karta - notebooks
+        $(options.DOMelement+' .list_item').remove();
+        //alert(options.DOMelement);
+    };
+
+    function readDir(options){
+        removeTabContent(options);
+        loadTabContent({path:options.path,contents:options.contents,DOMelement:options.DOMelement});
 
     };
 
-    //funkcja ładująca snippety kodu
-    var show_snippets = function () {
+    //*** loadTabContent ***
+    //Function for loading content into "Notebooks" and "Files" tabs
+    //loadTabContent({contents:notebooks,DOMelement:'#3karta'})
+    function loadTabContent(options){
+        var homePath = utils.url_path_join(Jupyter.notebook.base_url, 'tree');
+        var elementsList;
+        var rowItemArray = [];
 
-    };
+        //removeTabContent(options.DOMelement);
+        if (options.contents==="notebooks") {
+            elementsList = jupytepide_notebooks.get_NotebooksListDir(options.path);
+        }
+        if (options.contents==="files") {
+            elementsList = content_access.get_FilesListDir(options.path);
+        }
+        //console.log(notebooksList);
+        for (i = 0; i < elementsList.length; i++) {
+            var timeStr=elementsList[i].last_modified;
+            timeStr=timeStr.substring(0,timeStr.search("T"));
+
+             rowItemArray[i] = {
+                 name: elementsList[i].name,
+                 //link: '#',//utils.url_path_join(homePath, elementsList[i].path),
+                 time: timeStr,
+                 type: elementsList[i].type
+                 //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})'
+                 //onclick:removeTabContent,
+                 //DOMelement: options.DOMelement
+             };
+
+             //todo:rozróżnić rodzaje plików - jak tekstowy - włączać do ścieżki /edit/, jak graficzny /view/
+             if (rowItemArray[i].type==='file'){
+                 rowItemArray[i].link=utils.url_path_join(homePath, elementsList[i].path);
+             }
+             if (rowItemArray[i].type==='directory'){
+                 rowItemArray[i].link='#';
+                 rowItemArray[i].onclick='Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})';
+             }
+             if (rowItemArray[i].type==='notebook'){
+                rowItemArray[i].link=utils.url_path_join(homePath, elementsList[i].path);
+             }
+
+        }
+
+        for (var i = 0; i < rowItemArray.length; i++) {
+            //$('#3karta').append(make_row_item(rowItemArray[i]));
+
+            $(options.DOMelement).append(make_row_item(rowItemArray[i]));
+        }
+        //$(document).ready(function() {
+        //    $('.item_link').attr('onclick','Jupytepide.removeTabContent({DOMelement:"'+options.DOMelement+'"})');
+        //});
+    }
 
     // var make_snippets_menu_group = function(element){
     //
@@ -345,15 +400,14 @@ define([
     //     return item;
     // };
 
-    //proste wstawianie do panelu
-    // w tej metodzie dodać tworzenie całej zawartości panelu - czyli zakładki tu
+    //simple inserting into panel
+    // This method stands for panel content loading - Tabs here
     var insert_into_side_panel;
     insert_into_side_panel = function (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
 
-        //**zakładki w bootstrap
-        //przy budowie filemanagera opierać się na strukturze filemanagera jupytera
-        //nagłówki zakładek
+        //**Tabs in bootstrap
+        //tabs headers
         var tabsUl = $('<ul/>', {id: 'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
         var tabsLiActive = $('<li/>').addClass('active');
 
@@ -394,88 +448,16 @@ define([
 
         var rowItemArray = [];
         var i;
-//Karta Files
-        //Nagłówek listy
-        //var naglowek = $('<div/>').load('http://localhost:8888/tree #notebook_list').addClass('list_container');
-        //$('#4karta').append(naglowek);
+//Files Tab
 
+        loadTabContent({path:'',contents:'files',DOMelement:'#4karta'});
 
-        //item rows muszą być ładowane do notebook list - znowu trzeba ręcznie, nie hurtem
+//Notebooks Tab
 
-        //var akapit1 = $('<div/>').load('./item_row.html'); //taka sciezka jest relatywna do katalogu głownego serwera (u mnie /anaconda3/)
-        //$('#1karta').append(akapit1);
+        loadTabContent({path:'notebooks',contents:'notebooks',DOMelement:'#3karta'});
 
+//Snippets Tab
 
-        //wstawianie funkcją
-
-
-        //pozycje listy
-        rowItemArray[0] = new row_item('bin', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[1] = new row_item('bin bin', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[2] = new row_item('Folder 1', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[3] = new row_item('conda-meta', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[4] = new row_item('etc', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[5] = new row_item('include', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[6] = new row_item('lib', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[7] = new row_item('libexec', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[8] = new row_item('plugins', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[9] = new row_item('translations', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[10] = new row_item('sbin', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[11] = new row_item('var', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[12] = new row_item('zigbee', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[13] = new row_item('zuse', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[14] = new row_item('yaml', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-        rowItemArray[15] = new row_item('yeti', '/tree/anaconda3/bin', 'month ago', 'Stopped');
-
-        for (i = 0; i < rowItemArray.length; i++) {
-            $('#4karta').append(make_row_item(rowItemArray[i]));
-        }
-        //$('#notebook_list').addClass('list_container');
-        rowItemArray = [];
-
-
-        //$('#1karta').append(make_row_item(rowItemArray[1]).appendTo($('<div/>')));
-
-//!@!@!@!@!@!@!@!lista notebooków, którą można spr. wykorzystać do zbudowania filemanagera jest w pliku:
-        ///home/michal/anaconda3/lib/python3.6/site-packages/notebook/static/tree/js/notebooklist.js
-        //a wywołanie obiektu, który znajduje się w tym module jest w skrypcie main.js - studiować
-        //spr od napisania własnego, oddzielnego filemanagera.....
-
-//Karta Notebooks
-        var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
-        //var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks', utils.encode_uri_components(parent));
-
-        //var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree/notebooks');
-        var notebookPath = utils.url_path_join(Jupyter.notebook.base_url, 'tree');
-
-        //nazwa katalogu, w którym są notebooki preinstalowane
-        //podana bezpośrednio w odniesieniu do katalogu domowego, bo pozostałą część ścieżki dopisują funkcje z modułu content_access
-        var PREINSTALLED_NOTEBOOKS_PATH = 'notebooks';
-
-        var notebooksList = jupytepide_notebooks.get_NotebooksListDir('notebooks');
-
-        //console.log(notebooksList);
-        for (i = 0; i < notebooksList.length; i++) {
-            var timeStr=notebooksList[i].last_modified
-            timeStr=timeStr.substring(0,timeStr.search("T"));
-            rowItemArray[i] = {
-                name: notebooksList[i].name,
-                link: utils.url_path_join(notebookPath, notebooksList[i].path),
-                time: timeStr,
-                type: notebooksList[i].type
-            };
-        }
-
-        for (i = 0; i < rowItemArray.length; i++) {
-            $('#3karta').append(make_row_item(rowItemArray[i]));
-        }
-
-        rowItemArray = [];
-
-//Karta Snippets
-
-        //var naglowek3 = $('<div/>').addClass('list_container');
-        //$('#2karta').append(naglowek3);
         var menu_snippets = $('<div/>').addClass('menu_snippets');
 
         var menu_item;
@@ -505,29 +487,6 @@ define([
 
             code_snippets.addSnippetToUI(snippetsList[i].group,snippetsList[i].name);
 
-            //var snippet_item = $('<div/>').addClass('menu_snippets_item');
-            //snippet_item.append($('<a/>',{href:'#'}).html(snippetsList[i].name).bind('click', {snippet_name: snippetsList[i].name},
-            //    code_snippets.insert_snippet_cell)) ;
-
-            //$('#'+id+'.menu_snippets_item_content').append($('<a/>').html('ffff'));
-            //$('#'+id+'.menu_snippets_item_content').append(snippet_item);
-
-
-            //&&&
-            // if (row_item.on_click) {
-            //     a_link.bind('click', {snippet_name: row_item.snippet_name},
-            //         row_item.on_click);
-            // }
-            //&&&
-
-            // $('#'+id+'.menu_snippets_item_content').append(make_row_item({
-            //     name: snippetsList[i].name,
-            //     link: '#',
-            //     time: 'yesterday',
-            //     snippet_name: snippetsList[i].name,
-            //     on_click: code_snippets.insert_snippet_cell
-            // }));
-
         }
         }
         else {
@@ -535,7 +494,7 @@ define([
         }
 
 
-//Karta Map
+//Map Tab
         //var map_panel = map_browser.build_map_panel();
 
         $('#1karta').append(map_panel).css({height:'100%'});
@@ -598,7 +557,7 @@ define([
             })
         );
 
-        //podlinkowanie stylu bootstrap
+        //bootstrap style linkage
         //  $('head').append(
         //      $('<link/>', {
         //          rel: 'stylesheet',
@@ -629,7 +588,8 @@ define([
     }
 
     return {
-        load_ipython_extension: load_ipython_extension
+        load_ipython_extension: load_ipython_extension,
+        readDir:readDir
     };
 });
 

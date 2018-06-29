@@ -269,7 +269,7 @@ define([
     };
 
     //*** load_leaflet ***
-    //function for testing purposes - delete when finished
+    //todo:function for testing purposes - delete when finished
     var load_leaflet = function () {
         mymap = L.map("map_container").setView([51.505, -0.09], 13);
         Jupytepide.leafletMap = mymap;

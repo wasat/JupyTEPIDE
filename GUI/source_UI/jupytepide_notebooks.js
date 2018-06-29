@@ -43,7 +43,7 @@ define([
     };
 
     //daje tablicę obiektów zbudowanych na podstawie plików zawartych w katalogu (path)
-    //TODO: odfiltrowuje tylko te, które są notebookami
+    //odfiltrowuje tylko pliki, które są notebookami oraz katalogami
     function get_NotebooksListDir(path){
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
 
@@ -51,7 +51,7 @@ define([
             async: false
         });
 
-        var NotebooksList = content_access.getFilesList(path,{});
+        var NotebooksList = content_access.getFilesList(path,{filter:"directory;notebook"});
         return NotebooksList;
     };
 

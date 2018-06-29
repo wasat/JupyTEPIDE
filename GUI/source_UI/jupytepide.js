@@ -31,8 +31,9 @@ define([
     './code_snippets',
     'base/js/keyboard',
     './content_access',
-    './jupytepide_notebooks'
-], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets,keyboard, content_access,jupytepide_notebooks) {
+    './jupytepide_notebooks',
+    './panel_browser'
+], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets,keyboard, content_access,jupytepide_notebooks,panel_browser) {
     "use strict";
 
     /**
@@ -367,6 +368,10 @@ define([
 
     }
 
+    Jupytepide.readDir = function(options){
+        panel_browser.readDir(options);
+    };
+
     //*** map_layerMoveDown ***
 
     Jupytepide.map_addLayerControls = function(baseLayers,overlays){
@@ -425,6 +430,10 @@ define([
 
     Jupytepide.getFiles = function(path,options){
         return content_access.getFiles(path,options);
+    };
+
+    Jupytepide.getFilesList = function(path,options){
+        return content_access.getFilesList(path,options);
     };
 
     Jupytepide.getNotebooks = function(path){

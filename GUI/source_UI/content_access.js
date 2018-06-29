@@ -107,18 +107,44 @@ define([
 
     //** getFilesList ***
     //returns array of objects with content of directory (path)
-    //todo:dorobić filter - do filtrowania po rozszerzeniu
     function getFilesList(path,options) {
-       //var filesList=[];
         try {
            var filesList = getFiles(path, options);
            //return filesList;
-           return filesList.responseJSON.content;
-       }
-       catch (err){
+           var returnFilesList = filesList.responseJSON.content;
+        }
+        catch (err){
            console.log(err);
            return false;
-       }
+        }
+
+        if (options.filter){
+            var filteredFilesList=[];
+            var filterArray = options.filter.toString();
+            filterArray = filterArray.split(";");
+            for (var i=0; i <returnFilesList.length;i++){
+                for (var j=0;j<filterArray.length;j++){
+                    if (returnFilesList[i].type==filterArray[j]) {
+                        filteredFilesList.push(returnFilesList[i]);
+                    }
+                }
+
+            }
+            return filteredFilesList;
+        }
+        else return returnFilesList;
+    };
+
+    //Function to use in file browser tab "Files" - to load content
+    function get_FilesListDir(path){
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+
+        $.ajaxSetup({
+            async: false
+        });
+
+        var FilesList = getFilesList(path,{filter:""});
+        return FilesList;
     };
 
     //** saveFile ***
@@ -167,7 +193,8 @@ define([
         saveFile:saveFile,
         readFile:readFile,
         getFiles:getFiles,
-        getFilesList:getFilesList
+        getFilesList:getFilesList,
+        get_FilesListDir:get_FilesListDir
     };
 
 });
