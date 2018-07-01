@@ -345,7 +345,30 @@ define([
             $('.leaflet-'+layer_name+'-pane').remove();
         };
 
-        // ale najpierw spr czy istnieje
+        // todo: but first check whether a layer exists
+    };
+
+    /**
+     * Remove all layers (overlays) from the map, except the initial ones (base layers)
+     * @memberof: class:Jupytepide
+     *
+     */
+    //*** map_removeAllLayers
+    Jupytepide.map_removeAllLayers = function(){
+        var layers = Jupytepide.leafletMap.layers;
+        var names=[];
+        //get all layers names
+        for (var property in layers) {
+            if (layers.hasOwnProperty(property)) {
+                names.push(property.toString());
+            }
+        }
+        for (var i=0;i<names.length;i++){
+            //check if layer is not base layer
+            if (names[i]!=='mapbox' && names[i]!=='osm'){
+                Jupytepide.map_removeLayer(names[i]);
+            }
+        };
     };
 
     //*** map_layerMoveUp ***

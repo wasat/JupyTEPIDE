@@ -270,8 +270,8 @@ define([
         var colDiv = $('<div/>').addClass('col-md-12');
         var itemType = row_item.type;
         var iconName = 'file_icon';
-        if (itemType=='notebook'){iconName='notebook_icon'}
-         else if(itemType=='directory'){iconName='folder_icon'};
+        if (itemType==='notebook'){iconName='notebook_icon'}
+         else if(itemType==='directory'){iconName='folder_icon'};
 
         colDiv.append(
             $('<input>',
@@ -280,9 +280,7 @@ define([
                     type: 'checkbox'
                 }));
         colDiv.append(
-            //jakie są inne ikony
-            //TODO: dodawać ikony w zależności od rodzaju elementu. W zakładce "Notebooks" nie dawać ikon wcale
-            //TODO: są trzy ikony: notebook_icon, file_icon, folder_icon
+
             $('<i/>').addClass('item_icon ' + iconName +' icon-fixed-width')
         );
         var itemName = $('<span/>').addClass('item_name').html(row_item.name);
@@ -337,9 +335,13 @@ define([
     //Function for loading content into "Notebooks" and "Files" tabs
     //loadTabContent({contents:notebooks,DOMelement:'#3karta'})
     function loadTabContent(options){
+
         var homePath = utils.url_path_join(Jupyter.notebook.base_url, 'tree');
+        var editPath = utils.url_path_join(Jupyter.notebook.base_url, 'edit');
+        var viewPath = utils.url_path_join(Jupyter.notebook.base_url, 'view');
         var elementsList;
         var rowItemArray = [];
+        var n;
 
         //removeTabContent(options.DOMelement);
         if (options.contents==="notebooks") {
@@ -348,31 +350,56 @@ define([
         if (options.contents==="files") {
             elementsList = content_access.get_FilesListDir(options.path);
         }
+
+        //"goto previous directory" element - first element of the list
+        //prepare path to previous directory
+        var path_previous=options.path;
+        if (path_previous.search("/")!=-1){
+            path_previous = path_previous.slice(0,path_previous.lastIndexOf("/"))
+        }
+        else path_previous='';
+
+        rowItemArray[0] = {
+            name: '...',
+            link:'#',
+            type: 'directory',
+            onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+path_previous+'",contents:"'+options.contents+'"})'
+            //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"/",contents:"'+options.contents+'"})'
+        };
+
         //console.log(notebooksList);
         for (i = 0; i < elementsList.length; i++) {
             var timeStr=elementsList[i].last_modified;
             timeStr=timeStr.substring(0,timeStr.search("T"));
-
-             rowItemArray[i] = {
+            n = i+1;
+             rowItemArray[n] = {
                  name: elementsList[i].name,
                  //link: '#',//utils.url_path_join(homePath, elementsList[i].path),
                  time: timeStr,
-                 type: elementsList[i].type
+                 type: elementsList[i].type,
+                 mimetype: elementsList[i].mimetype
                  //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})'
                  //onclick:removeTabContent,
                  //DOMelement: options.DOMelement
              };
 
-             //todo:rozróżnić rodzaje plików - jak tekstowy - włączać do ścieżki /edit/, jak graficzny /view/
-             if (rowItemArray[i].type==='file'){
-                 rowItemArray[i].link=utils.url_path_join(homePath, elementsList[i].path);
+             if (rowItemArray[n].type==='file'){
+
+                 if (rowItemArray[n].mimetype==='text/plain'){
+                     rowItemArray[n].link=utils.url_path_join(editPath, elementsList[i].path);
+                 }
+                 else if (rowItemArray[n].mimetype==='image/png'){
+                     rowItemArray[n].link=utils.url_path_join(viewPath, elementsList[i].path);
+                 }
+                 else rowItemArray[n].link=utils.url_path_join(homePath, elementsList[i].path);
+
              }
-             if (rowItemArray[i].type==='directory'){
-                 rowItemArray[i].link='#';
-                 rowItemArray[i].onclick='Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})';
+             if (rowItemArray[n].type==='directory'){
+                 rowItemArray[n].link='#';
+                 rowItemArray[n].onclick='Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})';
              }
-             if (rowItemArray[i].type==='notebook'){
-                rowItemArray[i].link=utils.url_path_join(homePath, elementsList[i].path);
+             if (rowItemArray[n].type==='notebook'){
+                rowItemArray[n].link=utils.url_path_join(homePath, elementsList[i].path);
              }
 
         }
