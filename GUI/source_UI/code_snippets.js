@@ -558,7 +558,7 @@ define([
         var menu_snippets_item_content = $('<div/>',{id:element.id}).addClass('menu_snippets_item_content');
         var addBtn = $('<button/>',{title:'Create snippet from selected cell'}).addClass('btn btn-primary btn-xs pull-right');
         addBtn.append($('<i/>').addClass('fa fa-plus'));
-        //var e = {group_id: 1,snippet_name:'ZIUTEK'};
+
         addBtn.bind('click', element, showAddSnippetWindow) ;
 
         //TODO: dodanie wyskakującego - popracować

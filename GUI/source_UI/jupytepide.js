@@ -528,6 +528,10 @@ define([
         code_snippets.deleteGroupFromUI(gid);
     };
 
+    Jupytepide.getRestoGeoJSON = function(url_){
+        return leaflet_interface.getRestoGeoJSON(url_);
+    }
+
     //Jupytepide.addGroup = function(){
     //    code_snippets.showAddGroupWindow();
     //};

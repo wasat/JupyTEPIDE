@@ -54,3 +54,17 @@
 .help_panel_hide .modal {
     display: none !important;
 }
+
+div.data_browser_panel {
+    /*border-top: solid grey 1px;
+    border-bottom: solid grey 1px;*/
+    box-shadow: 0px 0px 1px black;
+    margin-bottom: 4px;
+
+}
+
+i.btn.fa {
+    box-shadow: 0px 0px 1px black;
+    margin-right:3px;
+    margin-bottom:4px;
+}

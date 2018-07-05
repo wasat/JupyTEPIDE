@@ -36,7 +36,8 @@ define([
     './jupytepide_notebooks',
     './map_browser',
     './leaflet_interface',
-    './content_access'
+    './content_access',
+    './jupytepide'
 ], function (require,
              $,
              IPython, //or Jupyter
@@ -51,7 +52,8 @@ define([
              jupytepide_notebooks,
              map_browser,
              leaflet_interface,
-             content_access) {
+             content_access,
+             jupytepideModule) {
     'use strict';
 // create config object to load parameters
     //   var base_url = utils.get_body_data('baseUrl');
@@ -62,6 +64,7 @@ define([
     var side_panel_max_rel_width = 90;
     var side_panel_start_width = 32;
     var map_panel = map_browser.build_map_panel();
+    var map_toolbar = $('<div/>',{class:'map_browser_toolbar'});
 
     var build_side_panel = function (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
@@ -75,15 +78,13 @@ define([
         var side_panel_splitbar = $('<div class="side_panel_splitbar"/>');
         var side_panel_inner = $('<div class="side_panel_inner"/>');
         var side_panel_expand_contract = $('<i class="btn fa fa-expand hidden-print">');
+        map_toolbar.append(side_panel_expand_contract);
         side_panel.append(side_panel_splitbar);
         side_panel.append(side_panel_inner);
-        side_panel_inner.append(side_panel_expand_contract);
+        side_panel_inner.append(map_toolbar);
 
         side_panel_expand_contract.attr({
-            title: 'expand/contract panel',
-            'data-toggle': 'tooltip'
-        }).tooltip({
-            placement: 'right'
+            title: 'expand/contract panel'
         }).click(function () {
 
             var open = $(this).hasClass('fa-expand');
@@ -123,6 +124,7 @@ define([
             Jupytepide.leafletMap.invalidateSize();
         });
 
+
         // bind events for resizing side panel
         side_panel_splitbar.mousedown(function (md_evt) {
             md_evt.preventDefault();
@@ -148,6 +150,78 @@ define([
 
             Jupytepide.leafletMap.invalidateSize(); //to resize leaflet map
         });
+
+        //search-toggle button
+        var search_button =$('<i/>',{class:"btn fa fa-search",title:"Search for EO data"});
+        search_button.click(function(){
+            data_browser.slideToggle();
+        });
+        map_toolbar.append(search_button);
+
+        //**** browser panel - preliminary version
+        var data_browser = $('<div/>',{height:'100px',class:'data_browser_panel'});
+
+        //set data
+        var missions = [
+            {name:"All", instrument:['All','MERIS','TM','ETM','OLI','OLI_TIRS','TIRS','SAR','MSI','OLCI','SLSTR','SR','OL','SL']},
+            {name:"Envisat",instrument:['MERIS']},
+            {name:"Landsat5",instrument:['TM']},
+            {name:"Landsat7",instrument:['ETM']},
+            {name:"Landsat8",instrument:['All','OLI','OLI_TIRS','TIRS']},
+            {name:"Sentinel1",instrument:['SAR']},
+            {name:"Sentinel2",instrument:['MSI']},
+            {name:"Sentinel3",instrument:['All','OL','SL','SR']}
+            ];
+
+
+        //set controls
+        var missionComboBox = $('<select/>',{class:'data_browser_combobox',id:'mission'});
+        for (var i=0;i<missions.length;i++){
+         missionComboBox.append($('<option/>',{value:i}).html(missions[i].name));
+        }
+        missionComboBox.on('change',function(){
+            $('.data_browser_combobox#instrument').find('option').remove();
+            var missionIdx = $('.data_browser_combobox#mission').find('option:selected').val();
+            for (i=0;i<missions[missionIdx].instrument.length;i++){
+                instrumentComboBox.append($('<option/>').html(missions[missionIdx].instrument[i]));
+            }
+        });
+
+        var instrumentComboBox = $('<select/>',{class:'data_browser_combobox',id:'instrument'});
+        for (i=0;i<missions[0].instrument.length;i++){
+            instrumentComboBox.append($('<option/>').html(missions[0].instrument[i]));
+        }
+
+        var layerName = "";
+
+        //send query, load result to map
+        var searchButton = $('<buton/>',{class:'btn btn-default btn-sm btn-primary'}).html('Search').click(function(){
+            //prepare query string
+            var missionStr = $('.data_browser_combobox#mission').find('option:selected').text()+'/';
+            layerName = missionStr;
+            if (missionStr==='All/'){missionStr='/'}
+            var instrumentStr = $('.data_browser_combobox#instrument').find('option:selected').text();
+            layerName=layerName+instrumentStr;
+            if (instrumentStr==='All'){
+                instrumentStr=''
+            }
+            else {
+                instrumentStr = "&instrument="+instrumentStr;
+            }
+            var queryStr = 'http://finder.eocloud.eu/resto/api/collections/'+missionStr+'search.json?_pretty=true&maxRecords=50'+instrumentStr;
+
+            var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
+            //todo: add more than one search layer, number search layers, add style attributes (now empty)
+            Jupytepide.map_addGeoJsonLayer(geoJSON,layerName,{});
+            //alert(queryStr);
+
+        });
+        data_browser.append(missionComboBox).append(instrumentComboBox).append(searchButton);
+        //data_browser.attr('style','color: red;');
+        map_toolbar.append(data_browser);
+        data_browser.hide();
+
+        //**** end of browser panel
 
         return side_panel;
     };
@@ -445,7 +519,9 @@ define([
         tabsUl.append(make_tab_li().append(make_tab_a('#4karta', 'Files', 'false')));
         //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
 
-        side_panel_inner.append(tabsUl);
+        //tabsUl=$('<div/>').append(tabsUl);
+        //side_panel_inner.append(tabsUl);
+        $('.map_browser_toolbar').append(tabsUl);
         // zawartość zakładek
         var tabContDiv = $('<div/>').addClass('tab-content').css({height:'85%'});
         //make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
