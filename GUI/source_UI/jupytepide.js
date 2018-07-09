@@ -29,8 +29,11 @@ define([
     'services/config',
     './leaflet_interface',
     './code_snippets',
-    'base/js/keyboard'
-], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets,keyboard) {
+    'base/js/keyboard',
+    './content_access',
+    './jupytepide_notebooks',
+    './panel_browser'
+], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets,keyboard, content_access,jupytepide_notebooks,panel_browser) {
     "use strict";
 
     /**
@@ -342,7 +345,30 @@ define([
             $('.leaflet-'+layer_name+'-pane').remove();
         };
 
-        // ale najpierw spr czy istnieje
+        // todo: but first check whether a layer exists
+    };
+
+    /**
+     * Remove all layers (overlays) from the map, except the initial ones (base layers)
+     * @memberof: class:Jupytepide
+     *
+     */
+    //*** map_removeAllLayers
+    Jupytepide.map_removeAllLayers = function(){
+        var layers = Jupytepide.leafletMap.layers;
+        var names=[];
+        //get all layers names
+        for (var property in layers) {
+            if (layers.hasOwnProperty(property)) {
+                names.push(property.toString());
+            }
+        }
+        for (var i=0;i<names.length;i++){
+            //check if layer is not base layer
+            if (names[i]!=='mapbox' && names[i]!=='osm'){
+                Jupytepide.map_removeLayer(names[i]);
+            }
+        };
     };
 
     //*** map_layerMoveUp ***
@@ -364,6 +390,10 @@ define([
         //todo: to może nie działać dla warstw wektorowych, wtedy można wypróbować dodawanie warstw wektorowych do grupy i przekładanie ich wtedy jako grup
 
     }
+
+    Jupytepide.readDir = function(options){
+        panel_browser.readDir(options);
+    };
 
     //*** map_layerMoveDown ***
 
@@ -417,12 +447,24 @@ define([
         leaflet_interface.load_test_polygon(popupText);
     };
 
-    Jupytepide.createFile = function(){
-        code_snippets.createFile();
+    //Jupytepide.createFile = function(){
+    //    code_snippets.createFile();
+    //};
+
+    Jupytepide.getFiles = function(path,options){
+        return content_access.getFiles(path,options);
+    };
+
+    Jupytepide.getFilesList = function(path,options){
+        return content_access.getFilesList(path,options);
+    };
+
+    Jupytepide.getNotebooks = function(path){
+        return jupytepide_notebooks.get_NotebooksListDir(path);
     };
 
     Jupytepide.saveFile = function(fname,data){
-        code_snippets.saveFile(fname,data);
+        content_access.saveFile(fname,data);
     };
 
     Jupytepide.readFile = function(fname,options){
@@ -437,7 +479,7 @@ define([
         // return val;
         // //alert(val[0]);
 
-        var a = code_snippets.readFile(fname,options);
+        var a = content_access.readFile(fname,options);
         return a;
 
     };
@@ -485,6 +527,10 @@ define([
     Jupytepide.deleteGroupFromUI = function(gid){
         code_snippets.deleteGroupFromUI(gid);
     };
+
+    Jupytepide.getRestoGeoJSON = function(url_){
+        return leaflet_interface.getRestoGeoJSON(url_);
+    }
 
     //Jupytepide.addGroup = function(){
     //    code_snippets.showAddGroupWindow();
