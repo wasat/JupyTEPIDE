@@ -62,7 +62,7 @@ c.DockerSpawner.notebook_dir = notebook_dir
 # c.DockerSpawner.volumes = {'jupyterhub-user-{username}': notebook_dir}
 c.DockerSpawner.volumes = {
     'jupyterhub-user-{username}': notebook_dir,
-    '/eodata': '/home/jovyan/eodata',
+    '/eodata': '/eodata',
     '/eodata-demo': '/home/jovyan/eodata-demo',
     '/pub/shared': '/home/jovyan/shared',
     '/opt/dev/JupyTEPIDE/notebooks': '/home/jovyan/shared/notebooks-dev',

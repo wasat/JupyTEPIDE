@@ -1,7 +1,20 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-ARG JUPYTEPIDE_HUB_BASE_VERSION
-FROM jupytepide/hub-base:$JUPYTEPIDE_HUB_BASE_VERSION
+FROM jupyterhub/jupyterhub:0.9
+
+# apt-get installs
+RUN apt-get update -qq && \
+    apt-get install -qqy mc nano && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install dockerspawner, oauth, postgres
+RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
+    /opt/conda/bin/pip install -q --upgrade --no-cache-dir \
+        oauthenticator==0.7.* \
+        dockerspawner==0.9.* && \
+    /opt/conda/bin/conda clean -tipsy && \
+    find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf
 
 # Copy TLS certificate and key
 ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
