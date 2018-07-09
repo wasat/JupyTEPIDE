@@ -33,7 +33,7 @@ define([
     './content_access',
     './jupytepide_notebooks',
     './panel_browser'
-], function ($, Jupyter, dialog, utils, configmod,leaflet_interface,code_snippets,keyboard, content_access,jupytepide_notebooks,panel_browser) {
+], function ($, Jupyter, dialog, utils, configmod, leaflet_interface, code_snippets, keyboard, content_access, jupytepide_notebooks, panel_browser) {
     "use strict";
 
     /**
@@ -63,7 +63,7 @@ define([
 
     Jupytepide.map_addMarker = function(center,popup_){
         //todo: zrobić numerowanie markerów (innych elementów też, żeby je można było usuwać
-        var layer_name='tmpMarker'
+        var layer_name = 'tmpMarker';
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_marker(center,popup_);
     };
@@ -244,8 +244,7 @@ define([
         $( document ).ready(function() {
             if (!$('.leaflet-control-layers-overlays label').is('#lbl_' + layer_name)) {
                 $('.leaflet-control-layers-overlays label').attr('id', 'lbl_' + layer_name)
-            };
-
+            }
         });
         //TRZEBA TO OBSŁUŻYĆ POZA FUNKCJĄ DODAWANIA WARSTWY.....
 
@@ -343,8 +342,7 @@ define([
         //remove pane created (in DOM) for that layer (if exists)
         if ($('.leaflet-'+layer_name+'-pane')) {
             $('.leaflet-'+layer_name+'-pane').remove();
-        };
-
+        }
         // todo: but first check whether a layer exists
     };
 
@@ -354,21 +352,21 @@ define([
      *
      */
     //*** map_removeAllLayers
-    Jupytepide.map_removeAllLayers = function(){
+    Jupytepide.map_removeAllLayers = function () {
         var layers = Jupytepide.leafletMap.layers;
-        var names=[];
+        var names = [];
         //get all layers names
         for (var property in layers) {
             if (layers.hasOwnProperty(property)) {
                 names.push(property.toString());
             }
         }
-        for (var i=0;i<names.length;i++){
+        for (var i = 0; i < names.length; i++) {
             //check if layer is not base layer
-            if (names[i]!=='mapbox' && names[i]!=='osm'){
+            if (names[i] !== 'mapbox' && names[i] !== 'osm') {
                 Jupytepide.map_removeLayer(names[i]);
             }
-        };
+        }
     };
 
     //*** map_layerMoveUp ***
@@ -379,7 +377,7 @@ define([
 
         //todo: to może nie działać dla warstw wektorowych, wtedy można wypróbować dodawanie warstw wektorowych do grupy i przekładanie ich wtedy jako grup
 
-    }
+    };
 
     //*** map_layerMoveUp ***
     Jupytepide.map_layerMoveDown = function(layer_name){
@@ -389,9 +387,9 @@ define([
 
         //todo: to może nie działać dla warstw wektorowych, wtedy można wypróbować dodawanie warstw wektorowych do grupy i przekładanie ich wtedy jako grup
 
-    }
+    };
 
-    Jupytepide.readDir = function(options){
+    Jupytepide.readDir = function (options) {
         panel_browser.readDir(options);
     };
 
@@ -451,20 +449,20 @@ define([
     //    code_snippets.createFile();
     //};
 
-    Jupytepide.getFiles = function(path,options){
-        return content_access.getFiles(path,options);
+    Jupytepide.getFiles = function (path, options) {
+        return content_access.getFiles(path, options);
     };
 
-    Jupytepide.getFilesList = function(path,options){
-        return content_access.getFilesList(path,options);
+    Jupytepide.getFilesList = function (path, options) {
+        return content_access.getFilesList(path, options);
     };
 
-    Jupytepide.getNotebooks = function(path){
+    Jupytepide.getNotebooks = function (path) {
         return jupytepide_notebooks.get_NotebooksListDir(path);
     };
 
     Jupytepide.saveFile = function(fname,data){
-        content_access.saveFile(fname,data);
+        content_access.saveFile(fname, data);
     };
 
     Jupytepide.readFile = function(fname,options){
@@ -479,7 +477,7 @@ define([
         // return val;
         // //alert(val[0]);
 
-        var a = content_access.readFile(fname,options);
+        var a = content_access.readFile(fname, options);
         return a;
 
     };
@@ -528,9 +526,9 @@ define([
         code_snippets.deleteGroupFromUI(gid);
     };
 
-    Jupytepide.getRestoGeoJSON = function(url_){
+    Jupytepide.getRestoGeoJSON = function (url_) {
         return leaflet_interface.getRestoGeoJSON(url_);
-    }
+    };
 
     //Jupytepide.addGroup = function(){
     //    code_snippets.showAddGroupWindow();
