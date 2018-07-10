@@ -8,5 +8,5 @@ User-oriented product will be based on web-related user interface in form of ext
 
 Staff of the prime contractor [Wasat](http://www.wasat.pl/) actively participated in a number of consultation workshops and meetings with [ESA](http://www.esa.int), thus gaining the decent understanding of the Agency’s plans and expectations. What should be also beneficial for the quality of work in the project is the fact that, apart from software development activities, Wasat provides operationally services partly based on EO data. The company’s customers form a heterogeneous group, which includes advanced users with a scientific or technical background and expectations of state-of-the art service functionalities. Working relations with such users should facilitate a proper design and development of the useful and popular Jupyter notebook IDE.  
 
-For more information please visit [JupyTEP IDE wiki](https://github.com/wasat/JupyTEPIDE/wiki) pages.
+For more information please visit [JupyTEP IDE wiki](https://github.com/wasat/JupyTEPIDE/wiki) pages or our YouTube channel with couple of manual movies - [JupyTEP IDE YouTube](https://www.youtube.com/playlist?list=PLYBBaO7mQ4q6lcnH6K0QGIF11Zi3U0ccY).
  
