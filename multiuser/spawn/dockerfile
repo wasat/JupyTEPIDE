@@ -9,26 +9,20 @@ FROM $DOCKER_NOTEBOOK_IMAGE
 USER root
 
 # ------------ PLACE FOR TESTING -----------------
-#RUN cd /tmp && \
-#    git clone https://github.com/wasat/JupyTEPIDE.git && \
-#    cp -rf /tmp/JupyTEPIDE/GUI/jupyter_resources/static/* "/opt/conda/lib/python3.6/site-packages/notebook/static" && \
-#    cd JupyTEPIDE && \
-#    cp -R notebooks /home/jovyan/ && \
-#    cd GUI && \
-#    jupyter nbextension install source_UI --user && \
-#    jupyter nbextension enable source_UI/main --sys-prefix && \
-#    mkdir -p /home/jovyan/.ipython/profile_default/startup && \
-#    find "/home/jovyan/.ipython/profile_default/startup" -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
-#    cp /tmp/JupyTEPIDE/scripts/startup/01-otb-paths.py /home/jovyan/.ipython/profile_default/startup/01-otb-paths.py && \
-#    cp /tmp/JupyTEPIDE/scripts/startup/02-init-leaflet.py /home/jovyan/.ipython/profile_default/startup/02-init-leaflet.py && \
-#    cp /tmp/JupyTEPIDE/scripts/startup/03-import_notebook_as_module.py /home/jovyan/.ipython/profile_default/startup/03-import_notebook_as_module.py && \
-#    cp /tmp/JupyTEPIDE/scripts/startup/04-grass.py /home/jovyan/.ipython/profile_default/startup/04-grass.py && \
-#    mkdir -p /opt/jupytepide/scripts && \
-#    cp /tmp/JupyTEPIDE/scripts/metadata.py /opt/jupytepide/scripts/metadata.py && \
-#    cp /tmp/JupyTEPIDE/GUI/source_UI/code_snippets.json /home/jovyan/code_snippets.json && \
-#    cp -R /tmp/JupyTEPIDE /opt/ && \
-#    find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf && \
-#    fix-permissions /home/$NB_USER
+
+WORKDIR /opt
+
+# Download and install Orfeo toolbox OTB
+# Standalone install
+# COPY OTB-6.4.0-Linux64.run /opt/OTB-6.4.0-Linux64.run
+RUN wget --quiet http://step.esa.int/thirdparties/snaphu/1.4.2-2/snaphu-v1.4.2_linux.zip && \
+    unzip snaphu-v1.4.2_linux.zip && \
+    mv snaphu-v1.4.2_linux snaphu &&\
+    chmod 755 snaphu/bin/snaphu &&\
+    rm -rf snaphu-v1.4.2_linux.zip
+
+ENV PATH="/opt/snaphu/bin:${PATH}"
+
 # ------------ END TESTING -----------------------
 
 # Install JupyTEP IDE UI layout and enable it

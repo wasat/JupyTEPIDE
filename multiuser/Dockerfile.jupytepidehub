@@ -12,9 +12,9 @@ RUN chmod 700 /srv/jupyterhub/secrets && \
     chmod 600 /srv/jupyterhub/secrets/*
 
 COPY ./sec/userlist /srv/jupyterhub/userlist
-
 COPY ./jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
 
-RUN cd /tmp && \
-    git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
-    cp -rf /tmp/JupyTEPIDE/GUI/res/hub/* /opt/conda/share/jupyter/hub
+# RUN cd /tmp && \
+#    git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
+#    cp -rf /tmp/JupyTEPIDE/GUI/res/hub/* /opt/conda/share/jupyter/hub &&\
+#    find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf
