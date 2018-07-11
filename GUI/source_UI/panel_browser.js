@@ -158,8 +158,8 @@ define([
         });
         map_toolbar.append(search_button);
 
-        //**** browser panel - preliminary version
-        var data_browser = $('<div/>',{height:'100px',class:'data_browser_panel'});
+     //**** browser panel - preliminary version
+        var data_browser = $('<div/>',{class:'data_browser_panel'});
 
         //set data
         var missions = [
@@ -175,7 +175,11 @@ define([
 
 
         //set controls
-        var missionComboBox = $('<select/>',{class:'data_browser_combobox',id:'mission'});
+        //missionComboBOx
+        var missionComboBox = $('<select/>',{
+            class:'data_browser_combobox',id:'mission',title:'Mission name',
+            style:'width:6em'
+        });
         for (var i=0;i<missions.length;i++){
          missionComboBox.append($('<option/>',{value:i}).html(missions[i].name));
         }
@@ -186,16 +190,87 @@ define([
                 instrumentComboBox.append($('<option/>').html(missions[missionIdx].instrument[i]));
             }
         });
+        var missionComboboxLbl = $('<label/>').html('Mission');
 
-        var instrumentComboBox = $('<select/>',{class:'data_browser_combobox',id:'instrument'});
+        //instrumentComboBox
+        var instrumentComboBox = $('<select/>',{
+            class:'data_browser_combobox',id:'instrument',title:'Instrument',
+            style:'width:6em'
+        });
         for (i=0;i<missions[0].instrument.length;i++){
             instrumentComboBox.append($('<option/>').html(missions[0].instrument[i]));
         }
+        var instrumentComboboxLbl = $('<label/>').html('Instrument');
+
+        //maxRecordsInput
+        var maxRecordsInput = $('<input/>',{
+            type:'number',min:'1',name:'maxRecords',value:'50',class:'data_browser_input',id:'maxRecords',step:'1',required:'true',title:'Max records count to display',
+            style:'width:5em;'
+        }).on('change',function(){
+            var maxRecordsStr = $('.data_browser_input[name=maxRecords]').val();
+            if ($.isNumeric(maxRecordsStr)){
+                if(maxRecordsStr>10000){
+                    $('.data_browser_input[name=maxRecords]').val(10000);
+                }
+                if(maxRecordsStr<1){
+                    $('.data_browser_input[name=maxRecords]').val(1);
+                }
+            }
+            else $('.data_browser_input[name=maxRecords]').val(1);
+        });
+        var maxRecordsLbl = $('<label/>').html('Max');
 
         var layerName = "";
 
+        //dateFromInput
+        var dateFromInput = $('<input/>',{
+            class:'data_browser_input', id:'dateFrom', type:'text', title:'Start date',
+            style:'width:8em;'
+        }).datepicker({
+                defaultDate:new Date(),
+                dateFormat: 'yy-mm-dd',
+                changeMonth:true,
+                changeYear:true,
+                showButtonPanel:true,
+                beforeShow: function() {
+                    setTimeout(function(){
+                        $('.ui-datepicker').css('z-index', 9999999999);
+                    }, 0);
+                }
+            }).attr("placeholder", "yyyy-mm-dd");
+        var dateFromLbl = $('<label/>').html('From');
+
+        //dateToInput
+        var dateToInput = $('<input/>',{
+            class:'data_browser_input', id:'dateTo', type:'text', title:'Completion date',
+            style:'width:8em;'
+        }).datepicker({
+            defaultDate:new Date(),
+            dateFormat: 'yy-mm-dd',
+            changeMonth:true,
+            changeYear:true,
+            showButtonPanel:true,
+            beforeShow: function() {
+                setTimeout(function(){
+                    $('.ui-datepicker').css('z-index', 9999999999);
+                }, 0);
+            }
+        }).attr("placeholder", "yyyy-mm-dd");
+        var dateToLbl = $('<label/>').html('To');
+
+        //useDateCheckbox
+        var useDateCheckbox = $('<input/>',{
+            type:'checkbox',
+            value:'Use date',
+            id:'useDateCheckbox',
+            class:'data_browser_checkbox'
+        });
+        useDateCheckbox = $('<label/>').html('Use date').prepend(useDateCheckbox);
+        //var useDateCheckboxLbl = $('<label/>',{for:'useDateCheckbox'}).html('Use date');
+
         //send query, load result to map
-        var searchButton = $('<buton/>',{class:'btn btn-default btn-sm btn-primary'}).html('Search').click(function(){
+        //searchButton
+        var searchButton = $('<buton/>',{class:'btn btn-default btn-sm btn-primary',title:'Search and display on the map'}).html('Search').click(function(){
             //prepare query string
             var missionStr = $('.data_browser_combobox#mission').find('option:selected').text()+'/';
             layerName = missionStr;
@@ -208,17 +283,95 @@ define([
             else {
                 instrumentStr = "&instrument="+instrumentStr;
             }
-            var queryStr = 'http://finder.eocloud.eu/resto/api/collections/'+missionStr+'search.json?_pretty=true&maxRecords=50'+instrumentStr;
+
+            var maxRecordsStr = $('.data_browser_input[name=maxRecords]').val();
+            if ($.isNumeric(maxRecordsStr)){
+                     maxRecordsStr = '&maxRecords='+maxRecordsStr;
+             }
+             else maxRecordsStr='';
+
+            if($('input[type=checkbox]#useDateCheckbox').is(':checked')){
+                var startDateStr = $('.data_browser_input#dateFrom').val();
+                var completionDateStr = $('.data_browser_input#dateTo').val();
+                startDateStr = '&startDate='+startDateStr;
+                completionDateStr = '&completionDate='+completionDateStr;
+            }
+            else {
+                startDateStr = '';
+                completionDateStr = '';
+            }
+
+            var geometryStr='';
+            if (Jupytepide.marker){
+                geometryStr='&geometry=MULTIPOINT(('+Jupytepide.marker._latlng.lng+' '+Jupytepide.marker._latlng.lat+'))';
+            }
+
+            var queryStr = 'http://finder.eocloud.eu/resto/api/collections/'
+                +missionStr
+                +'search.json?_pretty=true'
+                +maxRecordsStr
+                +instrumentStr
+                +startDateStr
+                +completionDateStr
+                +geometryStr;
+
+            //alert(queryStr);
+            Jupytepide.marker.remove();
 
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
             //todo: add more than one search layer, number search layers, add style attributes (now empty)
+            layerName=layerName+' ('+geoJSON.features.length+')';
+
             Jupytepide.map_addGeoJsonLayer(geoJSON,layerName,{});
-            //alert(queryStr);
+
 
         });
-        data_browser.append(missionComboBox).append(instrumentComboBox).append(searchButton);
+
+        //insert search point button
+        var insertSearchPointButton = $('<buton/>',{
+            class:'btn btn-default btn-sm btn-primary',
+            title:'Mark search point on map',
+            style:'margin-left:3px;margin-right:3px;'
+        })
+            .html('Mark point')
+            .click(function(){
+                if(Jupytepide.marker){Jupytepide.marker.remove()}
+                Jupytepide.mapAddPoint=true;
+                Jupytepide.mapClick=false;
+            });
+
+
+        //
+        var missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'1'});
+        missionControlGroup
+            .append(missionComboboxLbl)
+            .append(missionComboBox)
+            .append(instrumentComboboxLbl)
+            .append(instrumentComboBox)
+            .append(maxRecordsLbl)
+            .append(maxRecordsInput);
+        data_browser.append(missionControlGroup);
+
+        missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'2'});
+        missionControlGroup
+            .append(dateFromLbl)
+            .append(dateFromInput)
+            .append(dateToLbl)
+            .append(dateToInput)
+            .append(useDateCheckbox);
+        data_browser.append(missionControlGroup);
+
+        missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'3'});
+        missionControlGroup.append(searchButton).append(insertSearchPointButton);
+        data_browser.append(missionControlGroup);
+
+
+        // data_browser.append(missionComboBox).append(instrumentComboBox)
+        //     .append(maxRecordsInput).append(dateFromInput)
+        //     .append(dateToInput).append(useDateCheckbox).append(searchButton);
         //data_browser.attr('style','color: red;');
         map_toolbar.append(data_browser);
+        //$('input').checkboxradio();
         data_browser.hide();
 
         //**** end of browser panel

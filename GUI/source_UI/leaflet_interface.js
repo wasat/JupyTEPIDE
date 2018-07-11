@@ -36,18 +36,24 @@ define([
     };
 
     var mymap;
+    //var mapClick;
+    //var mapAddPoint;
 
     //*** load_map ***
     //Used for initial map loading (not for notebook users)
     //Jupytepide.leafletMap initialization
     var load_map = function(map_container) {
-        mymap = L.map(map_container);
+        mymap = L.map(map_container,{drawControl:true});
         Jupytepide.leafletMap = mymap;
+        Jupytepide.mapClick = true;
+        Jupytepide.mapAddPoint = false;
+
         //Jupytepide.leafletMap.on('resize',function(){Jupytepide.leafletMap.invalidateSize();});
         //Jupytepide.leafletMap.whenReady(function(){alert("gggggggd")});
         Jupytepide.leafletMap.setView([0,0], 1).on('click', onMapClick);
         //Jupytepide.leafletMap.fire('resize');
         L.control.scale().addTo(Jupytepide.leafletMap);
+        //L.control.toolb.addTo(Jupytepide.leafletMap);
     };
 
     var map_invalidateSize = function(){
@@ -193,11 +199,29 @@ define([
     var popup = L.popup();
 
     function onMapClick(e) {
-        popup
-            .setLatLng(e.latlng)
-            .setContent("You clicked the map at " + e.latlng.toString())
-            .openOn(Jupytepide.leafletMap);
+        if (Jupytepide.mapClick){
+            if(Jupytepide.marker){Jupytepide.marker.remove()}
+            popup
+                .setLatLng(e.latlng)
+                .setContent("You clicked the map at " + e.latlng.toString())
+                .openOn(Jupytepide.leafletMap);
+        }
+
+        else if (Jupytepide.mapAddPoint){
+            //alert(e.latlng.toString());
+            //var parameters={icon: markerIcon}
+            //L.marker(e.latlng, parameters).addTo(Jupytepide.leafletMap);
+
+            Jupytepide.marker = new L.Marker(e.latlng,{draggable:true,icon:markerIcon});
+            Jupytepide.leafletMap.addLayer(Jupytepide.marker);
+            Jupytepide.mapAddPoint=false;
+            Jupytepide.mapClick=true;
+            //alert(Jupytepide.marker._latlng.lng+','+Jupytepide.marker._latlng.lat);
+        }
+
+
     }
+
 
     //*** add_circle ***
     //center=[52.407, 21.33], radius=500, popup_="Some text", parameters_={color: 'red', fillColor: '#f03', fillOpacity: 0.5}
