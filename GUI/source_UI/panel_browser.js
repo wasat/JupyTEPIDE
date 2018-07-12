@@ -316,7 +316,10 @@ define([
                 +geometryStr;
 
             //alert(queryStr);
-            Jupytepide.marker.remove();
+            if (Jupytepide.marker){
+                Jupytepide.marker.remove();
+            }
+
 
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
             //todo: add more than one search layer, number search layers, add style attributes (now empty)
