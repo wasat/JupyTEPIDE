@@ -44,12 +44,10 @@ define([
 
     function getBaseUrl(){
         return base_url;
-    };
-
+    }
     function getSnippetsUrl(){
         return snippets_url;
-    };
-
+    }
     //combobox do ładowania snippetów - nie używany, można dostosować, nie usuwać na razie
     // config.loaded.then(function () {
     //     var dropdown = $("<select></select>").attr("id", "snippet_picker")
@@ -110,8 +108,7 @@ define([
 
             $("option#snippet_header").prop("selected", true);
         }
-    };
-
+    }
     //*** czytanie z pliku JSON po podanej nazwie snippeta
     //wstwianie celki o podanej nazwie
     function insert_cell1(name) {
@@ -142,15 +139,13 @@ define([
                 new_cell.code_mirror.setOption('theme', 'mbo');
                 new_cell.focus_cell();
 
-            };
+            }
         });
-    };
-
+    }
     //*** zapis dowolnego tekstu jako snippeta **
     function save_asSnippet(text){
 
-    };
-
+    }
     //*** daje listę nazw snippetów z pliku JSON
     //nieuzywane, stara wersja
     function get_SnippetsList() {
@@ -172,8 +167,7 @@ define([
         });
 
         return snippetsNames;
-    };
-
+    }
     //*** Druga wersja - daje listę nazw snippetów w grupach
     function get_SnippetsList1(){
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
@@ -192,8 +186,7 @@ define([
 
 
         return snippetsNames;
-    };
-
+    }
     //*** daje same grupy z obiektu "groups" JSON
     function get_SnippetsGroups(){
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
@@ -216,8 +209,7 @@ define([
         return snippetsGroups;
 
 
-    };
-
+    }
     //*** get Web Map Browser
     // zwraca tekst snippeta Web Map Browser
     //Do wstawienia w ukrytej celce zawierającej Web Map Browser
@@ -236,13 +228,11 @@ define([
                 if (snippet['name'] == snippet_name) {
                     WMBText = snippet['code'].join('\n');
                 }
-                ;
             });
         });
         //WMBText = "12+99";
         return WMBText;
-    };
-
+    }
     //*** createSnippet ***
     //Creates snippet from selected cell, returns an object codeSnippet - ready to save in file/add to UI
     function createSnippet(group_id_,snippet_name_){
@@ -250,15 +240,13 @@ define([
         var celJSON=cells[0].toJSON();
         var codeSnippet = {group:group_id_,name:snippet_name_,code:[celJSON.source]};
         return codeSnippet;
-    };
-
+    }
     //*** addSnippetClick ***
     //onclick funcion for adding snippets
     function addSnippetClick(e){
         var codeSnippet = createSnippet(e.group_id,e.snippet_name);
         addSnippet(codeSnippet);
-    };
-
+    }
     //todo: zabezpieczyć przed dodaniem snippeta do nieistniejącej grupy (numeru grupy) - niekoniecznie potrzebne, można to kontrolować z zewnątrz
     //*** addSnippet ***
     //Adds snippet to JSON file and to UI
@@ -278,7 +266,7 @@ define([
             if (snippet['name'] == codeSnippet.name) {
                 alert('There is already a snippet with the name: "'+ codeSnippet.name +'". Please change.');
                 toAdd = false;
-            };
+            }
         });
 
 
@@ -290,8 +278,7 @@ define([
         }
         else return false;
 
-    };
-
+    }
     //*** addSnippetToUI ***
     function addSnippetToUI(group_id,snippet_name){
         var id=group_id;
@@ -310,8 +297,7 @@ define([
             .append(delBtn) ;
 
         $('#'+id+'.menu_snippets_item_content').append(snippet_item);
-    };
-
+    }
     //*** deleteSnippetFromUI
     //$( "#1.menu_snippets_item_content .menu_snippets_item" ).each(function(index){console.log($(this).text())})
     function deleteSnippetFromUI(group_id,snippet_name){
@@ -321,8 +307,7 @@ define([
                     $(this).remove();
                 }
             });
-    };
-
+    }
     //*** deleteSnippet ***
     //deletes snippet fom file and from UI
     function deleteSnippet(codeSnippet){
@@ -342,7 +327,7 @@ define([
         $.each(snippets_data['code_snippets'],function(key,snippet){
             if (snippet['name'] == codeSnippet.data.name && snippet['group'] == codeSnippet.data.group) {
                 toDelete.push(snippet);
-            };
+            }
         });
 
 
@@ -350,8 +335,7 @@ define([
         for (i = 0; i < toDelete.length; i++){
             JSONdata.code_snippets.splice(JSONdata.code_snippets.indexOf(toDelete[i]),1);
             deleted=deleted+1;
-        };
-
+        }
         //alert("Delete snippet: "+codeSnippet.data.name+'?')
 
         //save to file and UI
@@ -361,18 +345,15 @@ define([
             content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
             //addSnippetToUI(codeSnippet.group,codeSnippet.name);
             return JSONdata;
-        };
+        }
         if (deleted==0) {
             alert('There is no snippet with the name: "'+ codeSnippet.data.name +'" in menu group number: '+codeSnippet.data.group);
             return false;
-        };
-
+        }
         if (deleted==-1){
             return false;
-        };
-
-    };
-
+        }
+    }
     //*** getMaxGroupId ***
     //do usunięcia
     function getMaxGroupId(){
@@ -390,8 +371,7 @@ define([
 
 
         return Math.max(...gids);
-    };
-
+    }
     //*** showAddSnippetWindow ***
     //wyświetla okno definiowania i dodawania snippeta
     //element = {group_name:"group name", id:3}
@@ -441,14 +421,12 @@ define([
             }
         });
         //***
-    };
-
+    }
     //*** showDeleteConfirmation ***
     //Confirmation of deletion snippet or group
     function showDeleteConfirmation(){
         //TODO: dokończyć
-    };
-
+    }
     //*** showDeleteSnippetWindow ***
     //wyświetla okno dodawania grupy
     //element = {group_name:"group name", id:3}
@@ -495,8 +473,7 @@ define([
             }
         });
         //***
-    };
-
+    }
     //*** showAddGroupWindow ***
     //wyświetla okno dodawania grupy
     //element = {group_name:"group name", id:3}
@@ -547,8 +524,7 @@ define([
             }
         });
         //***
-    };
-
+    }
     //*** make_snippets_menu_group ***
     //Creates a menu group with header and empty content (empty snippets list)
     var make_snippets_menu_group = function(element){
@@ -597,9 +573,7 @@ define([
         var menu_snippets=$('.menu_snippets');
         var menu_item = make_snippets_menu_group({group_name:gr_name,id:gr_id});
         menu_snippets.append(menu_item.header).append(menu_item.content);
-    };
-
-
+    }
     //*** addGroup ***
     //Adds menu snippets group to JSON file and to UI
     //{ group_id: 1, group_name: "OTB", group_level: 0 }
@@ -621,7 +595,7 @@ define([
             if (groups['group_name'] == group.group_name) {
                 alert('There is already a group menu with the name: "'+ group.group_name +'". Please change.');
                 toAdd = false;
-            };
+            }
             gids.push(groups['group_id']);
         });
 
@@ -637,8 +611,7 @@ define([
             return JSONdata;
         }
         else return false;
-    };
-
+    }
     //*** deleteGroup ***
     //group={group_name:'name',group_id:2}
     function deleteGroup(group){
@@ -662,14 +635,13 @@ define([
                 if (snippet['group'] == group.data.group_id) {
                     containsSnippets = true;
                 }
-                ;
             });
         }
         if (containsSnippets==false){
             $.each(snippets_data['groups'], function (key, groups) {
                 if (groups['group_name'] == group.data.group_name) {
                     toDelete.push(groups);
-                };
+                }
             });
         }
 
@@ -677,8 +649,7 @@ define([
         for (i = 0; i < toDelete.length; i++){
             JSONdata.groups.splice(JSONdata.groups.indexOf(toDelete[i]),1);
             deleted=deleted+1;
-        };
-
+        }
         //save to file and UI
         if (deleted!=0){
             //JSONdata.code_snippets.push(codeSnippet);
@@ -686,7 +657,7 @@ define([
             content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
             //addSnippetToUI(codeSnippet.group,codeSnippet.name);
             return JSONdata;
-        };
+        }
         if (deleted==0 && !containsSnippets) {
             alert('There is no group with the name: "'+ group.data.group_name +'"');
             return false;
@@ -694,14 +665,12 @@ define([
         else if (deleted==0 && containsSnippets) {
             alert('This group contains snippets. Can not be deleted.');
             return false;
-        };
-    };
-
+        }
+    }
     function deleteGroupFromUI(group_id){
         $( '#'+group_id+'.menu_snippets_item_header' ).remove(); //stąd wziąć text() i mam nazwę
         $( '#'+group_id+'.menu_snippets_item_content' ).remove();
-    };
-
+    }
     // return public methods
     return {
         load_ipython_extension: load_extension,
