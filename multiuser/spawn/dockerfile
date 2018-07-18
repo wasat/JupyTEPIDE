@@ -15,13 +15,13 @@ WORKDIR /opt
 # Download and install Orfeo toolbox OTB
 # Standalone install
 # COPY OTB-6.4.0-Linux64.run /opt/OTB-6.4.0-Linux64.run
-RUN wget --quiet http://step.esa.int/thirdparties/snaphu/1.4.2-2/snaphu-v1.4.2_linux.zip && \
-    unzip snaphu-v1.4.2_linux.zip && \
-    mv snaphu-v1.4.2_linux snaphu &&\
-    chmod 755 snaphu/bin/snaphu &&\
-    rm -rf snaphu-v1.4.2_linux.zip
-
-ENV PATH="/opt/snaphu/bin:${PATH}"
+#RUN wget --quiet http://step.esa.int/thirdparties/snaphu/1.4.2-2/snaphu-v1.4.2_linux.zip && \
+#    unzip snaphu-v1.4.2_linux.zip && \
+#    mv snaphu-v1.4.2_linux snaphu &&\
+#    chmod 755 snaphu/bin/snaphu &&\
+#    rm -rf snaphu-v1.4.2_linux.zip
+#
+#ENV PATH="/opt/snaphu/bin:${PATH}"
 
 # ------------ END TESTING -----------------------
 
