@@ -64,7 +64,7 @@ define([
     var side_panel_max_rel_width = 90;
     var side_panel_start_width = 32;
     var map_panel = map_browser.build_map_panel();
-    var map_toolbar = $('<div/>', {class: 'map_browser_toolbar'});
+    var map_toolbar = $('<div/>',{class:'map_browser_toolbar'});
 
     var build_side_panel = function (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
@@ -152,78 +152,229 @@ define([
         });
 
         //search-toggle button
-        var search_button = $('<i/>', {class: "btn fa fa-search", title: "Search for EO data"});
-        search_button.click(function () {
+        var search_button =$('<i/>',{class:"btn fa fa-search",title:"Search for EO data"});
+        search_button.click(function(){
             data_browser.slideToggle();
         });
         map_toolbar.append(search_button);
 
-        //**** browser panel - preliminary version
-        var data_browser = $('<div/>', {height: '100px', class: 'data_browser_panel'});
+     //**** browser panel - preliminary version
+        var data_browser = $('<div/>',{class:'data_browser_panel'});
 
         //set data
         var missions = [
-            {
-                name: "All",
-                instrument: ['All', 'MERIS', 'TM', 'ETM', 'OLI', 'OLI_TIRS', 'TIRS', 'SAR', 'MSI', 'OLCI', 'SLSTR', 'SR', 'OL', 'SL']
-            },
-            {name: "Envisat", instrument: ['MERIS']},
-            {name: "Landsat5", instrument: ['TM']},
-            {name: "Landsat7", instrument: ['ETM']},
-            {name: "Landsat8", instrument: ['All', 'OLI', 'OLI_TIRS', 'TIRS']},
-            {name: "Sentinel1", instrument: ['SAR']},
-            {name: "Sentinel2", instrument: ['MSI']},
-            {name: "Sentinel3", instrument: ['All', 'OL', 'SL', 'SR']}
-        ];
+            {name:"All", instrument:['All','MERIS','TM','ETM','OLI','OLI_TIRS','TIRS','SAR','MSI','OLCI','SLSTR','SR','OL','SL']},
+            {name:"Envisat",instrument:['MERIS']},
+            {name:"Landsat5",instrument:['TM']},
+            {name:"Landsat7",instrument:['ETM']},
+            {name:"Landsat8",instrument:['All','OLI','OLI_TIRS','TIRS']},
+            {name:"Sentinel1",instrument:['SAR']},
+            {name:"Sentinel2",instrument:['MSI']},
+            {name:"Sentinel3",instrument:['All','OL','SL','SR']}
+            ];
 
 
         //set controls
-        var missionComboBox = $('<select/>', {class: 'data_browser_combobox', id: 'mission'});
-        for (var i = 0; i < missions.length; i++) {
-            missionComboBox.append($('<option/>', {value: i}).html(missions[i].name));
+        //missionComboBOx
+        var missionComboBox = $('<select/>',{
+            class:'data_browser_combobox',id:'mission',title:'Mission name',
+            style:'width:6em'
+        });
+        for (var i=0;i<missions.length;i++){
+         missionComboBox.append($('<option/>',{value:i}).html(missions[i].name));
         }
-        missionComboBox.on('change', function () {
+        missionComboBox.on('change',function(){
             $('.data_browser_combobox#instrument').find('option').remove();
             var missionIdx = $('.data_browser_combobox#mission').find('option:selected').val();
-            for (i = 0; i < missions[missionIdx].instrument.length; i++) {
+            for (i=0;i<missions[missionIdx].instrument.length;i++){
                 instrumentComboBox.append($('<option/>').html(missions[missionIdx].instrument[i]));
             }
         });
+        var missionComboboxLbl = $('<label/>').html('Mission');
 
-        var instrumentComboBox = $('<select/>', {class: 'data_browser_combobox', id: 'instrument'});
-        for (i = 0; i < missions[0].instrument.length; i++) {
+        //instrumentComboBox
+        var instrumentComboBox = $('<select/>',{
+            class:'data_browser_combobox',id:'instrument',title:'Instrument',
+            style:'width:6em'
+        });
+        for (i=0;i<missions[0].instrument.length;i++){
             instrumentComboBox.append($('<option/>').html(missions[0].instrument[i]));
         }
+        var instrumentComboboxLbl = $('<label/>').html('Instrument');
+
+        //maxRecordsInput
+        var maxRecordsInput = $('<input/>',{
+            type:'number',min:'1',name:'maxRecords',value:'50',class:'data_browser_input',id:'maxRecords',step:'1',required:'true',title:'Max records count to display',
+            style:'width:5em;'
+        }).on('change',function(){
+            var maxRecordsStr = $('.data_browser_input[name=maxRecords]').val();
+            if ($.isNumeric(maxRecordsStr)){
+                if(maxRecordsStr>10000){
+                    $('.data_browser_input[name=maxRecords]').val(10000);
+                }
+                if(maxRecordsStr<1){
+                    $('.data_browser_input[name=maxRecords]').val(1);
+                }
+            }
+            else $('.data_browser_input[name=maxRecords]').val(1);
+        });
+        var maxRecordsLbl = $('<label/>').html('Max');
 
         var layerName = "";
 
-        //send query, load result to map
-        var searchButton = $('<buton/>', {class: 'btn btn-default btn-sm btn-primary'}).html('Search').click(function () {
-            //prepare query string
-            var missionStr = $('.data_browser_combobox#mission').find('option:selected').text() + '/';
-            layerName = missionStr;
-            if (missionStr === 'All/') {
-                missionStr = '/'
+        //dateFromInput
+        var dateFromInput = $('<input/>',{
+            class:'data_browser_input', id:'dateFrom', type:'text', title:'Start date',
+            style:'width:8em;'
+        }).datepicker({
+                defaultDate:new Date(),
+                dateFormat: 'yy-mm-dd',
+                changeMonth:true,
+                changeYear:true,
+                showButtonPanel:true,
+                beforeShow: function() {
+                    setTimeout(function(){
+                        $('.ui-datepicker').css('z-index', 9999999999);
+                    }, 0);
+                }
+            }).attr("placeholder", "yyyy-mm-dd");
+        var dateFromLbl = $('<label/>').html('From');
+
+        //dateToInput
+        var dateToInput = $('<input/>',{
+            class:'data_browser_input', id:'dateTo', type:'text', title:'Completion date',
+            style:'width:8em;'
+        }).datepicker({
+            defaultDate:new Date(),
+            dateFormat: 'yy-mm-dd',
+            changeMonth:true,
+            changeYear:true,
+            showButtonPanel:true,
+            beforeShow: function() {
+                setTimeout(function(){
+                    $('.ui-datepicker').css('z-index', 9999999999);
+                }, 0);
             }
+        }).attr("placeholder", "yyyy-mm-dd");
+        var dateToLbl = $('<label/>').html('To');
+
+        //useDateCheckbox
+        var useDateCheckbox = $('<input/>',{
+            type:'checkbox',
+            value:'Use date',
+            id:'useDateCheckbox',
+            class:'data_browser_checkbox'
+        });
+        useDateCheckbox = $('<label/>').html('Use date').prepend(useDateCheckbox);
+        //var useDateCheckboxLbl = $('<label/>',{for:'useDateCheckbox'}).html('Use date');
+
+        //send query, load result to map
+        //searchButton
+        var searchButton = $('<buton/>',{class:'btn btn-default btn-sm btn-primary',title:'Search and display on the map'}).html('Search').click(function(){
+            //prepare query string
+            var missionStr = $('.data_browser_combobox#mission').find('option:selected').text()+'/';
+            layerName = missionStr;
+            if (missionStr==='All/'){missionStr='/'}
             var instrumentStr = $('.data_browser_combobox#instrument').find('option:selected').text();
-            layerName = layerName + instrumentStr;
-            if (instrumentStr === 'All') {
-                instrumentStr = ''
+            layerName=layerName+instrumentStr;
+            if (instrumentStr==='All'){
+                instrumentStr=''
             }
             else {
-                instrumentStr = "&instrument=" + instrumentStr;
+                instrumentStr = "&instrument="+instrumentStr;
             }
-            var queryStr = 'http://finder.eocloud.eu/resto/api/collections/' + missionStr + 'search.json?_pretty=true&maxRecords=50' + instrumentStr;
+
+            var maxRecordsStr = $('.data_browser_input[name=maxRecords]').val();
+            if ($.isNumeric(maxRecordsStr)){
+                     maxRecordsStr = '&maxRecords='+maxRecordsStr;
+             }
+             else maxRecordsStr='';
+
+            if($('input[type=checkbox]#useDateCheckbox').is(':checked')){
+                var startDateStr = $('.data_browser_input#dateFrom').val();
+                var completionDateStr = $('.data_browser_input#dateTo').val();
+                startDateStr = '&startDate='+startDateStr;
+                completionDateStr = '&completionDate='+completionDateStr;
+            }
+            else {
+                startDateStr = '';
+                completionDateStr = '';
+            }
+
+            var geometryStr='';
+            if (Jupytepide.marker){
+                geometryStr='&geometry=MULTIPOINT(('+Jupytepide.marker._latlng.lng+' '+Jupytepide.marker._latlng.lat+'))';
+            }
+
+            var queryStr = 'http://finder.eocloud.eu/resto/api/collections/'
+                +missionStr
+                +'search.json?_pretty=true'
+                +maxRecordsStr
+                +instrumentStr
+                +startDateStr
+                +completionDateStr
+                +geometryStr;
+
+            //alert(queryStr);
+            if (Jupytepide.marker){
+                Jupytepide.marker.remove();
+            }
+
 
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
             //todo: add more than one search layer, number search layers, add style attributes (now empty)
-            Jupytepide.map_addGeoJsonLayer(geoJSON, layerName, {});
-            //alert(queryStr);
+            layerName=layerName+' ('+geoJSON.features.length+')';
+
+            Jupytepide.map_addGeoJsonLayer(geoJSON,layerName,{});
+
 
         });
-        data_browser.append(missionComboBox).append(instrumentComboBox).append(searchButton);
+
+        //insert search point button
+        var insertSearchPointButton = $('<buton/>',{
+            class:'btn btn-default btn-sm btn-primary',
+            title:'Mark search point on map',
+            style:'margin-left:3px;margin-right:3px;'
+        })
+            .html('Mark point')
+            .click(function(){
+                if(Jupytepide.marker){Jupytepide.marker.remove()}
+                Jupytepide.mapAddPoint=true;
+                Jupytepide.mapClick=false;
+            });
+
+
+        //
+        var missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'1'});
+        missionControlGroup
+            .append(missionComboboxLbl)
+            .append(missionComboBox)
+            .append(instrumentComboboxLbl)
+            .append(instrumentComboBox)
+            .append(maxRecordsLbl)
+            .append(maxRecordsInput);
+        data_browser.append(missionControlGroup);
+
+        missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'2'});
+        missionControlGroup
+            .append(dateFromLbl)
+            .append(dateFromInput)
+            .append(dateToLbl)
+            .append(dateToInput)
+            .append(useDateCheckbox);
+        data_browser.append(missionControlGroup);
+
+        missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'3'});
+        missionControlGroup.append(searchButton).append(insertSearchPointButton);
+        data_browser.append(missionControlGroup);
+
+
+        // data_browser.append(missionComboBox).append(instrumentComboBox)
+        //     .append(maxRecordsInput).append(dateFromInput)
+        //     .append(dateToInput).append(useDateCheckbox).append(searchButton);
         //data_browser.attr('style','color: red;');
         map_toolbar.append(data_browser);
+        //$('input').checkboxradio();
         data_browser.hide();
 
         //**** end of browser panel
@@ -349,12 +500,9 @@ define([
         var colDiv = $('<div/>').addClass('col-md-12');
         var itemType = row_item.type;
         var iconName = 'file_icon';
-        if (itemType === 'notebook') {
-            iconName = 'notebook_icon'
-        }
-        else if (itemType === 'directory') {
-            iconName = 'folder_icon'
-        }
+        if (itemType==='notebook'){iconName='notebook_icon'}
+         else if(itemType==='directory'){iconName='folder_icon'};
+
         colDiv.append(
             $('<input>',
                 {
@@ -362,14 +510,15 @@ define([
                     type: 'checkbox'
                 }));
         colDiv.append(
-            $('<i/>').addClass('item_icon ' + iconName + ' icon-fixed-width')
+
+            $('<i/>').addClass('item_icon ' + iconName +' icon-fixed-width')
         );
         var itemName = $('<span/>').addClass('item_name').html(row_item.name);
 
         var a_link = $('<a/>',
             {
                 href: row_item.link  //'/tree/anaconda3/bin',
-            }).addClass('item_link').append(itemName).attr('onclick', row_item.onclick);//.bind('click',{},removeTabContent);
+            }).addClass('item_link').append(itemName).attr('onclick',row_item.onclick);//.bind('click',{},removeTabContent);
 
         if (row_item.on_click) {
             a_link.bind('click', {snippet_name: row_item.snippet_name},
@@ -400,22 +549,22 @@ define([
 
     //*** removeTabContent ***
     //Function for removing content from tabs "Notebooks" and "Files"
-    function removeTabContent(options) {
+    function removeTabContent(options){
         //#karta - files, #3karta - notebooks
-        $(options.DOMelement + ' .list_item').remove();
+        $(options.DOMelement+' .list_item').remove();
         //alert(options.DOMelement);
-    }
+    };
 
-    function readDir(options) {
+    function readDir(options){
         removeTabContent(options);
-        loadTabContent({path: options.path, contents: options.contents, DOMelement: options.DOMelement});
+        loadTabContent({path:options.path,contents:options.contents,DOMelement:options.DOMelement});
 
-    }
+    };
 
     //*** loadTabContent ***
     //Function for loading content into "Notebooks" and "Files" tabs
     //loadTabContent({contents:notebooks,DOMelement:'#3karta'})
-    function loadTabContent(options) {
+    function loadTabContent(options){
 
         var homePath = utils.url_path_join(Jupyter.notebook.base_url, 'tree');
         var editPath = utils.url_path_join(Jupyter.notebook.base_url, 'edit');
@@ -425,63 +574,63 @@ define([
         var n;
 
         //removeTabContent(options.DOMelement);
-        if (options.contents === "notebooks") {
+        if (options.contents==="notebooks") {
             elementsList = jupytepide_notebooks.get_NotebooksListDir(options.path);
         }
-        if (options.contents === "files") {
+        if (options.contents==="files") {
             elementsList = content_access.get_FilesListDir(options.path);
         }
 
         //"goto previous directory" element - first element of the list
         //prepare path to previous directory
-        var path_previous = options.path;
-        if (path_previous.search("/") != -1) {
-            path_previous = path_previous.slice(0, path_previous.lastIndexOf("/"))
+        var path_previous=options.path;
+        if (path_previous.search("/")!=-1){
+            path_previous = path_previous.slice(0,path_previous.lastIndexOf("/"))
         }
-        else path_previous = '';
+        else path_previous='';
 
         rowItemArray[0] = {
             name: '...',
-            link: '#',
+            link:'#',
             type: 'directory',
-            onclick: 'Jupytepide.readDir({DOMelement:"' + options.DOMelement + '",path:"' + path_previous + '",contents:"' + options.contents + '"})'
+            onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+path_previous+'",contents:"'+options.contents+'"})'
             //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"/",contents:"'+options.contents+'"})'
         };
 
         //console.log(notebooksList);
         for (i = 0; i < elementsList.length; i++) {
-            var timeStr = elementsList[i].last_modified;
-            timeStr = timeStr.substring(0, timeStr.search("T"));
-            n = i + 1;
-            rowItemArray[n] = {
-                name: elementsList[i].name,
-                //link: '#',//utils.url_path_join(homePath, elementsList[i].path),
-                time: timeStr,
-                type: elementsList[i].type,
-                mimetype: elementsList[i].mimetype
-                //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})'
-                //onclick:removeTabContent,
-                //DOMelement: options.DOMelement
-            };
+            var timeStr=elementsList[i].last_modified;
+            timeStr=timeStr.substring(0,timeStr.search("T"));
+            n = i+1;
+             rowItemArray[n] = {
+                 name: elementsList[i].name,
+                 //link: '#',//utils.url_path_join(homePath, elementsList[i].path),
+                 time: timeStr,
+                 type: elementsList[i].type,
+                 mimetype: elementsList[i].mimetype
+                 //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})'
+                 //onclick:removeTabContent,
+                 //DOMelement: options.DOMelement
+             };
 
-            if (rowItemArray[n].type === 'file') {
+             if (rowItemArray[n].type==='file'){
 
-                if (rowItemArray[n].mimetype === 'text/plain') {
-                    rowItemArray[n].link = utils.url_path_join(editPath, elementsList[i].path);
-                }
-                else if (rowItemArray[n].mimetype === 'image/png') {
-                    rowItemArray[n].link = utils.url_path_join(viewPath, elementsList[i].path);
-                }
-                else rowItemArray[n].link = utils.url_path_join(homePath, elementsList[i].path);
+                 if (rowItemArray[n].mimetype==='text/plain'){
+                     rowItemArray[n].link=utils.url_path_join(editPath, elementsList[i].path);
+                 }
+                 else if (rowItemArray[n].mimetype==='image/png'){
+                     rowItemArray[n].link=utils.url_path_join(viewPath, elementsList[i].path);
+                 }
+                 else rowItemArray[n].link=utils.url_path_join(homePath, elementsList[i].path);
 
-            }
-            if (rowItemArray[n].type === 'directory') {
-                rowItemArray[n].link = '#';
-                rowItemArray[n].onclick = 'Jupytepide.readDir({DOMelement:"' + options.DOMelement + '",path:"' + elementsList[i].path + '",contents:"' + options.contents + '"})';
-            }
-            if (rowItemArray[n].type === 'notebook') {
-                rowItemArray[n].link = utils.url_path_join(homePath, elementsList[i].path);
-            }
+             }
+             if (rowItemArray[n].type==='directory'){
+                 rowItemArray[n].link='#';
+                 rowItemArray[n].onclick='Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})';
+             }
+             if (rowItemArray[n].type==='notebook'){
+                rowItemArray[n].link=utils.url_path_join(homePath, elementsList[i].path);
+             }
 
         }
 
@@ -560,11 +709,11 @@ define([
         var i;
 //Files Tab
 
-        loadTabContent({path: '', contents: 'files', DOMelement: '#4karta'});
+        loadTabContent({path:'',contents:'files',DOMelement:'#4karta'});
 
 //Notebooks Tab
 
-        loadTabContent({path: 'notebooks', contents: 'notebooks', DOMelement: '#3karta'});
+        loadTabContent({path:'notebooks',contents:'notebooks',DOMelement:'#3karta'});
 
 //Snippets Tab
 
@@ -582,8 +731,10 @@ define([
              menu_item = code_snippets.make_snippets_menu_group({group_name:group_name,id:group_id});
              menu_snippets.append(menu_item.header).append(menu_item.content);
              menu_item={};
-            }
-            $('#2karta').append(menu_snippets);
+            };
+
+
+        $('#2karta').append(menu_snippets);
 
         //Load snippets from JSON
         //loading menu snippets items content (snippets names) into appropriate groups
@@ -697,7 +848,7 @@ define([
 
     return {
         load_ipython_extension: load_ipython_extension,
-        readDir: readDir
+        readDir:readDir
     };
 });
 
