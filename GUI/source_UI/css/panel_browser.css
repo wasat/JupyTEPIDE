@@ -154,3 +154,8 @@ i.btn.fa {
     border: 1px solid #555;
     background: #1c1c1c;
 }
+
+#restoSearchBtn i.fa{
+    margin-left:5px;
+    margin-right:0px;
+}

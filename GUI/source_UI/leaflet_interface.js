@@ -13,14 +13,16 @@ define([
     'require',
     './ol',
     './code_snippets',
-    './leaflet'
+    './leaflet',
+    'base/js/utils'
 
 ], function (Jupyter,
              $,
              require,
              ol,
              code_snippets,
-             L
+             L,
+             utils
 
 ) {
 
@@ -105,6 +107,7 @@ define([
         $.get(url_, function (data) {
                  returnedJSON=data;
         });
+        $('#restoSearchBtnIcon').hide();
         return returnedJSON;
     };
 
@@ -175,14 +178,14 @@ define([
     //     layer.options.zIndex = layer.options.zIndex-1;
     // };
 
-    //todo:ikona leafleta - poprawić ścieżkę
+    //
     //*** markerIcon ***
     var markerIcon = L.icon({
-        iconUrl: '/nbextensions/source_UI/img/marker-icon.png',
+        iconUrl: utils.url_path_join(Jupyter.notebook.base_url,require.toUrl('/nbextensions/source_UI/img/marker-icon.png')),
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [0, -41],
-        shadowUrl: '/nbextensions/source_UI/img/marker-shadow.png',
+        shadowUrl: utils.url_path_join(Jupyter.notebook.base_url,require.toUrl('/nbextensions/source_UI/img/marker-shadow.png')),
         shadowSize: [41, 41],
         shadowAnchor: [12, 41]
     });
@@ -191,7 +194,7 @@ define([
     //example: center=[51.11134, 17.0343], popup_={title: 'Wrocław',text:'Miasto w Polsce'}
     var add_marker = function(center,popup_) {
         var html_popup = "<b>{0}</b><br />{1}".format(popup_.title,popup_.text);
-        var parameters={icon: markerIcon}
+        var parameters={icon: markerIcon};
         L.marker(center, parameters).addTo(Jupytepide.leafletMap)
             .bindPopup(html_popup);
     };

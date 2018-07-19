@@ -161,6 +161,11 @@ define([
      //**** browser panel - preliminary version
         var data_browser = $('<div/>',{class:'data_browser_panel'});
 
+        //busy icon
+        // var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/source_UI/img/busy_blue_64_icon.png'})
+        // busyIcon = $('<div/>',{style:'position:absolute;width:64px;height:64px;margin-left:auto;margin-right:auto'}).append(busyIcon);
+        // data_browser.append(busyIcon);
+
         //set data
         var missions = [
             {name:"All", instrument:['All','MERIS','TM','ETM','OLI','OLI_TIRS','TIRS','SAR','MSI','OLCI','SLSTR','SR','OL','SL']},
@@ -270,7 +275,7 @@ define([
 
         //send query, load result to map
         //searchButton
-        var searchButton = $('<buton/>',{class:'btn btn-default btn-sm btn-primary',title:'Search and display on the map'}).html('Search').click(function(){
+        var searchButton = $('<buton/>',{id:'restoSearchBtn', class:'btn btn-default btn-sm btn-primary',title:'Search and display on the map'}).html('Search').click(function(){
             //prepare query string
             var missionStr = $('.data_browser_combobox#mission').find('option:selected').text()+'/';
             layerName = missionStr;
@@ -306,7 +311,7 @@ define([
                 geometryStr='&geometry=MULTIPOINT(('+Jupytepide.marker._latlng.lng+' '+Jupytepide.marker._latlng.lat+'))';
             }
 
-            var queryStr = 'http://finder.eocloud.eu/resto/api/collections/'
+            var queryStr = 'https://finder.eocloud.eu/resto/api/collections/'
                 +missionStr
                 +'search.json?_pretty=true'
                 +maxRecordsStr
@@ -321,14 +326,21 @@ define([
             }
 
 
+            $('#restoSearchBtnIcon').show();
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
+
             //todo: add more than one search layer, number search layers, add style attributes (now empty)
             layerName=layerName+' ('+geoJSON.features.length+')';
 
             Jupytepide.map_addGeoJsonLayer(geoJSON,layerName,{});
 
 
+
         });
+
+        //search icon
+        var searchButtonIcon = $('<i/>',{id: 'restoSearchBtnIcon', class:'fa fa-spinner fa-spin'}).hide();
+        searchButton.append(searchButtonIcon);
 
         //insert search point button
         var insertSearchPointButton = $('<buton/>',{
