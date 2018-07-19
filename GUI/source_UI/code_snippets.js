@@ -272,7 +272,7 @@ define([
 
         if (toAdd) {
             JSONdata.code_snippets.push(codeSnippet);
-            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN, JSONdata);
+            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
             addSnippetToUI(codeSnippet.group,codeSnippet.name);
             return JSONdata;
         }
@@ -342,7 +342,7 @@ define([
         if (deleted!=0){
             //JSONdata.code_snippets.push(codeSnippet);
             deleteSnippetFromUI(codeSnippet.data.group,codeSnippet.data.name);
-            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN, JSONdata);
+            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
             //addSnippetToUI(codeSnippet.group,codeSnippet.name);
             return JSONdata;
         }
@@ -370,8 +370,7 @@ define([
         });
 
 
-        return Math.max(...gids;
-    )
+        return Math.max(...gids);
     }
     //*** showAddSnippetWindow ***
     //wyświetla okno definiowania i dodawania snippeta
@@ -603,9 +602,7 @@ define([
 
         if (toAdd) {
             //check max group ID, assign max+1 value to new group
-            maxGid = Math.max(...gids;
-        )
-            +1;
+            maxGid=Math.max(...gids)+1;
             group.group_id=maxGid;
             JSONdata.groups.push(group);
             //Save to JSON file
@@ -657,7 +654,7 @@ define([
         if (deleted!=0){
             //JSONdata.code_snippets.push(codeSnippet);
             deleteGroupFromUI(group.data.group_id);
-            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN, JSONdata);
+            content_access.saveFile(CODE_SNIPPETS_PATH_HIDDEN,JSONdata);
             //addSnippetToUI(codeSnippet.group,codeSnippet.name);
             return JSONdata;
         }
@@ -694,7 +691,7 @@ define([
         addSnippetClick:addSnippetClick,
         showAddSnippetWindow:showAddSnippetWindow,
         showAddGroupWindow:showAddGroupWindow,
-        deleteGroupFromUI: deleteGroupFromUI
+        deleteGroupFromUI:deleteGroupFromUI
 
     };
 });
