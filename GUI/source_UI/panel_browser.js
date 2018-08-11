@@ -53,7 +53,8 @@ define([
              map_browser,
              leaflet_interface,
              content_access,
-             jupytepideModule) {
+             jupytepideModule
+) {
     'use strict';
 // create config object to load parameters
     //   var base_url = utils.get_body_data('baseUrl');
@@ -242,7 +243,8 @@ define([
                         $('.ui-datepicker').css('z-index', 9999999999);
                     }, 0);
                 }
-            }).attr("placeholder", "yyyy-mm-dd");
+            }).attr("placeholder", "yyyy-mm-dd")
+            .val('1970-01-01');
         var dateFromLbl = $('<label/>').html('From');
 
         //dateToInput
@@ -275,7 +277,9 @@ define([
 
         //send query, load result to map
         //searchButton
-        var searchButton = $('<buton/>',{id:'restoSearchBtn', class:'btn btn-default btn-sm btn-primary',title:'Search and display on the map'}).html('Search').click(function(){
+        var searchButton = $('<buton/>',{id:'restoSearchBtn', class:'btn btn-default btn-sm btn-primary',title:'Search and display on the map'})
+            .html('Search')
+            .click(function(){
             //prepare query string
             var missionStr = $('.data_browser_combobox#mission').find('option:selected').text()+'/';
             layerName = missionStr;
@@ -309,6 +313,16 @@ define([
             var geometryStr='';
             if (Jupytepide.marker){
                 geometryStr='&geometry=MULTIPOINT(('+Jupytepide.marker._latlng.lng+' '+Jupytepide.marker._latlng.lat+'))';
+                Jupytepide.marker.remove();
+            }
+
+            if (Jupytepide.leafletMap.tmpShapeWKT){
+                geometryStr='&geometry='+Jupytepide.leafletMap.tmpShapeWKT;
+                leaflet_interface.remove_tmp_shape();
+                // Jupytepide.leafletMap._layers[Jupytepide.leafletMap.tmpShapeID].remove();
+                // Jupytepide.leafletMap.tmpShapeID = -1;
+                // Jupytepide.leafletMap.tmpShapeVertexArray = [];
+                // Jupytepide.leafletMap.tmpShapeWKT = "";
             }
 
             var queryStr = 'https://finder.eocloud.eu/resto/api/collections/'
@@ -320,14 +334,15 @@ define([
                 +completionDateStr
                 +geometryStr;
 
-            //alert(queryStr);
-            if (Jupytepide.marker){
-                Jupytepide.marker.remove();
-            }
+            alert(queryStr);
+            // if (Jupytepide.marker){
+            //     Jupytepide.marker.remove();
+            // }
 
 
             $('#restoSearchBtnIcon').show();
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
+            //alert(queryStr);
 
             //todo: add more than one search layer, number search layers, add style attributes (now empty)
             layerName=layerName+' ('+geoJSON.features.length+')';
@@ -343,17 +358,47 @@ define([
         searchButton.append(searchButtonIcon);
 
         //insert search point button
-        var insertSearchPointButton = $('<buton/>',{
+        var insertSearchShapeButton = $('<buton/>',{
             class:'btn btn-default btn-sm btn-primary',
             title:'Mark search point on map',
-            style:'margin-left:3px;margin-right:3px;'
+            style:'margin-left:3px;margin-right:3px;',
+            id:'insertSearchShapeButton'
         })
-            .html('Mark point')
+            .html('Mark shape')
             .click(function(){
-                if(Jupytepide.marker){Jupytepide.marker.remove()}
-                Jupytepide.mapAddPoint=true;
-                Jupytepide.mapClick=false;
+                var options = {
+                    templineStyle: {},
+                    hintlineStyle: {},
+                    pathOptions: {
+                        // add leaflet options for polylines/polygons
+                        color: 'orange',
+                        fillColor: 'green',
+                    },
+                };
+                var shpTypeStr = $('.data_browser_combobox#shapeType').find('option:selected').text();
+                if (shpTypeStr=="Point"){
+                leaflet_interface.draw_point_tmp_marker();
+                }
+                else if (shpTypeStr=="Rectangle") {
+                    leaflet_interface.draw_rect_tmp_marker(options);
+                }
+                else if (shpTypeStr=="Polygon") {
+                    leaflet_interface.draw_poly_tmp_marker(options);
+                }
+                $('#insertSearchShapeButton').addClass('selected');
             });
+
+        //select marking shape type combobox - for resto searching shape type marker
+
+        var selectShapeTypeCombobox = $('<select/>',{
+            class:'data_browser_combobox',id:'shapeType',title:'Shape type',
+            style:'width:7em'
+        });
+        var tmpShapes = ["Point","Polygon","Rectangle"];
+        for (i=0;i<tmpShapes.length;i++){
+            selectShapeTypeCombobox.append($('<option/>').html(tmpShapes[i]));
+        }
+        //var selectShapeTypeComboboxLbl = $('<label/>').html('Instrument');
 
 
         //
@@ -377,7 +422,7 @@ define([
         data_browser.append(missionControlGroup);
 
         missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'3'});
-        missionControlGroup.append(searchButton).append(insertSearchPointButton);
+        missionControlGroup.append(searchButton).append(insertSearchShapeButton).append(selectShapeTypeCombobox);
         data_browser.append(missionControlGroup);
 
 

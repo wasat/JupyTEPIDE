@@ -159,3 +159,8 @@ i.btn.fa {
     margin-left:5px;
     margin-right:0px;
 }
+
+#insertSearchShapeButton.selected{
+    background-color:darkgrey;
+    border-color:grey;
+}

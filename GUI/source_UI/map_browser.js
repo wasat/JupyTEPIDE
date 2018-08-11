@@ -9,13 +9,16 @@ define([
     './code_snippets',
     './leaflet',
     './leaflet_interface'
+   // '/leaflet.pm'
 ], function (Jupyter,
              $,
              require,
              ol,
              code_snippets,
              leaflet,
-             leaflet_interface) {
+             leaflet_interface
+//             leaflet_pm
+) {
 
     //var MapBrowser={}
 
@@ -209,12 +212,6 @@ define([
         var flip = $('<div/>', {id: 'flip_map', class: 'container toolbar'});
         flip.append($('<button/>', {id: 'map_toggle', class: 'btn btn-xs btn-default'}).html('Hide/Show'));
         flip.append($('<a>', {name: 'map'}));
-
-
-        //TODO zrobić animację - trzeba regulować height
-        //TODO jeżeli ma to być pod notebook to zrobić przewijanie okna do mapy z guzika na toolbarze
-        //TODO pomyśleć jeszcze jak najlepiej umieścić okno mapy
-
 
         flip.insertAfter(main_panel);
         //wstawienie panelu z mapą
