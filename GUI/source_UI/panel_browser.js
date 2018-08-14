@@ -311,19 +311,11 @@ define([
             }
 
             var geometryStr='';
-            if (Jupytepide.marker){
-                geometryStr='&geometry=MULTIPOINT(('+Jupytepide.marker._latlng.lng+' '+Jupytepide.marker._latlng.lat+'))';
-                Jupytepide.marker.remove();
-            }
 
-            if (Jupytepide.leafletMap.tmpShapeWKT){
                 geometryStr='&geometry='+Jupytepide.leafletMap.tmpShapeWKT;
+                Jupytepide.marker.remove();
                 leaflet_interface.remove_tmp_shape();
-                // Jupytepide.leafletMap._layers[Jupytepide.leafletMap.tmpShapeID].remove();
-                // Jupytepide.leafletMap.tmpShapeID = -1;
-                // Jupytepide.leafletMap.tmpShapeVertexArray = [];
-                // Jupytepide.leafletMap.tmpShapeWKT = "";
-            }
+
 
             var queryStr = 'https://finder.eocloud.eu/resto/api/collections/'
                 +missionStr
@@ -334,12 +326,6 @@ define([
                 +completionDateStr
                 +geometryStr;
 
-            alert(queryStr);
-            // if (Jupytepide.marker){
-            //     Jupytepide.marker.remove();
-            // }
-
-
             $('#restoSearchBtnIcon').show();
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
             //alert(queryStr);
@@ -348,9 +334,6 @@ define([
             layerName=layerName+' ('+geoJSON.features.length+')';
 
             Jupytepide.map_addGeoJsonLayer(geoJSON,layerName,{});
-
-
-
         });
 
         //search icon
@@ -360,7 +343,7 @@ define([
         //insert search point button
         var insertSearchShapeButton = $('<buton/>',{
             class:'btn btn-default btn-sm btn-primary',
-            title:'Mark search point on map',
+            title:'Mark search shape on map',
             style:'margin-left:3px;margin-right:3px;',
             id:'insertSearchShapeButton'
         })
@@ -400,8 +383,25 @@ define([
         }
         //var selectShapeTypeComboboxLbl = $('<label/>').html('Instrument');
 
+        //Button for copying WKT of inserted temp shape - to insert it into selected cell
+        var copyShpWKTBtn = $('<button/>',{
+            class:'btn btn-default btn-sm btn-primary',
+            title:'Copy shape\'s WKT to selected cell',
+            style:'margin-left:3px;margin-right:3px;',
+            id:'copyShapeWKTButton'
+        })
+            .html('Copy WKT')
+            .click(function(){
+                var cell = Jupyter.notebook.get_selected_cell();
+                if (Jupytepide.leafletMap.tmpShapeWKT!='undefined') {
+                    //var match = /\r|\n/.exec(cell.get_text());
+                    //if (match){
+                        cell.set_text(cell.toJSON().source + Jupytepide.leafletMap.tmpShapeWKT+'\n');
+                    //}
+                    //else {cell.set_text(cell.toJSON().source  + Jupytepide.leafletMap.tmpShapeWKT+'\r')};
+                }
+            });
 
-        //
         var missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'1'});
         missionControlGroup
             .append(missionComboboxLbl)
@@ -422,7 +422,11 @@ define([
         data_browser.append(missionControlGroup);
 
         missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'3'});
-        missionControlGroup.append(searchButton).append(insertSearchShapeButton).append(selectShapeTypeCombobox);
+        missionControlGroup
+            .append(searchButton)
+            .append(insertSearchShapeButton)
+            .append(selectShapeTypeCombobox)
+            .append(copyShpWKTBtn);
         data_browser.append(missionControlGroup);
 
 
@@ -701,18 +705,6 @@ define([
         //});
     }
 
-    // var make_snippets_menu_group = function(element){
-    //
-    //     var menu_snippets_item_header = $('<a/>',{href:'#',id:element.id}).addClass('menu_snippets_item_header').html(element.group_name).append($('<br>'));
-    //     var menu_snippets_item_content = $('<div/>',{id:element.id}).addClass('menu_snippets_item_content');
-    //     var item = {header:menu_snippets_item_header,content:menu_snippets_item_content};
-    //
-    //     menu_snippets_item_header.click(function(){
-    //         menu_snippets_item_content.slideToggle();
-    //     });
-    //     menu_snippets_item_content.hide();
-    //     return item;
-    // };
 
     //simple inserting into panel
     // This method stands for panel content loading - Tabs here

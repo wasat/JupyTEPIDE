@@ -47,8 +47,8 @@ define([
     var load_map = function(map_container) {
         mymap = L.map(map_container,{drawControl:true});
         Jupytepide.leafletMap = mymap;
-        Jupytepide.mapClick = true;
-        Jupytepide.mapAddPoint = false;
+        toggle_map_action('mapClick');
+
 
         //Jupytepide.leafletMap.on('resize',function(){Jupytepide.leafletMap.invalidateSize();});
         //Jupytepide.leafletMap.whenReady(function(){alert("gggggggd")});
@@ -66,7 +66,7 @@ define([
         //Remember tmpShapeID
         Jupytepide.leafletMap.on('pm:create', function(e) {
             e.shape; // the name of the shape being drawn (i.e. 'Circle')
-            console.log(e.layer._leaflet_id); // the leaflet layer created
+            //console.log(e.layer._leaflet_id); // the leaflet layer created
             var tmpShapeID = e.layer._leaflet_id;
             Jupytepide.leafletMap.tmpShapeID = tmpShapeID;
 
@@ -79,6 +79,9 @@ define([
             if(Jupytepide.marker){Jupytepide.marker.remove()};
             remove_tmp_shape();
             //console.log(e.latlng);
+            toggle_map_action('mapAddPoly');
+
+
             layer.on('pm:vertexadded', function(e) {
                 //console.log(e.latlng);
                 if (e.shape=='Poly') {
@@ -88,9 +91,8 @@ define([
 
             if (e.shape=='Rectangle'){
                 Jupytepide.leafletMap.tmpShapeVertexArray=[];
-                Jupytepide.mapAddRectangle = true;
-                Jupytepide.mapAddPoint = false;
-                Jupytepide.mapClick = false;
+                toggle_map_action('mapAddRectangle');
+
 
             }
 
@@ -100,9 +102,8 @@ define([
         //remember WKT of entered shape (to create RESTO data query)
         Jupytepide.leafletMap.on('pm:drawend',function(e){
             if (e.shape=='Poly'|e.shape=='Rectangle'){
-                Jupytepide.mapAddRectangle = false;
-                Jupytepide.mapAddPoint = false;
-                Jupytepide.mapClick = true;
+                toggle_map_action('mapClick');
+
 
                 if (e.shape=='Rectangle' & typeof Jupytepide.leafletMap.tmpShapeVertexArray != 'undefined'
                     & Jupytepide.leafletMap.tmpShapeVertexArray.length>0 ){
@@ -310,21 +311,18 @@ define([
 
         //point marker for RESTO searching - "click" mode disabled
         else if (Jupytepide.mapAddPoint){
-            //alert(e.latlng.toString());
-            //var parameters={icon: markerIcon}
-            //L.marker(e.latlng, parameters).addTo(Jupytepide.leafletMap);
 
             Jupytepide.marker = new L.Marker(e.latlng,{draggable:true,icon:markerIcon});
             Jupytepide.leafletMap.addLayer(Jupytepide.marker);
-            Jupytepide.mapAddPoint=false;
-            Jupytepide.mapAddrectangle = false;
-            Jupytepide.mapClick=true;
+            Jupytepide.leafletMap.tmpShapeWKT='MULTIPOINT(('+Jupytepide.marker._latlng.lng+' '+Jupytepide.marker._latlng.lat+'))';
+            toggle_map_action('mapClick');
+
             $('#insertSearchShapeButton').removeClass('selected');
-            //alert(Jupytepide.marker._latlng.lng+','+Jupytepide.marker._latlng.lat);
+
         }
 
         //polygon shape for RESTO searching - "click" mode disabled - look at load_map()
-        else if (Jupytepide.mapAddPolygon){
+        else if (Jupytepide.mapAddPoly){
             //this is manained by leaflet pm extension's events
         }
 
@@ -334,10 +332,21 @@ define([
             //collect (two) points to build rectangle shape (in WKT)
             Jupytepide.leafletMap.tmpShapeVertexArray.push(e.latlng)
         }
+    };
 
+    //*** toggle_map_action ***
+    //set action, which takes place on the map at the moment
+    var toggle_map_action = function(action){
+        Jupytepide.mapAddPoint=false;
+        Jupytepide.mapAddRectangle = false;
+        Jupytepide.mapAddPoly = false;
+        Jupytepide.mapClick=false;
 
-
-    }
+        if (action=='mapAddPoint'){Jupytepide.mapAddPoint=true}
+        else if (action=='mapAddRectangle'){Jupytepide.mapAddRectangle=true}
+        else if (action=='mapAddPoly'){Jupytepide.mapAddPoly=true}
+        else if (action=='mapClick'){Jupytepide.mapClick=true}
+    };
 
     //*** remove_tmp_shape ***
     //removes from map, temporary shape drawn with leaflet pm extension (for RESTO searching)
@@ -349,7 +358,7 @@ define([
             //Jupytepide.leafletMap.pm.disableDraw();
             Jupytepide.leafletMap.tmpShapeID = -1;
             Jupytepide.leafletMap.tmpShapeVertexArray = [];
-            Jupytepide.leafletMap.tmpShapeWKT = "";
+            Jupytepide.leafletMap.tmpShapeWKT = 'undefined';
         }
     };
 
@@ -359,8 +368,7 @@ define([
         if(Jupytepide.marker){Jupytepide.marker.remove()}
         remove_tmp_shape();
         Jupytepide.leafletMap.pm.disableDraw();
-        Jupytepide.mapAddPoint=true;
-        Jupytepide.mapClick=false;
+        toggle_map_action('mapAddPoint');
 
     };
     //*** draw_rect_tmp_marker ***
