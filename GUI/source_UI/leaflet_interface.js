@@ -48,6 +48,10 @@ define([
         mymap = L.map(map_container,{drawControl:true});
         Jupytepide.leafletMap = mymap;
         toggle_map_action('mapClick');
+        Jupytepide.marker = new L.Marker();
+        Jupytepide.leafletMap.tmpShapeID = -1;
+        Jupytepide.leafletMap.tmpShapeVertexArray = [];
+        Jupytepide.leafletMap.tmpShapeWKT = 'undefined';
 
 
         //Jupytepide.leafletMap.on('resize',function(){Jupytepide.leafletMap.invalidateSize();});

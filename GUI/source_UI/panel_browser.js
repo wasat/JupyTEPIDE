@@ -311,11 +311,13 @@ define([
             }
 
             var geometryStr='';
-
+            if (Jupytepide.leafletMap.tmpShapeWKT=='undefined'){
+                geometryStr='';
+                alert('Jest undefined...'+Jupytepide.leafletMap.tmpShapeWKT);
+            }
+            else{
                 geometryStr='&geometry='+Jupytepide.leafletMap.tmpShapeWKT;
-                Jupytepide.marker.remove();
-                leaflet_interface.remove_tmp_shape();
-
+            }
 
             var queryStr = 'https://finder.eocloud.eu/resto/api/collections/'
                 +missionStr
@@ -328,7 +330,9 @@ define([
 
             $('#restoSearchBtnIcon').show();
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
-            //alert(queryStr);
+            alert(queryStr);
+            Jupytepide.marker.remove();
+            leaflet_interface.remove_tmp_shape();
 
             //todo: add more than one search layer, number search layers, add style attributes (now empty)
             layerName=layerName+' ('+geoJSON.features.length+')';
