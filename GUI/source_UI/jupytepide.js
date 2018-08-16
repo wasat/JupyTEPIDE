@@ -235,7 +235,7 @@ define([
         var optClick = $('<a/>',{href:'#',
             id:'optLayer_'+layer_name,
             onclick:'Jupytepide.alertTest'
-        }).html('opcje'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
+        }).html(' Options'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
 
         // var optBody = $('<div/>',{id:'optBody_'+layer_name}).html('Tu będą opcje'+layer_name);
 

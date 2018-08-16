@@ -53,7 +53,8 @@ define([
              map_browser,
              leaflet_interface,
              content_access,
-             jupytepideModule) {
+             jupytepideModule
+) {
     'use strict';
 // create config object to load parameters
     //   var base_url = utils.get_body_data('baseUrl');
@@ -161,6 +162,11 @@ define([
      //**** browser panel - preliminary version
         var data_browser = $('<div/>',{class:'data_browser_panel'});
 
+        //busy icon
+        // var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/source_UI/img/busy_blue_64_icon.png'})
+        // busyIcon = $('<div/>',{style:'position:absolute;width:64px;height:64px;margin-left:auto;margin-right:auto'}).append(busyIcon);
+        // data_browser.append(busyIcon);
+
         //set data
         var missions = [
             {name:"All", instrument:['All','MERIS','TM','ETM','OLI','OLI_TIRS','TIRS','SAR','MSI','OLCI','SLSTR','SR','OL','SL']},
@@ -237,7 +243,8 @@ define([
                         $('.ui-datepicker').css('z-index', 9999999999);
                     }, 0);
                 }
-            }).attr("placeholder", "yyyy-mm-dd");
+            }).attr("placeholder", "yyyy-mm-dd")
+            .val('1970-01-01');
         var dateFromLbl = $('<label/>').html('From');
 
         //dateToInput
@@ -270,7 +277,9 @@ define([
 
         //send query, load result to map
         //searchButton
-        var searchButton = $('<buton/>',{class:'btn btn-default btn-sm btn-primary',title:'Search and display on the map'}).html('Search').click(function(){
+        var searchButton = $('<buton/>',{id:'restoSearchBtn', class:'btn btn-default btn-sm btn-primary',title:'Search and display on the map'})
+            .html('Search')
+            .click(function(){
             //prepare query string
             var missionStr = $('.data_browser_combobox#mission').find('option:selected').text()+'/';
             layerName = missionStr;
@@ -302,11 +311,15 @@ define([
             }
 
             var geometryStr='';
-            if (Jupytepide.marker){
-                geometryStr='&geometry=MULTIPOINT(('+Jupytepide.marker._latlng.lng+' '+Jupytepide.marker._latlng.lat+'))';
+            if (Jupytepide.leafletMap.tmpShapeWKT=='undefined'){
+                geometryStr='';
+                alert('Jest undefined...'+Jupytepide.leafletMap.tmpShapeWKT);
+            }
+            else{
+                geometryStr='&geometry='+Jupytepide.leafletMap.tmpShapeWKT;
             }
 
-            var queryStr = 'http://finder.eocloud.eu/resto/api/collections/'
+            var queryStr = 'https://finder.eocloud.eu/resto/api/collections/'
                 +missionStr
                 +'search.json?_pretty=true'
                 +maxRecordsStr
@@ -315,36 +328,84 @@ define([
                 +completionDateStr
                 +geometryStr;
 
-            //alert(queryStr);
-            if (Jupytepide.marker){
-                Jupytepide.marker.remove();
-            }
-
-
+            $('#restoSearchBtnIcon').show();
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
+            alert(queryStr);
+            Jupytepide.marker.remove();
+            leaflet_interface.remove_tmp_shape();
+
             //todo: add more than one search layer, number search layers, add style attributes (now empty)
             layerName=layerName+' ('+geoJSON.features.length+')';
 
             Jupytepide.map_addGeoJsonLayer(geoJSON,layerName,{});
-
-
         });
 
+        //search icon
+        var searchButtonIcon = $('<i/>',{id: 'restoSearchBtnIcon', class:'fa fa-spinner fa-spin'}).hide();
+        searchButton.append(searchButtonIcon);
+
         //insert search point button
-        var insertSearchPointButton = $('<buton/>',{
+        var insertSearchShapeButton = $('<buton/>',{
             class:'btn btn-default btn-sm btn-primary',
-            title:'Mark search point on map',
-            style:'margin-left:3px;margin-right:3px;'
+            title:'Mark search shape on map',
+            style:'margin-left:3px;margin-right:3px;',
+            id:'insertSearchShapeButton'
         })
-            .html('Mark point')
+            .html('Mark shape')
             .click(function(){
-                if(Jupytepide.marker){Jupytepide.marker.remove()}
-                Jupytepide.mapAddPoint=true;
-                Jupytepide.mapClick=false;
+                var options = {
+                    templineStyle: {},
+                    hintlineStyle: {},
+                    pathOptions: {
+                        // add leaflet options for polylines/polygons
+                        color: 'orange',
+                        fillColor: 'green',
+                    },
+                };
+                var shpTypeStr = $('.data_browser_combobox#shapeType').find('option:selected').text();
+                if (shpTypeStr=="Point"){
+                leaflet_interface.draw_point_tmp_marker();
+                }
+                else if (shpTypeStr=="Rectangle") {
+                    leaflet_interface.draw_rect_tmp_marker(options);
+                }
+                else if (shpTypeStr=="Polygon") {
+                    leaflet_interface.draw_poly_tmp_marker(options);
+                }
+                $('#insertSearchShapeButton').addClass('selected');
             });
 
+        //select marking shape type combobox - for resto searching shape type marker
 
-        //
+        var selectShapeTypeCombobox = $('<select/>',{
+            class:'data_browser_combobox',id:'shapeType',title:'Shape type',
+            style:'width:7em'
+        });
+        var tmpShapes = ["Point","Polygon","Rectangle"];
+        for (i=0;i<tmpShapes.length;i++){
+            selectShapeTypeCombobox.append($('<option/>').html(tmpShapes[i]));
+        }
+        //var selectShapeTypeComboboxLbl = $('<label/>').html('Instrument');
+
+        //Button for copying WKT of inserted temp shape - to insert it into selected cell
+        var copyShpWKTBtn = $('<button/>',{
+            class:'btn btn-default btn-sm btn-primary',
+            title:'Copy shape\'s WKT to selected cell',
+            style:'margin-left:3px;margin-right:3px;',
+            id:'copyShapeWKTButton'
+        })
+            .html('Copy WKT')
+            .click(function(){
+                var cell = Jupyter.notebook.get_selected_cell();
+                if (Jupytepide.leafletMap.tmpShapeWKT!='undefined') {
+                    //var match = /\r|\n/.exec(cell.get_text());
+                    //if (match){
+                        cell.set_text(cell.toJSON().source + Jupytepide.leafletMap.tmpShapeWKT+'\n');
+                    //}
+                    //else {cell.set_text(cell.toJSON().source  + Jupytepide.leafletMap.tmpShapeWKT+'\r')};
+                }
+            });
+
         var missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'1'});
         missionControlGroup
             .append(missionComboboxLbl)
@@ -365,7 +426,11 @@ define([
         data_browser.append(missionControlGroup);
 
         missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'3'});
-        missionControlGroup.append(searchButton).append(insertSearchPointButton);
+        missionControlGroup
+            .append(searchButton)
+            .append(insertSearchShapeButton)
+            .append(selectShapeTypeCombobox)
+            .append(copyShpWKTBtn);
         data_browser.append(missionControlGroup);
 
 
@@ -644,18 +709,6 @@ define([
         //});
     }
 
-    // var make_snippets_menu_group = function(element){
-    //
-    //     var menu_snippets_item_header = $('<a/>',{href:'#',id:element.id}).addClass('menu_snippets_item_header').html(element.group_name).append($('<br>'));
-    //     var menu_snippets_item_content = $('<div/>',{id:element.id}).addClass('menu_snippets_item_content');
-    //     var item = {header:menu_snippets_item_header,content:menu_snippets_item_content};
-    //
-    //     menu_snippets_item_header.click(function(){
-    //         menu_snippets_item_content.slideToggle();
-    //     });
-    //     menu_snippets_item_content.hide();
-    //     return item;
-    // };
 
     //simple inserting into panel
     // This method stands for panel content loading - Tabs here

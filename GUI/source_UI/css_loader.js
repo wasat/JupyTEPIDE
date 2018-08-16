@@ -86,6 +86,18 @@ define([
             .attr('rel', 'stylesheet')
             .attr('type', 'text/css'));
 
+
+        //Leaflet drawing and editing tools plugin
+        $('body').append($('<script/>',{
+            src: require.toUrl('./leaflet.pm.min.js')
+        }));
+
+        //Leaflet.pm - Leaflet plugin library style
+        $('head').append($('<link/>').attr('href', require.toUrl('./css/' + 'leaflet.pm' + '.css'))
+            .attr('rel', 'stylesheet')
+            .attr('type', 'text/css'));
+
+
         // $('body').append($('<script/>')).text('Jupytepide.leafletMap.invalidateSize();');
     };
 
