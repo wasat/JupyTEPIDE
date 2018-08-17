@@ -34,7 +34,7 @@ services:
       context: .
       dockerfile: Dockerfile.jupytepidehub
       args:
-        JUPYTEPIDE_HUB_BASE_VERSION: ${JUPYTEPIDE_HUB_BASE_VERSION}
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
     restart: always
     image: jupytepide-hub
     container_name: jupytepide-hub
