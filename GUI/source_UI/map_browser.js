@@ -9,13 +9,16 @@ define([
     './code_snippets',
     './leaflet',
     './leaflet_interface'
+   // '/leaflet.pm'
 ], function (Jupyter,
              $,
              require,
              ol,
              code_snippets,
              leaflet,
-             leaflet_interface) {
+             leaflet_interface
+//             leaflet_pm
+) {
 
     //var MapBrowser={}
 
@@ -84,7 +87,7 @@ define([
         }).addTo(mymap);
 
         var myIcon = leaflet.icon({
-            iconUrl: '/nbextensions/source_UI/img/marker-icon.png',
+            iconUrl: '/nbextensions/source_UI/img/marker-ico.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [0, -41],
@@ -169,12 +172,22 @@ define([
         //map_container.append($('<div/>',{class:'leaflet-pane leaflet-map-pane',style:'transform: translate3d(-32px, -14px, 0px);'}));
         //map_container.append($('<div/>',{class:'leaflet-control-container'}));
 
+// //busy icon
+//         var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/source_UI/img/busy_blue_64_icon.png'})
+//         busyIcon = $('<div/>',{class:'leaflet-top', style:'position:relative;width:64px,height:64px;margin-left:auto;margin-right:auto'}).append(busyIcon);
+        //busyIcon.hide();
+        //busyIcon=$('<div/>',{class:'leaflet-top'}).progressbar({value:false});
+        //map_container.append(busyIcon);
+
         //pasek narzędzowy - mój
         //TODO: umieścić go jako "wiszący" nad treścią mapy
         var control_container = $('<div/>', {class: 'map_control_container'});
 
+
+
         map_panel.append(map_container);
         map_panel.append(control_container);
+
         //html('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi. Cras vel lorem. Etiam pellentesque aliquet tellus. Phasellus pharetra nulla ac diam. Quisque semper justo at risus. Donec venenatis, turpis vel hendrerit interdum, dui ligula ultricies purus, sed posuere libero dui id orci. Nam congue, pede vitae dapibus aliquet, elit magna vulputate arcu, vel tempus metus leo non est. Etiam sit amet lectus quis est congue mollis. Phasellus congue lacus eget neque. Phasellus ornare, ante vitae consectetuer consequat, purus sapien ultricies dolor, et mollis pede metus eget nisi. Praesent sodales velit quis augue. Cras suscipit, urna at aliquam rhoncus, urna quam viverra nisi, in interdum massa nibh nec erat.');
 
         return map_panel;
@@ -199,12 +212,6 @@ define([
         var flip = $('<div/>', {id: 'flip_map', class: 'container toolbar'});
         flip.append($('<button/>', {id: 'map_toggle', class: 'btn btn-xs btn-default'}).html('Hide/Show'));
         flip.append($('<a>', {name: 'map'}));
-
-
-        //TODO zrobić animację - trzeba regulować height
-        //TODO jeżeli ma to być pod notebook to zrobić przewijanie okna do mapy z guzika na toolbarze
-        //TODO pomyśleć jeszcze jak najlepiej umieścić okno mapy
-
 
         flip.insertAfter(main_panel);
         //wstawienie panelu z mapą

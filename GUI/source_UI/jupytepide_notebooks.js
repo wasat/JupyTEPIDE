@@ -12,8 +12,9 @@ define([
     'base/js/dialog',
     'base/js/utils',
     'services/config',
-    'require'
-], function ($, Jupyter, dialog, utils, configmod, require) {
+    'require',
+    './content_access'
+], function ($, Jupyter, dialog, utils, configmod, require, content_access) {
     "use strict";
 
     //daje listę nazw notebooków z pliku notebooks.json
@@ -39,11 +40,24 @@ define([
         });
 
         return NotebooksList;
-    };
+    }
 
+    //daje tablicę obiektów zbudowanych na podstawie plików zawartych w katalogu (path)
+    //odfiltrowuje tylko pliki, które są notebookami oraz katalogami
+    function get_NotebooksListDir(path) {
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+
+        $.ajaxSetup({
+            async: false
+        });
+
+        var NotebooksList = content_access.getFilesList(path, {filter: "directory;notebook"});
+        return NotebooksList;
+    }
     // return public methods
     return {
-        getNotebooksList: get_NotebooksList
+        getNotebooksList: get_NotebooksList,
+        get_NotebooksListDir: get_NotebooksListDir
     };
 
 });

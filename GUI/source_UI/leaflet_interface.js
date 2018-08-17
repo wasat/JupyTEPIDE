@@ -13,14 +13,16 @@ define([
     'require',
     './ol',
     './code_snippets',
-    './leaflet'
+    './leaflet',
+    'base/js/utils'
 
 ], function (Jupyter,
              $,
              require,
              ol,
              code_snippets,
-             L
+             L,
+             utils
 
 ) {
 
@@ -36,18 +38,124 @@ define([
     };
 
     var mymap;
+    //var mapClick;
+    //var mapAddPoint;
 
     //*** load_map ***
     //Used for initial map loading (not for notebook users)
     //Jupytepide.leafletMap initialization
     var load_map = function(map_container) {
-        mymap = L.map(map_container);
+        mymap = L.map(map_container,{drawControl:true});
         Jupytepide.leafletMap = mymap;
+        toggle_map_action('mapClick');
+        Jupytepide.marker = new L.Marker();
+        Jupytepide.leafletMap.tmpShapeID = -1;
+        Jupytepide.leafletMap.tmpShapeVertexArray = [];
+        Jupytepide.leafletMap.tmpShapeWKT = 'undefined';
+
+
         //Jupytepide.leafletMap.on('resize',function(){Jupytepide.leafletMap.invalidateSize();});
         //Jupytepide.leafletMap.whenReady(function(){alert("gggggggd")});
         Jupytepide.leafletMap.setView([0,0], 1).on('click', onMapClick);
         //Jupytepide.leafletMap.fire('resize');
         L.control.scale().addTo(Jupytepide.leafletMap);
+        //L.control.toolb.addTo(Jupytepide.leafletMap);
+
+        //this enables all tools from leaflet.pm plugin - can be used in near future
+        //todo:leaflet pm controls adding
+        //Jupytepide.leafletMap.pm.addControls();
+
+        //events for edit temporary shapes controling
+        // (shapes for searching and temp shapes for drawing - deleted after search or after entering the shape onto the layer)
+        //Remember tmpShapeID
+        Jupytepide.leafletMap.on('pm:create', function(e) {
+            e.shape; // the name of the shape being drawn (i.e. 'Circle')
+            //console.log(e.layer._leaflet_id); // the leaflet layer created
+            var tmpShapeID = e.layer._leaflet_id;
+            Jupytepide.leafletMap.tmpShapeID = tmpShapeID;
+
+        });
+
+        //remember each vertex in tmpShapeVertexArray
+        Jupytepide.leafletMap.on('pm:drawstart', function(e) {
+            var layer = e.workingLayer;
+            Jupytepide.leafletMap.tmpShapeVertexArray = [];
+            if(Jupytepide.marker){Jupytepide.marker.remove()};
+            remove_tmp_shape();
+            //console.log(e.latlng);
+            toggle_map_action('mapAddPoly');
+
+
+            layer.on('pm:vertexadded', function(e) {
+                //console.log(e.latlng);
+                if (e.shape=='Poly') {
+                    Jupytepide.leafletMap.tmpShapeVertexArray.push(e.latlng);
+                }
+            });
+
+            if (e.shape=='Rectangle'){
+                Jupytepide.leafletMap.tmpShapeVertexArray=[];
+                toggle_map_action('mapAddRectangle');
+
+
+            }
+
+
+        });
+
+        //remember WKT of entered shape (to create RESTO data query)
+        Jupytepide.leafletMap.on('pm:drawend',function(e){
+            if (e.shape=='Poly'|e.shape=='Rectangle'){
+                toggle_map_action('mapClick');
+
+
+                if (e.shape=='Rectangle' & typeof Jupytepide.leafletMap.tmpShapeVertexArray != 'undefined'
+                    & Jupytepide.leafletMap.tmpShapeVertexArray.length>0 ){
+                    //must build rectangle for WKT from two collected points
+                    var tmpVtxArr = Jupytepide.leafletMap.tmpShapeVertexArray;
+                    if (tmpVtxArr[0].lat>tmpVtxArr[1].lat & tmpVtxArr[0].lng<tmpVtxArr[1].lng){
+                        tmpVtxArr.splice(1,0,{lat:tmpVtxArr[0].lat, lng:tmpVtxArr[1].lng});
+                        tmpVtxArr.push({lat:tmpVtxArr[2].lat, lng:tmpVtxArr[0].lng})
+                    }
+
+                    if (tmpVtxArr[0].lat<tmpVtxArr[1].lat & tmpVtxArr[0].lng<tmpVtxArr[1].lng){
+                        tmpVtxArr.splice(1,0,{lat:tmpVtxArr[1].lat, lng:tmpVtxArr[0].lng});
+                        tmpVtxArr.push({lat:tmpVtxArr[0].lat, lng:tmpVtxArr[2].lng})
+                    }
+
+                    if (tmpVtxArr[0].lat<tmpVtxArr[1].lat & tmpVtxArr[0].lng>tmpVtxArr[1].lng){
+                        tmpVtxArr.splice(1,0,{lat:tmpVtxArr[0].lat, lng:tmpVtxArr[1].lng});
+                        tmpVtxArr.push({lat:tmpVtxArr[2].lat, lng:tmpVtxArr[0].lng})
+                    }
+
+                    if (tmpVtxArr[0].lat>tmpVtxArr[1].lat & tmpVtxArr[0].lng>tmpVtxArr[1].lng){
+                        tmpVtxArr.splice(1,0,{lat:tmpVtxArr[1].lat, lng:tmpVtxArr[0].lng});
+                        tmpVtxArr.push({lat:tmpVtxArr[0].lat, lng:tmpVtxArr[2].lng})
+                    }
+
+                    Jupytepide.leafletMap.tmpShapeVertexArray=tmpVtxArr;
+
+                }
+
+                var WKTstr = 'POLYGON((';
+                var vertexStr='';
+                //var tmpShapeID = Jupytepide.leafletMap.tmpShapeID;
+                //console.log('toto:'+tmpShapeID);
+                var numVertex = Jupytepide.leafletMap.tmpShapeVertexArray.length;
+                 for(var i=0;i<numVertex;i++){
+                     vertexStr = Jupytepide.leafletMap.tmpShapeVertexArray[i].lng +' '+ Jupytepide.leafletMap.tmpShapeVertexArray[i].lat;
+
+                     if(i==numVertex-1){
+
+                         WKTstr=WKTstr+ vertexStr+','+Jupytepide.leafletMap.tmpShapeVertexArray[0].lng +' '+ Jupytepide.leafletMap.tmpShapeVertexArray[0].lat+'))';
+                     }
+                     else WKTstr=WKTstr+ vertexStr+',';
+                 }
+             }
+             Jupytepide.leafletMap.tmpShapeWKT = WKTstr;
+            $('#insertSearchShapeButton').removeClass('selected');
+        });
+
     };
 
     var map_invalidateSize = function(){
@@ -76,10 +184,31 @@ define([
     var load_geoJsonLayer = function(data,options){
         return L.geoJSON(data,options
         ).bindPopup(function(layer){
-            return layer.feature.properties.description;
+            var collection = layer.feature.properties.collection;
+            var productID = layer.feature.properties.productIdentifier;
+            var completionDate = layer.feature.properties.completionDate;
+            var thumbnail = layer.feature.properties.thumbnail;
+            var thumbnailTxt = "No picture";
+            if (thumbnail!=="null") thumbnailTxt="Thumbnail picture"
+
+            //var popup = "<b>"+collection+"</b><br/><textarea style='width:300px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><a href='"+thumbnail+"' target:'_blank'>"+thumbnailTxt+"</a>";
+            //var popup = "<b>"+collection+"</b><br/>Product identifier:<br/><textarea style='width:250px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><img alt='No picture' src='"+thumbnail+"' style='width:250px;'></img>";
+            var popup = "<b>"+collection+"</b><br/>Product identifier:<br/><div style='font-size:10px;box-shadow: 0px 0px 1px black;width:250px;height:60px;overflow-y: scroll;word-wrap:break-word;'>"+productID+"</div><div style='margin-bottom:2px;margin-top:2px;'>Completion date: "+completionDate+"</div><img alt='No picture' src='"+thumbnail+"' style='width:250px;'></img>";
+            //return layer.feature.properties.description;
+            return popup;
         }).addTo(Jupytepide.leafletMap);
 
         //return L.geoJSON(data).addTo(Jupytepide.leafletMap);
+    };
+
+    //*** getRestoGeoJSON ***
+    var getRestoGeoJSON = function(url_){
+        var returnedJSON={};
+        $.get(url_, function (data) {
+                 returnedJSON=data;
+        });
+        $('#restoSearchBtnIcon').hide();
+        return returnedJSON;
     };
 
     //*** load_imageLayer ***
@@ -149,14 +278,14 @@ define([
     //     layer.options.zIndex = layer.options.zIndex-1;
     // };
 
-    //todo:ikona leafleta - poprawić ścieżkę
+    //
     //*** markerIcon ***
     var markerIcon = L.icon({
-        iconUrl: '/nbextensions/source_UI/img/marker-icon.png',
+        iconUrl: utils.url_path_join(Jupyter.notebook.base_url,require.toUrl('/nbextensions/source_UI/img/marker-icon.png')),
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [0, -41],
-        shadowUrl: '/nbextensions/source_UI/img/marker-shadow.png',
+        shadowUrl: utils.url_path_join(Jupyter.notebook.base_url,require.toUrl('/nbextensions/source_UI/img/marker-shadow.png')),
         shadowSize: [41, 41],
         shadowAnchor: [12, 41]
     });
@@ -165,7 +294,7 @@ define([
     //example: center=[51.11134, 17.0343], popup_={title: 'Wrocław',text:'Miasto w Polsce'}
     var add_marker = function(center,popup_) {
         var html_popup = "<b>{0}</b><br />{1}".format(popup_.title,popup_.text);
-        var parameters={icon: markerIcon}
+        var parameters={icon: markerIcon};
         L.marker(center, parameters).addTo(Jupytepide.leafletMap)
             .bindPopup(html_popup);
     };
@@ -173,11 +302,88 @@ define([
     var popup = L.popup();
 
     function onMapClick(e) {
-        popup
-            .setLatLng(e.latlng)
-            .setContent("You clicked the map at " + e.latlng.toString())
-            .openOn(Jupytepide.leafletMap);
-    }
+        //if no RESTO searching adding shapes - map is in "click" mode
+        if (Jupytepide.mapClick){
+            if(Jupytepide.marker){
+                Jupytepide.marker.remove()}
+            remove_tmp_shape();
+            // popup
+            //     .setLatLng(e.latlng)
+            //     .setContent("You clicked the map at " + e.latlng.toString())
+            //     .openOn(Jupytepide.leafletMap);
+        }
+
+        //point marker for RESTO searching - "click" mode disabled
+        else if (Jupytepide.mapAddPoint){
+
+            Jupytepide.marker = new L.Marker(e.latlng,{draggable:true,icon:markerIcon});
+            Jupytepide.leafletMap.addLayer(Jupytepide.marker);
+            Jupytepide.leafletMap.tmpShapeWKT='MULTIPOINT(('+Jupytepide.marker._latlng.lng+' '+Jupytepide.marker._latlng.lat+'))';
+            toggle_map_action('mapClick');
+
+            $('#insertSearchShapeButton').removeClass('selected');
+
+        }
+
+        //polygon shape for RESTO searching - "click" mode disabled - look at load_map()
+        else if (Jupytepide.mapAddPoly){
+            //this is manained by leaflet pm extension's events
+        }
+
+        //rectangle shape for RESTO searching - "click" mode disabled - look at load_map()
+        else if (Jupytepide.mapAddRectangle){
+
+            //collect (two) points to build rectangle shape (in WKT)
+            Jupytepide.leafletMap.tmpShapeVertexArray.push(e.latlng)
+        }
+    };
+
+    //*** toggle_map_action ***
+    //set action, which takes place on the map at the moment
+    var toggle_map_action = function(action){
+        Jupytepide.mapAddPoint=false;
+        Jupytepide.mapAddRectangle = false;
+        Jupytepide.mapAddPoly = false;
+        Jupytepide.mapClick=false;
+
+        if (action=='mapAddPoint'){Jupytepide.mapAddPoint=true}
+        else if (action=='mapAddRectangle'){Jupytepide.mapAddRectangle=true}
+        else if (action=='mapAddPoly'){Jupytepide.mapAddPoly=true}
+        else if (action=='mapClick'){Jupytepide.mapClick=true}
+    };
+
+    //*** remove_tmp_shape ***
+    //removes from map, temporary shape drawn with leaflet pm extension (for RESTO searching)
+    var remove_tmp_shape = function(){
+        if(Jupytepide.leafletMap.tmpShapeWKT){
+            if (Jupytepide.leafletMap._layers[Jupytepide.leafletMap.tmpShapeID]) {
+                Jupytepide.leafletMap._layers[Jupytepide.leafletMap.tmpShapeID].remove()
+            };
+            //Jupytepide.leafletMap.pm.disableDraw();
+            Jupytepide.leafletMap.tmpShapeID = -1;
+            Jupytepide.leafletMap.tmpShapeVertexArray = [];
+            Jupytepide.leafletMap.tmpShapeWKT = 'undefined';
+        }
+    };
+
+    //temp shapes as markesr for RESTO searching (point,rectangle,polygon)
+    //*** draw_point_tmp_marker ***
+    var draw_point_tmp_marker = function(){
+        if(Jupytepide.marker){Jupytepide.marker.remove()}
+        remove_tmp_shape();
+        Jupytepide.leafletMap.pm.disableDraw();
+        toggle_map_action('mapAddPoint');
+
+    };
+    //*** draw_rect_tmp_marker ***
+    var draw_rect_tmp_marker = function(options){
+        Jupytepide.leafletMap.pm.enableDraw('Rectangle',options);
+    };
+    //*** draw_poly_tmp_marker ***
+    var draw_poly_tmp_marker = function(options){
+        Jupytepide.leafletMap.pm.enableDraw('Poly',options);
+    };
+    //end of temp shapes as markesr for RESTO searching
 
     //*** add_circle ***
     //center=[52.407, 21.33], radius=500, popup_="Some text", parameters_={color: 'red', fillColor: '#f03', fillOpacity: 0.5}
@@ -269,7 +475,7 @@ define([
     };
 
     //*** load_leaflet ***
-    //function for testing purposes - delete when finished
+    //todo:function for testing purposes - delete when finished
     var load_leaflet = function () {
         mymap = L.map("map_container").setView([51.505, -0.09], 13);
         Jupytepide.leafletMap = mymap;
@@ -355,7 +561,12 @@ define([
         load_geojson:load_geojson,
         load_image:load_image,
         load_madrid:load_madrid,
-        map_invalidateSize:map_invalidateSize
+        map_invalidateSize:map_invalidateSize,
+        getRestoGeoJSON:getRestoGeoJSON,
+        remove_tmp_shape:remove_tmp_shape,
+        draw_point_tmp_marker:draw_point_tmp_marker,
+        draw_rect_tmp_marker:draw_rect_tmp_marker,
+        draw_poly_tmp_marker:draw_poly_tmp_marker
 
     };
 

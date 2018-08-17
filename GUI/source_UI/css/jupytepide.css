@@ -1,3 +1,15 @@
+/* File source_UI/panel_browser.js
+ Edited by: Michał Bednarczyk
+ Copyright (C) 2017 .....
+
+  Distributed under the terms of the BSD License.
+ ---------------------------------------------------------------------------
+ This file, together with bootstrap.min.css should be placed in:
+ anaconda3/lib/python3.6/site-packages/notebook/static/custom/
+
+ and added as import into custom.css
+*/
+
 /*notebook */
 .container {
     /*background-color: #1C1C1C;*/
@@ -13,12 +25,12 @@ body > #header {
     background-color: #313335;
 }
 
-/*kreska pod nagłówkiem*/
+/*Line under the header*/
 body > #header .header-bar {
     background-color: #1c1c1c;
 }
 
-/* to będzie skutkowało zmianą koloru czcionki napisów w nagłówku i innych, domyślnie jest biały, ustawiony przez bootstrap*/
+/*Header font color, default is white - set by bootstrap*/
 body {
     /*color: #2a323a;*/
     font-size: 12px;
@@ -46,7 +58,7 @@ body {
     border-bottom: 1px solid #7a7c8a;
 }
 
-/*to tymczasowo - do poprawienia ładowania list_container (patrz TODO w panel_browser.js*/
+/*temporarily - to fix loading in  list_container (look at: TODO in panel_browser.js*/
 .list_container {
     border: none;
 }
@@ -81,7 +93,7 @@ body {
     line-height: 22px;
 }
 
-/* prompt po lewej stronie celek*/
+/* prompt on the left side of code cell*/
 div.input_prompt {
     color: #a2a2a2;
 }
@@ -94,25 +106,25 @@ div.input_prompt {
 żeby zrobić własny dropdown, trzeba go umieścić w bootstrapowym stylu - jako button dropdown (zamiast select, chociaż select też działa)
 
 */
-/*dropdowns na toolbarze*/
+/*dropdowns on toolbar*/
 .toolbar select, .toolbar label {
     height: 30px;
     background-color: #1c1c1c;
 }
 
-/*Celki (cells) Jupytera notebook'a*/
+/*Cells of Jupyter notebook*/
 div.input_area {
     border: 1px solid #1C1C1C;
     border-radius: 0px;
 }
 
-/*Output pod celką*/
+/*Output under code cell*/
 div.output_area pre {
     color: #FFFFFF;
 
 }
 
-/*czas wykonania pod celką - to jest od rozszerzenia związanego z execution timing)*/
+/*execution timing under the code cell*/
 .timing_area {
     background-color: #2c2c2c;
     /*border: 1px solid #1c1c1c;*/
@@ -120,7 +132,7 @@ div.output_area pre {
     color: #ffffff;
 }
 
-/*Guzik na toolbarze (trusted)*/
+/*Button on toolbar (Trusted)*/
 .notification_widget {
     background-color: #424242; /*#BB5A2C;*/
     color: #ffffff; /*#1c1c1c;*/
@@ -132,7 +144,7 @@ div.output_area pre {
     border: 1px solid #282828;
 }
 
-/*Guzik Logout na toolbarze*/
+/*Logout button on toolbar*/
 span#login_widget > .button, #logout {
     background-color: #3D74AD; /*#BB5A2C;*/
     color: #ffffff; /*#1c1c1c;*/
@@ -146,13 +158,13 @@ span#login_widget > .button, #logout {
 
 }
 
-/*logo lewa górna część */
+/*Logo - left upper part of the screen*/
 #ipython_notebook img {
     height: 100%;
 
 }
 
-/*komunikaty pod celkami*/
+/*alerts under cells*/
 .rendered_html p {
     color: #ffffff;
 }
@@ -214,6 +226,7 @@ div.menu_snippets_item_header a{
 div.tab-content {
     background-color:#2c2c2c;
 }
+
 /*End of MENU SNIPPETS*/
 
 /*wysokość całej apki zmniejszymy - jeżeli chcemy na dole dodać pasek (np. rozwijalny)

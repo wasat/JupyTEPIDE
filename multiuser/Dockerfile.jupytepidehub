@@ -17,3 +17,8 @@ COPY ./secrets/userlist /srv/jupyterhub/userlist
 COPY ./img/logo_jupytepide.png /opt/conda/share/jupyter/hub/static/images/jupyterhub-80.png
 COPY ./img/logo_jupytepide.png /opt/conda/share/jupyter/hub/static/images/jupyter.png
 COPY ./jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
+
+RUN cd /tmp && \
+   git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
+   cp -rf /tmp/JupyTEPIDE/GUI/res/hub/* /opt/conda/share/jupyter/hub &&\
+   find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf
