@@ -54,6 +54,11 @@ def clean_dir_hook(spawner):
 # c.Spawner.pre_spawn_hook = create_dir_hook
 # c.Spawner.post_stop_hook = clean_dir_hook
 
+# Set the log level by value or name.
+c.JupyterHub.log_level = 'DEBUG'
+
+# Enable debug-logging of the single-user server
+c.LocalProcessSpawner.debug = True
 
 notebook_dir = os.environ.get('DOCKER_NOTEBOOK_DIR') or '/home/jovyan/work'
 c.DockerSpawner.notebook_dir = notebook_dir
