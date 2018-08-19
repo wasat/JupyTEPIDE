@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Map srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
+    <Style name="mapStyle">
+        <Rule>
+            <RasterSymbolizer>
+                <RasterColorizer default-mode="discrete" default-color="rgb(0,0,0)">
+                    <stop value="0" color="rgba(0,0,0,0.0)" mode="discrete"/>
+                    <stop value="1" color="rgb(0,0,139)" mode="discrete"/>
+                    <stop value="10000" color="rgb(0,0,255)" mode="discrete"/>
+                    <stop value="20000" color="rgb(0,0,255)" mode="discrete"/>
+                    <stop value="30000" color="rgb(0,0,255)" mode="discrete"/>
+                    <stop value="40000" color="rgb(0,0,255)" mode="discrete"/>
+                    <stop value="50000" color="rgb(0,0,255)" mode="discrete"/>
+                    <stop value="60000" color="rgb(0,0,255)" mode="discrete"/>
+                    <stop value="70000" color="rgb(0,0,255)" mode="discrete"/>
+                </RasterColorizer>
+            </RasterSymbolizer>
+        </Rule>
+    </Style>
+    <Layer name="mapLayer" srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
+        <StyleName>mapStyle</StyleName>
+        <Datasource>
+            <Parameter name="band">1</Parameter>
+            <Parameter name="file">/etc/tilestache/test.tif</Parameter>
+            <Parameter name="type">gdal</Parameter>
+        </Datasource>
+    </Layer>
+</Map>

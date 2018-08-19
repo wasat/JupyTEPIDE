@@ -12,6 +12,7 @@ volumes:
 	@docker volume inspect $(DATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DATA_VOLUME_HOST)
 	@docker volume inspect $(DB_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(DB_VOLUME_HOST)
 	@docker volume inspect $(EODATA_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(EODATA_VOLUME_HOST)
+	@docker volume inspect $(MAPNIK_VOLUME_HOST) >/dev/null 2>&1 || docker volume create --name $(MAPNIK_VOLUME_HOST)
 
 self-signed-cert:
 	# make a self-signed cert
@@ -32,8 +33,8 @@ secrets/jupyterhub.key:
 	@echo "Need an SSL key in secrets/jupyterhub.key"
 	@exit 1
 
-userlist:
-	@echo "Add usernames, one per line, to ./userlist, such as:"
+secrets/userlist:
+	@echo "Add usernames, one per line, to ./secrets/userlist, such as:"
 	@echo "    zoe admin"
 	@echo "    wash"
 	@exit 1
@@ -46,7 +47,7 @@ else
 	cert_files=
 endif
 
-check-files: userlist $(cert_files) secrets/oauth.env secrets/postgres.env
+check-files: secrets/userlist $(cert_files) secrets/oauth.env secrets/postgres.env
 
 pull:
 	docker pull $(DOCKER_REG)/$(DOCKER_NOTEBOOK_IMAGE)

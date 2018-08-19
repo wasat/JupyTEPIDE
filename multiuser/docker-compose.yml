@@ -17,12 +17,22 @@ services:
     volumes:
       - "db:${DB_VOLUME_CONTAINER}"
 
+  mapnik:
+    image: "jupytepide/tilestache-mapnik:ver_1.0.4"
+    container_name: jupytepide-mapnik
+    ports:
+     - "32798:22"
+     - "32799:9001"
+     - "32800:80"
+    volumes:
+     - mapnik:/etc/tilestache
+
   hub:
     depends_on:
       - hub-db
     build:
       context: .
-      dockerfile: Dockerfile.jupyterhub
+      dockerfile: Dockerfile.jupytepidehub
       args:
         JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
     restart: always
@@ -35,6 +45,7 @@ services:
       # Bind Docker volume on host for JupyterHub database and cookie secrets
       - "data:${DATA_VOLUME_CONTAINER}"
       - "eodata:${EODATA_VOLUME_CONTAINER}"
+      - "mapnik:${MAPNIK_VOLUME_CONTAINER}"
     ports:
       - "443:443"
     links:
@@ -52,7 +63,7 @@ services:
       DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
       # Postgres db info
       POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_HOST: hub-db
+      POSTGRES_HOST: ${POSTGRES_HOST}
     env_file:
       - secrets/postgres.env
       - secrets/oauth.env
@@ -67,7 +78,9 @@ volumes:
     external:
       name: ${DB_VOLUME_HOST}
   eodata:
-
+  mapnik:
+    external:
+      name: ${MAPNIK_VOLUME_HOST}
 
 networks:
   default:
