@@ -234,40 +234,75 @@ define([
         //dodaje do control.layers (do menu z checkboxem)
         var optClick = $('<a/>',{href:'#',
             id:'optLayer_'+layer_name,
-            onclick:'Jupytepide.alertTest'
+            onclick:'Jupytepide.showLayerFeaturesData("'+layer_name+'")'
         }).html(' Options'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
 
-        // var optBody = $('<div/>',{id:'optBody_'+layer_name}).html('Tu będą opcje'+layer_name);
-
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name+" "+optClick[0].outerHTML);
-        //    $('#optLayer_'+layer_name).append(optBody);
-        $( document ).ready(function() {
-            if (!$('.leaflet-control-layers-overlays label').is('#lbl_' + layer_name)) {
-                $('.leaflet-control-layers-overlays label').attr('id', 'lbl_' + layer_name)
-            };
 
-        });
-        //TRZEBA TO OBSŁUŻYĆ POZA FUNKCJĄ DODAWANIA WARSTWY.....
-
-        //trzeba "złapać" ten dodany <a> z identyfikatorem i odwołać się do jego "parentów", żeby nadać
-        // elementowi <label> id o nazwie warstwy, wtedy będzie można przypisać onclick indywidualnie...
-
-        //nie może tak być jak poniżej, bo on robi to na wszystkiech elementach na raz
-        // $( document ).ready(function() {
-        //     $('.leaflet-control-layers-overlays label div').addClass('l-layer');
-        //
-        //      //$('.leaflet-control-layers-overlays label').append(optBody);
-        //
-        //
-        //     $('#optLayer').click(function(){
-        //         $('#optBody').slideToggle('medium');
-        //     });
-        //
-        //     //optBody.hide();
-        //
-        // });
     };
     //************************************************************
+    /**
+     * Used by Jupytepide to load features data (bound to GeoJSON properties) from vector layer [layer_name] into UI.
+     * @example
+     *
+     * @param layer_name - Jupytepide layer name, which appears on the layers list after loading.
+     * @memberof: class:Jupytepide
+     */
+    Jupytepide.showLayerFeaturesData = function(layer_name){
+        var featuresData = Jupytepide.getLayerFeaturesData(layer_name);
+        $('.data_browser_panel.data_layer_browser').empty();
+        $('.data_browser_panel.data_layer_browser').append($('<div/>',{style:'font-weight:bold;'}).html(layer_name));
+        for (var i=0;i<featuresData.length;i++){
+
+            var featureRow = $('<div/>').html(featuresData[i].featureID)
+                .append($('<a/>',{href:featuresData[i].featureHref,target:'about:blank'}).html(' more'));
+
+            featureRow.bind('mouseenter',{fID:featuresData[i].leafletID},setSelectedFeatureColor);
+            featureRow.bind('mouseleave',{fID:featuresData[i].leafletID},setUnselectedFeatureColor);
+
+            // featureRow.on('mouseenter',function(){
+            //     //console.log('entered');
+            //     Jupytepide.leafletMap._layers[featuresData[i].leafletID].setStyle({color:'red'});
+            // });
+
+            $('.data_browser_panel.data_layer_browser').append(featureRow);
+
+
+        }
+    }
+
+    function setSelectedFeatureColor(fID){
+        Jupytepide.leafletMap._layers[fID.data.fID].setStyle({color:'red'});
+    }
+
+    function setUnselectedFeatureColor(fID){
+        Jupytepide.leafletMap._layers[fID.data.fID].setStyle({color:'blue'});
+    }
+
+    /**
+     * Returns GeoJSON vector layer data. Jupytepide uses it for browsing layer data after making RESTO data search.
+     * @example
+     *
+     * @param layer_name - Jupytepide layer name, which appears on the layers list after loading.
+     * @memberof: class:Jupytepide
+     */
+    Jupytepide.getLayerFeaturesData = function(layer_name){
+        var features = Jupytepide.leafletMap.layers[layer_name]._layers
+        var featuresData = [];
+        var fData = {};
+        for(var property_leaflet_id in features){
+            if (features.hasOwnProperty(property_leaflet_id)) {
+                fData = {
+                    leafletID:property_leaflet_id,
+                    featureID:features[property_leaflet_id].feature.id,
+                    featureHref:features[property_leaflet_id].feature.properties.links[0].href
+                };
+                featuresData.push(fData);
+            }
+        }
+        return featuresData;
+        //console.log(featuresData);
+    };
 
     Jupytepide.layersTest = function (){
         //var optClick = $('<a/>',{href:'#',id:'optLayer_'+layer_name}).html('opcje'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..

@@ -152,6 +152,7 @@ define([
             Jupytepide.leafletMap.invalidateSize(); //to resize leaflet map
         });
 
+        //** BUTTONS **
         //search-toggle button
         var search_button =$('<i/>',{class:"btn fa fa-search",title:"Search for EO data"});
         search_button.click(function(){
@@ -159,8 +160,23 @@ define([
         });
         map_toolbar.append(search_button);
 
+        //layer_browser_button
+        var layer_browser_button =$('<i/>',{class:"btn fa fa-table",title:"Browse layer data"});
+        layer_browser_button.click(function(){
+            data_search.slideToggle();
+            data_layer_browser.slideToggle();
+        });
+        map_toolbar.append(layer_browser_button);
+
+
+        //** PANELS **
      //**** browser panel - preliminary version
         var data_browser = $('<div/>',{class:'data_browser_panel'});
+        var data_search = $('<div/>',{class:'data_browser_panel data_search'});
+        var data_layer_browser = $('<div/>',{class:'data_browser_panel data_layer_browser'})
+            .hide();
+        data_browser.append(data_search);
+        data_browser.append(data_layer_browser);
 
         //busy icon
         // var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/source_UI/img/busy_blue_64_icon.png'})
@@ -282,7 +298,7 @@ define([
             .click(function(){
             //prepare query string
             var missionStr = $('.data_browser_combobox#mission').find('option:selected').text()+'/';
-            layerName = missionStr;
+            layerName = missionStr.slice(0,-1)+'_';
             if (missionStr==='All/'){missionStr='/'}
             var instrumentStr = $('.data_browser_combobox#instrument').find('option:selected').text();
             layerName=layerName+instrumentStr;
@@ -330,14 +346,39 @@ define([
 
             $('#restoSearchBtnIcon').show();
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
-            alert(queryStr);
+            //alert(queryStr);
             Jupytepide.marker.remove();
             leaflet_interface.remove_tmp_shape();
+            console.log(geoJSON);
 
             //todo: add more than one search layer, number search layers, add style attributes (now empty)
-            layerName=layerName+' ('+geoJSON.features.length+')';
+            layerName=layerName+'_'+geoJSON.features.length+'_of_'+geoJSON.properties.totalResults+'_total_results';
 
-            Jupytepide.map_addGeoJsonLayer(geoJSON,layerName,{});
+            Jupytepide.leafletMap.ids = [];
+            //add layer, set options for layer (style, events, etc.)
+            Jupytepide.map_addGeoJsonLayer(geoJSON,layerName,{
+                color:'#161ce9',
+                onEachFeature: function(feature,layer){
+                    //Jupytepide.leafletMap.ids.push(layer); //todo: to jest niepotrzebne - patrz notatki
+                    //dzięki temu mam dostęp do id warstw(ficzerów): Jupytepide.leafletMap.ids[0]._leaflet_id
+                    //todo: przemyśleć jak dodawać warstwy i nimi zarządzać
+                    //do zmiany koloru mam dostep: Jupytepide.leafletMap._layers[91].setStyle({color:'red'});
+                 layer.on({
+                     mouseover: function(e){
+                         layer.setStyle({color:'#e97916'});
+                         console.log(layer._leaflet_id);
+
+                     },
+                     mouseout: function(e){
+                         layer.setStyle({color:'#161ce9'});
+                     },
+                     load: function(){
+                         console.log(layer._leaflet_id);
+                     }
+
+                 })
+                }
+            });
         });
 
         //search icon
@@ -358,8 +399,8 @@ define([
                     hintlineStyle: {},
                     pathOptions: {
                         // add leaflet options for polylines/polygons
-                        color: 'orange',
-                        fillColor: 'green',
+                        color: '#f50534',
+                        fillColor: 'f50534',
                     },
                 };
                 var shpTypeStr = $('.data_browser_combobox#shapeType').find('option:selected').text();
@@ -414,7 +455,7 @@ define([
             .append(instrumentComboBox)
             .append(maxRecordsLbl)
             .append(maxRecordsInput);
-        data_browser.append(missionControlGroup);
+        data_search.append(missionControlGroup);
 
         missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'2'});
         missionControlGroup
@@ -423,7 +464,7 @@ define([
             .append(dateToLbl)
             .append(dateToInput)
             .append(useDateCheckbox);
-        data_browser.append(missionControlGroup);
+        data_search.append(missionControlGroup);
 
         missionControlGroup = $('<div/>',{class:'data_browser_controlgroup', id:'3'});
         missionControlGroup
@@ -431,7 +472,7 @@ define([
             .append(insertSearchShapeButton)
             .append(selectShapeTypeCombobox)
             .append(copyShpWKTBtn);
-        data_browser.append(missionControlGroup);
+        data_search.append(missionControlGroup);
 
 
         // data_browser.append(missionComboBox).append(instrumentComboBox)

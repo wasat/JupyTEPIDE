@@ -164,3 +164,14 @@ i.btn.fa {
     background-color:darkgrey;
     border-color:grey;
 }
+
+.data_browser_panel .data_layer_browser{
+
+    height:100px;
+    overflow:auto;
+}
+
+.data_browser_panel .data_layer_browser div:hover{
+    background-color:#555;
+    color:whitesmoke;
+}
