@@ -16,7 +16,7 @@ define([
 
     //*** createFile ***
     //tworzenie pliku tekstowego o nazwie untitled.txt
-    function createFile(){
+    function createFile() {
         // var contents = new contents_service.Contents({
         //     base_url: common_options.base_url,
         //     common_config: common_config
@@ -27,19 +27,19 @@ define([
         });
 
         contents.new_untitled('', {type: 'file', ext: '.txt'});
-    };
+    }
 
     //*** save2 ***
     //Additional method added to Contents.prototyme class contained in Jupyter's "content.js" module
     //UWAGA:PUT (HTTP) nie jest obsługiwany przez wszystkie przeglądarki - może być, że nie zapiszemy snippetów - pomyśleć o PHP - ale najpierw testować
     //trzeba zrobić tak: każde dodanie snippeta wymaga pobrania całej zawartości pliku, modyfikacji i ponownego zapisu, z tego jak działa AJAX inaczej się nie da, chyba, że będziemy używać bazy danych...
-    contents_service.Contents.prototype.save2 = function(path, model) {
+    contents_service.Contents.prototype.save2 = function (path, model) {
 
         var settings = {
-            processData : false,
-            type : "PUT",
+            processData: false,
+            type: "PUT",
             dataType: "json",
-            data : JSON.stringify(model),
+            data: JSON.stringify(model),
             contentType: 'application/json',
         };
         var url = this.api_url(path);
@@ -49,11 +49,11 @@ define([
 
     };
 
-    contents_service.Contents.prototype.read2 = function(path) {
+    contents_service.Contents.prototype.read2 = function (path) {
 //todo: zrobić tak z Contents.get(), żeby czytać zawartość katalogu
         var settings = {
-            processData : false,
-            type : "GET",
+            processData: false,
+            type: "GET",
             dataType: "json",
             //data : JSON.stringify(model),
             contentType: 'application/json'
@@ -81,16 +81,22 @@ define([
          * We do the call with settings so we can set cache to false.
          */
         var settings = {
-            processData : false,
-            cache : false,
-            type : "GET",
-            dataType : "json",
+            processData: false,
+            cache: false,
+            type: "GET",
+            dataType: "json",
         };
         var url = this.api_url(path);
         var params = {};
-        if (options.type) { params.type = options.type; }
-        if (options.format) { params.format = options.format; }
-        if (options.content === false) { params.content = '0'; }
+        if (options.type) {
+            params.type = options.type;
+        }
+        if (options.format) {
+            params.format = options.format;
+        }
+        if (options.content === false) {
+            params.content = '0';
+        }
         //return utils.promising_ajax(url + '?' + $.param(params), settings);
         return utils.ajax(url + '?' + $.param(params), settings);
     };
@@ -98,33 +104,33 @@ define([
     //** getFiles ***
     //The simplest: getFiles("",{}) will return objest containig all files and dirs from base_url dir
     //it can be used to read file contents or to list any dir
-    function getFiles(path,options){
+    function getFiles(path, options) {
         var contents = new contents_service.Contents({
             base_url: base_url
         });
-        return contents.get2(path,options);
+        return contents.get2(path, options);
     }
 
     //** getFilesList ***
     //returns array of objects with content of directory (path)
-    function getFilesList(path,options) {
+    function getFilesList(path, options) {
         try {
-           var filesList = getFiles(path, options);
-           //return filesList;
-           var returnFilesList = filesList.responseJSON.content;
+            var filesList = getFiles(path, options);
+            //return filesList;
+            var returnFilesList = filesList.responseJSON.content;
         }
-        catch (err){
-           console.log(err);
-           return false;
+        catch (err) {
+            console.log(err);
+            return false;
         }
 
-        if (options.filter){
-            var filteredFilesList=[];
+        if (options.filter) {
+            var filteredFilesList = [];
             var filterArray = options.filter.toString();
             filterArray = filterArray.split(";");
-            for (var i=0; i <returnFilesList.length;i++){
-                for (var j=0;j<filterArray.length;j++){
-                    if (returnFilesList[i].type==filterArray[j]) {
+            for (var i = 0; i < returnFilesList.length; i++) {
+                for (var j = 0; j < filterArray.length; j++) {
+                    if (returnFilesList[i].type == filterArray[j]) {
                         filteredFilesList.push(returnFilesList[i]);
                     }
                 }
@@ -133,33 +139,33 @@ define([
             return filteredFilesList;
         }
         else return returnFilesList;
-    };
+    }
 
     //Function to use in file browser tab "Files" - to load content
-    function get_FilesListDir(path){
+    function get_FilesListDir(path) {
         //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
 
         $.ajaxSetup({
             async: false
         });
 
-        var FilesList = getFilesList(path,{filter:""});
+        var FilesList = getFilesList(path, {filter: ""});
         return FilesList;
-    };
+    }
 
     //** saveFile ***
     //Saves data into file located in user's HOME directory
     //if file doesn't exist, it will be created. Use carefully!
-    function saveFile(fname,data){
+    function saveFile(fname, data) {
         var contents = new contents_service.Contents({
             base_url: base_url
         });
         //contents.save('untitled.txt',{path:'',type:'file', format:'text', content:"{ x: 5, y: 6 }"});
-        contents.save2(fname,{path:'',type:'file', format:'text', content:JSON.stringify(data)});
-    };
+        contents.save2(fname, {path: '', type: 'file', format: 'text', content: JSON.stringify(data)});
+    }
 
     //** readFile **
-    function readFile(fname,option_fn){
+    function readFile(fname, option_fn) {
         var contents = new contents_service.Contents({
             base_url: base_url
         });
@@ -180,21 +186,21 @@ define([
             return JSON.parse(a.responseJSON.content);
         }
         catch (err) {
-            console.log('Failed to load snippets from: '+fname);
+            console.log('Failed to load snippets from: ' + fname);
             //throw 'Unable to read file';
             return false;
 
         }
 
-    };
+    }
 
     // return public methods
     return {
-        saveFile:saveFile,
-        readFile:readFile,
-        getFiles:getFiles,
-        getFilesList:getFilesList,
-        get_FilesListDir:get_FilesListDir
+        saveFile: saveFile,
+        readFile: readFile,
+        getFiles: getFiles,
+        getFilesList: getFilesList,
+        get_FilesListDir: get_FilesListDir
     };
 
 });

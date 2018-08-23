@@ -100,6 +100,10 @@ ENV/
 # Idea conf files
 .idea/
 /docker/tmp/
-**/multiuser/secrets/
-**/multiuser/userlist
+multiuser/secrets/
 /docker/logs/
+data_dir/
+notebooks/GDAL/
+notebooks/GEO/
+multiuser/userlist
+/multiuser/userlist
