@@ -183,24 +183,7 @@ define([
     //*** load_geoJsonLayer ***
     var load_geoJsonLayer = function(data,options){
         return L.geoJSON(data,options
-        ).bindPopup(function(layer){
-            var collection = layer.feature.properties.collection;
-            var productID = layer.feature.properties.productIdentifier;
-            var completionDate = layer.feature.properties.completionDate;
-            var thumbnail = layer.feature.properties.thumbnail;
-            var thumbnailTxt = "No picture";
-            if (thumbnail!=="null") thumbnailTxt="Thumbnail picture";
-
-            //var popup = "<b>"+collection+"</b><br/><textarea style='width:300px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><a href='"+thumbnail+"' target:'_blank'>"+thumbnailTxt+"</a>";
-            //var popup = "<b>"+collection+"</b><br/>Product identifier:<br/><textarea style='width:250px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><img alt='No picture' src='"+thumbnail+"' style='width:250px;'></img>";
-            var popup = "<b>"+collection+"</b>" +
-                "<br/>Product identifier:<br/>" +
-                "<div style='font-size:10px;box-shadow: 0px 0px 1px black;width:250px;height:60px;overflow-y: scroll;word-wrap:break-word;'>"+
-                productID+"</div><div style='margin-bottom:2px;margin-top:2px;'>Completion date: "+completionDate+"" +
-                "</div><img alt='No picture' src='"+thumbnail+"' style='width:250px;'></img>";
-            //return layer.feature.properties.description;
-            return popup;
-        }).addTo(Jupytepide.leafletMap);
+        ).addTo(Jupytepide.leafletMap);
 
         //return L.geoJSON(data).addTo(Jupytepide.leafletMap);
     };

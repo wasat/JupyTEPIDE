@@ -171,7 +171,46 @@ i.btn.fa {
     overflow:auto;
 }
 
-.data_browser_panel .data_layer_browser div:hover{
-    background-color:#555;
-    color:whitesmoke;
+.data_browser_panel .data_layer_browser div{
+    background-color:black;
+    color:silver;
 }
+
+.data_browser_panel .data_layer_browser table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border-color: #272727;
+    color: #ccc;
+}
+
+.data_browser_panel .data_layer_browser table a {
+    text-decoration: none;
+    background: #0b2283;
+    border-radius: 4px;
+    padding: 1px;
+}
+.data_browser_panel .data_layer_browser td, th {
+    border: 1px solid #272727;
+    text-align: left;
+    padding: 2px;
+}
+
+.data_browser_panel .data_layer_browser tr:hover {
+    background-color: #1b698e;
+}
+
+.data_browser_panel .data_layer_browser tr:hover {
+    box-shadow: 0px 0px 1px black;
+}
+
+
+.map_browser_toolbar button{
+    border-color:#1d1c20;
+}
+
+.map_browser_toolbar button.selected {
+    background:#b95000;
+}
+
+

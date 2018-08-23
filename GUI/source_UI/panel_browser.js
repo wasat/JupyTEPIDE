@@ -67,6 +67,38 @@ define([
     var map_panel = map_browser.build_map_panel();
     var map_toolbar = $('<div/>',{class:'map_browser_toolbar'});
 
+    //** data_search_toggle **
+    //check_visibility - use this parameter to check whether data_layer_browser is visible and if it is visible, don't toggle it.
+    var data_search_toggle = function(check_visibility){
+        check_visibility = check_visibility || false;
+        if (!check_visibility) {
+            $('.data_browser_panel .data_search').slideToggle();
+            $('.data_browser_panel .data_layer_browser').slideToggle();
+        }
+        else{
+            var searchBtn = $('.data_browser_panel,button#searchBtn');
+            var layerBrowseBtn = $('.data_browser_panel,button#layerBrowseBtn');
+                 if($('.data_browser_panel').is(':hidden')){
+
+                     $('.data_browser_panel').show();
+                     $('.data_browser_panel .data_search').hide();
+
+                     layerBrowseBtn.removeClass('inactive').addClass('selected');
+                     searchBtn.addClass('selected');
+
+                 }
+                 else if($('.data_browser_panel .data_search').is(':visible') & $('.data_browser_panel .data_layer_browser').is(':hidden')){
+                     $('.data_browser_panel .data_search').hide();
+                     $('.data_browser_panel .data_layer_browser').show();
+
+                 }
+                 else if ($('.data_browser_panel .data_search').is(':hidden') & $('.data_browser_panel .data_layer_browser').is(':visible')){
+
+                 }
+            //}
+        }
+    };
+
     var build_side_panel = function (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
         if (max_rel_width === undefined) max_rel_width = 100;
@@ -78,7 +110,7 @@ define([
 
         var side_panel_splitbar = $('<div class="side_panel_splitbar"/>');
         var side_panel_inner = $('<div class="side_panel_inner"/>');
-        var side_panel_expand_contract = $('<i class="btn fa fa-expand hidden-print">');
+        var side_panel_expand_contract = $('<button>',{class:"btn btn-default fa fa-expand hidden-print"});
         map_toolbar.append(side_panel_expand_contract);
         side_panel.append(side_panel_splitbar);
         side_panel.append(side_panel_inner);
@@ -154,18 +186,31 @@ define([
 
         //** BUTTONS **
         //search-toggle button
-        var search_button =$('<i/>',{class:"btn fa fa-search",title:"Search for EO data"});
+        var search_button =$('<button/>',{id:'searchBtn',class:"btn btn-default fa fa-search",title:"Search for EO data - show/hide"});
         search_button.click(function(){
             data_browser.slideToggle();
+            search_button.toggleClass('selected');
+            layer_browser_button.toggleClass('inactive');
+            // if (data_browser.is(':visible')){
+            //     search_button.addClass('selected');
+            // }
+            // else{
+            //     search_button.removeClass('selected');
+            // }
+
+
         });
         map_toolbar.append(search_button);
 
         //layer_browser_button
-        var layer_browser_button =$('<i/>',{class:"btn fa fa-table",title:"Browse layer data"});
+        var layer_browser_button =$('<button/>',{id:'layerBrowseBtn',class:"btn btn-default fa fa-table",title:"Toggle layer data view"});
         layer_browser_button.click(function(){
-            data_search.slideToggle();
-            data_layer_browser.slideToggle();
+            if (!layer_browser_button.hasClass('inactive')){
+                data_search_toggle();
+                layer_browser_button.toggleClass('selected');
+            }
         });
+        layer_browser_button.addClass('inactive');
         map_toolbar.append(layer_browser_button);
 
 
@@ -346,7 +391,7 @@ define([
 
             $('#restoSearchBtnIcon').show();
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
-            //alert(queryStr);
+
             Jupytepide.marker.remove();
             leaflet_interface.remove_tmp_shape();
             console.log(geoJSON);
@@ -359,21 +404,33 @@ define([
             Jupytepide.map_addGeoJsonLayer(geoJSON,layerName,{
                 color:'#161ce9',
                 onEachFeature: function(feature,layer){
-                    //Jupytepide.leafletMap.ids.push(layer); //todo: to jest niepotrzebne - patrz notatki
-                    //dzięki temu mam dostęp do id warstw(ficzerów): Jupytepide.leafletMap.ids[0]._leaflet_id
-                    //todo: przemyśleć jak dodawać warstwy i nimi zarządzać
-                    //do zmiany koloru mam dostep: Jupytepide.leafletMap._layers[91].setStyle({color:'red'});
-                 layer.on({
+                 layer.bindPopup(function(layer){
+                     var collection = layer.feature.properties.collection;
+                     var productID = layer.feature.properties.productIdentifier;
+                     var completionDate = layer.feature.properties.completionDate;
+                     var thumbnail = layer.feature.properties.thumbnail;
+                     var thumbnailTxt = "No picture";
+                     if (thumbnail!=="null") thumbnailTxt="Thumbnail picture";
+
+                     //var popup = "<b>"+collection+"</b><br/><textarea style='width:300px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><a href='"+thumbnail+"' target:'_blank'>"+thumbnailTxt+"</a>";
+                     //var popup = "<b>"+collection+"</b><br/>Product identifier:<br/><textarea style='width:250px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><img alt='No picture' src='"+thumbnail+"' style='width:250px;'></img>";
+                     var popup = "<b>"+collection+"</b>" +
+                         "<br/>Product identifier:<br/>" +
+                         "<div style='font-size:10px;box-shadow: 0px 0px 1px black;width:250px;height:60px;overflow-y: scroll;word-wrap:break-word;'>"+
+                         productID+"</div><div style='margin-bottom:2px;margin-top:2px;'>Completion date: "+completionDate+"" +
+                         "</div><img alt='No picture' src='"+thumbnail+"' style='width:250px;'></img>";
+                     //return layer.feature.properties.description;
+                     return popup;
+                 });
+                    layer.on({
                      mouseover: function(e){
                          layer.setStyle({color:'#e97916'});
-                         console.log(layer._leaflet_id);
-
                      },
                      mouseout: function(e){
                          layer.setStyle({color:'#161ce9'});
                      },
                      load: function(){
-                         console.log(layer._leaflet_id);
+
                      }
 
                  })
@@ -385,7 +442,7 @@ define([
         var searchButtonIcon = $('<i/>',{id: 'restoSearchBtnIcon', class:'fa fa-spinner fa-spin'}).hide();
         searchButton.append(searchButtonIcon);
 
-        //insert search point button
+        //insert search shape button
         var insertSearchShapeButton = $('<buton/>',{
             class:'btn btn-default btn-sm btn-primary',
             title:'Mark search shape on map',
@@ -426,7 +483,6 @@ define([
         for (i=0;i<tmpShapes.length;i++){
             selectShapeTypeCombobox.append($('<option/>').html(tmpShapes[i]));
         }
-        //var selectShapeTypeComboboxLbl = $('<label/>').html('Instrument');
 
         //Button for copying WKT of inserted temp shape - to insert it into selected cell
         var copyShpWKTBtn = $('<button/>',{
@@ -439,11 +495,8 @@ define([
             .click(function(){
                 var cell = Jupyter.notebook.get_selected_cell();
                 if (Jupytepide.leafletMap.tmpShapeWKT!='undefined') {
-                    //var match = /\r|\n/.exec(cell.get_text());
-                    //if (match){
                         cell.set_text(cell.toJSON().source + Jupytepide.leafletMap.tmpShapeWKT+'\n');
-                    //}
-                    //else {cell.set_text(cell.toJSON().source  + Jupytepide.leafletMap.tmpShapeWKT+'\r')};
+                    Jupytepide.insert_cell1()
                 }
             });
 
@@ -942,7 +995,8 @@ define([
 
     return {
         load_ipython_extension: load_ipython_extension,
-        readDir:readDir
+        readDir:readDir,
+        data_search_toggle:data_search_toggle
     };
 });
 
