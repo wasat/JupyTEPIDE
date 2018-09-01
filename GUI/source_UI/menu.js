@@ -21,13 +21,18 @@ define([
     'require',
     'base/js/namespace',
     'base/js/utils',
-    './code_snippets'
+    './code_snippets',
+    'base/js/keyboard',
+    'base/js/dialog'
 ], function (Jupyter,
              $,
              require,
              IPython,
              utils,
-             code_snippets) {
+             code_snippets,
+             keyboard,
+             dialog
+) {
 
     //otwieranie notebooka, lub innego pliku - jako name można podać dowolny plik
     function open_notebook(name) {
@@ -166,9 +171,7 @@ define([
         snippets_submenu = add_submenu('Snippets', '#jupytepide_menu');
         add_menu_item('Add Group', 'Add new menu group', '#', snippets_submenu, function (evt) {
             evt.preventDefault();
-            //code_snippets.addGroup({ group_name: "KUKURA" });
             code_snippets.showAddGroupWindow();
-            //open_notebook('moj_probny.ipynb');
         });
 
         //Notebooks
@@ -192,15 +195,80 @@ define([
         //Help
         add_menu_item('Help', 'Show help in modal', '#', moje_menu, function (evt) {
             evt.preventDefault();
+            showHelpDialog();
         });
 
         //About Jupytepide
         add_menu_item('About Jupytepide', 'About Jupytepide', '#', moje_menu, function (evt) {
             evt.preventDefault();
+            window.open('https://wasat.github.io/JupyTEPIDE/');
         });
+    }
 
 
+    function showHelpDialog(){
+        //***
+        var options = {};
+        var dialog_body = $('<div/>');
+        var introStr = Jupytepide.getJupytepideHelpJSON().intro;
+        var positionsArr = Jupytepide.getJupytepideHelpJSON().positions;
 
+        var intro = $('<div/>',{class:'well'}).html(introStr);
+        var container = $('<div/>',{class:'container-fluid'});
+        var col_1 = $('<div/>',{class:'col-md-6'});
+        var col_2 = $('<div/>',{class:'col-md-6'});
+        var position = $('<div/>');
+
+        //even indexes
+        for(var i=0;i<positionsArr.length;i+=2){
+          col_1.append($('<div/>').html(positionsArr[i].text +" ").append($('<a/>',{href:positionsArr[i].url,target:'about:blank'}).html(positionsArr[i].url)));
+        }
+
+        //odd indexes
+        for(var i=1;i<positionsArr.length;i+=2){
+            col_2.append($('<div/>').html(positionsArr[i].text +" ").append($('<a/>',{href:positionsArr[i].url,target:'about:blank'}).html(positionsArr[i].url)));
+        }
+
+        container.append(col_1).append(col_2);
+
+        dialog_body.append(intro);
+        dialog_body.append($('<div/>').append(container));
+
+
+        var d = dialog.modal({
+            title: "Jupytepide Help",
+            body: dialog_body,
+            notebook: options.notebook,
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            default_button: "Close",
+            buttons : {
+                "Close": {
+                    class:'btn-primary',
+                    click: function(){
+                        d.modal('hide');
+
+                          }
+                }
+            },
+            open : function () {
+                d.find('.modal-body').attr('style','max-height: calc(100vh - 200px);overflow:auto;');
+                d.find('div.modal-content').attr('tabindex','0');
+                /**
+                 * Upon ENTER, click the OK button.
+                 */
+                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
+
+                 d.find('div.modal-content').keydown(function (event) {
+                     if (event.which === keyboard.keycodes.escape) {
+                         d.find('.btn-primary').first().click();
+                         return false;
+                     }
+                 });
+                d.find('.btn-primary').focus().select();
+            }
+        });
+        //***
     }
 
     function load_ipython_extension() {

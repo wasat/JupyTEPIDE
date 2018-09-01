@@ -32,8 +32,9 @@ define([
     'base/js/keyboard',
     './content_access',
     './jupytepide_notebooks',
-    './panel_browser'
-], function ($, Jupyter, dialog, utils, configmod, leaflet_interface, code_snippets, keyboard, content_access, jupytepide_notebooks, panel_browser) {
+    './panel_browser',
+    'require'
+], function ($, Jupyter, dialog, utils, configmod, leaflet_interface, code_snippets, keyboard, content_access, jupytepide_notebooks, panel_browser,require) {
     "use strict";
 
     /**
@@ -586,6 +587,11 @@ define([
         leaflet_interface.load_image();
     };
 
+    Jupytepide.getJupytepideHelpJSON = function() {
+        var fName = require.toUrl('./help.json')
+        return content_access.readJupytepideJSONFile(fName);
+    };
+
     //.:*** testing area ***:.
     Jupytepide.getSnippetsList1 = function(){
         return code_snippets.getSnippetsList1();
@@ -703,6 +709,12 @@ define([
     Jupytepide.getRestoGeoJSON = function (url_) {
         return leaflet_interface.getRestoGeoJSON(url_);
     };
+
+    Jupytepide.getSampleUrl = function(fname) {
+        return require.toUrl('./'+fname);
+    };
+
+
 
     //Jupytepide.addGroup = function(){
     //    code_snippets.showAddGroupWindow();

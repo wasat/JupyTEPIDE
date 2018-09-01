@@ -8,8 +8,9 @@
 
 define([
     'contents',
-    'base/js/utils'
-], function (contents_service, utils) {
+    'base/js/utils',
+    'jquery'
+], function (contents_service, utils,$) {
     "use strict";
 
     var base_url = utils.get_body_data("baseUrl");
@@ -186,12 +187,30 @@ define([
             return JSON.parse(a.responseJSON.content);
         }
         catch (err) {
-            console.log('Failed to load snippets from: ' + fname);
+            console.log('Failed to load data from: ' + fname);
+            console.log(err);
             //throw 'Unable to read file';
             return false;
 
         }
 
+    }
+
+    //** readJupytepideJSONFile **
+    //this is to read json file from direstory where Jupytepide extension is installed (Jupytepide local dir)
+    function readJupytepideJSONFile(fName) {
+        //to wyłącza działanie asynchroniczne funkcji $getJSON i mozna wtedy poza nią przekazać wartość zmiennej
+         //$.ajaxSetup({
+         //    async: false
+         //});
+        var file_url = fName;//require.toUrl('./'+fName);
+        //  $.getJSON(file_url, function (data) {
+        //      $.each(data['positions'], function (key, position) {
+        //          //snippetsNames.push(snippet['name']);
+        //          //snippetsNames.push([{name:'Example 1',link:'#',time:'yesterday',snippet_name:'Example1',on_click:insert_cell1}]);
+        //      });
+        //  });
+        return $.getJSON(file_url).responseJSON;
     }
 
     // return public methods
@@ -200,7 +219,8 @@ define([
         readFile: readFile,
         getFiles: getFiles,
         getFilesList: getFilesList,
-        get_FilesListDir: get_FilesListDir
+        get_FilesListDir: get_FilesListDir,
+        readJupytepideJSONFile:readJupytepideJSONFile
     };
 
 });
