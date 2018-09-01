@@ -289,6 +289,7 @@ define([
     var popup = L.popup();
 
     function onMapClick(e) {
+        //console.log(e.latlng.toString());
         //if no RESTO searching adding shapes - map is in "click" mode
         if (Jupytepide.mapClick){
             if(Jupytepide.marker){

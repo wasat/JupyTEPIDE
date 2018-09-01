@@ -52,6 +52,19 @@ define([
     };
 
     /**
+     * Fit the map view to given layer's extent.
+     * @example
+     * Jupytepide.map_fitToLayer('Roads');
+     * @method map_fitToLayer
+     * @param layer_name - string with layer name.
+     * @memberof: class:Jupytepide
+     */
+    Jupytepide.map_fitToLayer = function(layer_name){
+        var bounds = Jupytepide.leafletMap.layers[layer_name].getBounds();
+        Jupytepide.leafletMap.fitBounds(bounds);
+    };
+
+    /**
      * Adds a marker into the map.
      * @example
      * // center=[51.11134, 17.0343], popup_={title: 'Wrocław',text:'Miasto w Polsce'}
@@ -156,7 +169,15 @@ define([
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_wmsLayer(url_,attrib);
         //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+        //remove layer click
+        var removeClick = $('<a/>',{href:'#',
+            id:'optLayer_'+layer_name,
+            onclick:'Jupytepide.map_removeLayerDlg("'+layer_name+'")'
+        }).append($('<i/>',{class:"fa fa-remove",title:'Remove layer'}));
+
+        var displayedLayerName = layer_name+" "+removeClick[0].outerHTML;
+
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],displayedLayerName);
     };
 
     /**
@@ -182,13 +203,23 @@ define([
         //Jupytepide.leafletMap.createPane(attrib.pane);
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_tileLayer(url_,attrib);
+
         //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+        //remove layer click
+        var removeClick = $('<a/>',{href:'#',
+            id:'optLayer_'+layer_name,
+            onclick:'Jupytepide.map_removeLayerDlg("'+layer_name+'")'
+        }).append($('<i/>',{class:"fa fa-remove",title:'Remove layer'}));
+
+        var displayedLayerName = layer_name+" "+removeClick[0].outerHTML;
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],displayedLayerName);
 
         //oznacz element listy klasą
         $( document ).ready(function() {
             $('.leaflet-control-layers-overlays label div').addClass('l-layer');
         });
+
+
     };
     /**
      * Adds a GEOJSON vector layer into the map.
@@ -232,17 +263,28 @@ define([
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_geoJsonLayer(data,options);
 
         //dodaje do control.layers (do menu z checkboxem)
+        //these are icons appearing in layers list (for every loaded layer)
+        //Browse layer attributes click
         var browseClick = $('<a/>',{href:'#',
             id:'optLayer_'+layer_name,
             onclick:'Jupytepide.showLayerFeaturesData("'+layer_name+'")'
-        }).html(' Browse'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
+        }).append($('<i/>',{class:"fa fa-table",title:'Browse layer'}));//trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
 
-        var copyClick = $('<a/>',{href:'#',
+        //remove layer click
+        var removeClick = $('<a/>',{href:'#',
             id:'optLayer_'+layer_name,
-            onclick:'Jupytepide.copyLayerProductsIDsToCell("'+layer_name+'")'
-        }).html(' Copy');
+            onclick:'Jupytepide.map_removeLayerDlg("'+layer_name+'")'
+        }).append($('<i/>',{class:"fa fa-remove",title:'Remove layer'}));
 
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name+" "+browseClick[0].outerHTML+copyClick[0].outerHTML);
+
+        //zoom (fit) to layer view click
+        var fitClick = $('<a/>',{href:'#',
+            id:'optLayer_'+layer_name,
+            onclick:'Jupytepide.map_fitToLayer("'+layer_name+'")'
+        }).append($('<i/>',{class:"fa fa-arrows-alt",title:'Fit to layer'}));
+
+        var displayedLayerName = layer_name+" "+browseClick[0].outerHTML+removeClick[0].outerHTML+fitClick[0].outerHTML;
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],displayedLayerName);
 
     };
     //************************************************************
@@ -256,7 +298,7 @@ define([
     Jupytepide.showLayerFeaturesData = function(layer_name){
         var featuresData = Jupytepide.getLayerFeaturesData(layer_name);
         $('.data_browser_panel.data_layer_browser').empty();
-        $('.data_browser_panel.data_layer_browser').append($('<div/>',{style:'font-weight:bold;'}).html(layer_name)
+        $('.data_browser_panel.data_layer_browser').append($('<div/>',{layerName:layer_name, style:'font-weight:bold;'}).html(layer_name)
             .append($('<a/>',{href:'#',onclick:'Jupytepide.copyLayerProductsIDsToCell("'+layer_name+'")'}).html(' Copy all')));
         var featureTable = $('<table/>',{border:"1", cellpadding:"5", style:"text-align: center;"});
         for (var i=0;i<featuresData.length;i++){
@@ -269,9 +311,9 @@ define([
             row.append(col);
             col=$('<td/>').append($('<a/>',{href:'#'}).html('info').bind('click',{fID:featuresData[i].leafletID},openFeaturePopup));
             row.append(col);
-            col=$('<td/>').append($('<a/>',{href:'#'}).html('copy').bind('click',{fID:featuresData[i].leafletID},copyProductIDToCell));
+            col=$('<td/>').append($('<a/>',{href:'#'}).html('copy').bind('click',{fID:featuresData[i].leafletID},Jupytepide.copyProductIDToCell));
             row.append(col);
-            col=$('<td/>').append($('<a/>',{href:featuresData[i].featureHref,target:'about:blank'}).html('more'));
+            col=$('<td/>').append($('<a/>',{href:'https://jsoneditoronline.org/?url='+featuresData[i].featureHref,target:'about:blank'}).html('more'));
             row.append(col);
 
             row.bind('mouseenter',{fID:featuresData[i].leafletID},setSelectedFeatureColor);
@@ -293,6 +335,13 @@ define([
         $('.data_browser_panel.data_layer_browser').append(featureTable);
         var check_visibility = true;
         panel_browser.data_search_toggle(check_visibility);
+    };
+
+    /**
+     * */
+    Jupytepide.emptyLayerBrowser = function(){
+        $('.data_browser_panel.data_layer_browser').empty();
+        $('.data_browser_panel.data_layer_browser').html('No layer data do display.')
     }
 
     /**
@@ -330,9 +379,16 @@ define([
 
     /**
      * */
-    function copyProductIDToCell(fID){
+    Jupytepide.copyProductIDToCell = function(fID){
         var new_cell = Jupyter.notebook.insert_cell_above('');
-        var cellStr = Jupytepide.leafletMap._layers[fID.data.fID].feature.properties.productIdentifier;
+        var featureID;
+        if (typeof fID.data == 'undefined'){
+            featureID = fID
+        }
+        else {
+            featureID = fID.data.fID;
+        }
+        var cellStr = Jupytepide.leafletMap._layers[featureID].feature.properties.productIdentifier;
         new_cell.set_text(cellStr);
         new_cell.code_mirror.setOption('theme', 'mbo');
         new_cell.focus_cell();
@@ -443,6 +499,11 @@ define([
         if ($('.leaflet-'+layer_name+'-pane')) {
             $('.leaflet-'+layer_name+'-pane').remove();
         }
+
+        if ($('.data_browser_panel.data_layer_browser [layerName]').attr('layerName')==layer_name)
+        {
+            Jupytepide.emptyLayerBrowser();
+        }
         // todo: but first check whether a layer exists
     };
 
@@ -467,6 +528,19 @@ define([
                 Jupytepide.map_removeLayer(names[i]);
             }
         }
+    };
+
+    /**
+     * Removes layer given by the "layer_name" from the map.
+     * Shows confirmation dialog. This method is used by Jupytepide in UI.
+     * @example
+     * //To remove layer named "tmpPolyline", call:
+     * Jupytepide.map_removeLayerDlg('tmpPolyline');
+     * @param layer_name
+     * @memberof: class:Jupytepide
+     */
+    Jupytepide.map_removeLayerDlg = function(layer_name){
+        panel_browser.showRemoveLayerDialog(layer_name);
     };
 
     //*** map_layerMoveUp ***

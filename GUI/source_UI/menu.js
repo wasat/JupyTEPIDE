@@ -189,6 +189,11 @@ define([
 
         add_divider(moje_menu);
 
+        //Help
+        add_menu_item('Help', 'Show help in modal', '#', moje_menu, function (evt) {
+            evt.preventDefault();
+        });
+
         //About Jupytepide
         add_menu_item('About Jupytepide', 'About Jupytepide', '#', moje_menu, function (evt) {
             evt.preventDefault();

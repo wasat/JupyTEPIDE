@@ -630,3 +630,42 @@
 	margin-left: -12px;
 	border-right-color: #fff;
 	}
+
+
+.leaflet-control-layers {
+	background-color: #3c3f41;
+	opacity: 0.9;
+	color: white;
+}
+
+.leaflet-control-layers-list a {
+	background-color: #b63509;
+	border-radius:4px;
+	opacity: 1;
+	color:white;
+	padding-right: 4px;
+	padding-left: 4px;
+	padding-top:2px;
+	padding-bottom:2px;
+	margin-left: 1px;
+	margin-right: 1px;
+}
+
+.leaflet-control-layers-list a:hover{
+	background-color: #9c9c93;
+	color: #000000;
+}
+
+.leaflet-touch .leaflet-bar a{
+	background-color: #3c3f41;
+	opacity:0.9;
+	color:white;
+}
+
+div.leaflet-control-layers-base label:hover {
+	background-color:#1b698e;
+}
+
+div.leaflet-control-layers-overlays label:hover {
+	background-color:#1b698e;
+}

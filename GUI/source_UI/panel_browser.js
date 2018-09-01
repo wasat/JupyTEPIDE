@@ -37,7 +37,9 @@ define([
     './map_browser',
     './leaflet_interface',
     './content_access',
-    './jupytepide'
+    './jupytepide',
+    'base/js/keyboard',
+    'base/js/dialog'
 ], function (require,
              $,
              IPython, //or Jupyter
@@ -53,7 +55,9 @@ define([
              map_browser,
              leaflet_interface,
              content_access,
-             jupytepideModule
+             jupytepideModule,
+             keyboard,
+             dialog
 ) {
     'use strict';
 // create config object to load parameters
@@ -69,27 +73,31 @@ define([
 
     //** data_search_toggle **
     //check_visibility - use this parameter to check whether data_layer_browser is visible and if it is visible, don't toggle it.
-    var data_search_toggle = function(check_visibility){
+    function data_search_toggle (check_visibility){
         check_visibility = check_visibility || false;
         if (!check_visibility) {
             $('.data_browser_panel .data_search').slideToggle();
             $('.data_browser_panel .data_layer_browser').slideToggle();
         }
-        else{
-            var searchBtn = $('.data_browser_panel,button#searchBtn');
-            var layerBrowseBtn = $('.data_browser_panel,button#layerBrowseBtn');
+        else {
+            var searchBtn = $('button#searchBtn');
+            var layerBrowseBtn = $('button#layerBrowseBtn');
+            var toggleBtn = $('button#toggleBtn');
+
                  if($('.data_browser_panel').is(':hidden')){
 
                      $('.data_browser_panel').show();
                      $('.data_browser_panel .data_search').hide();
 
                      layerBrowseBtn.removeClass('inactive').addClass('selected');
-                     searchBtn.addClass('selected');
+                     searchBtn.removeClass('selected');
+                     toggleBtn.addClass('fa-toggle-up').removeClass('fa-toggle-down');
 
                  }
                  else if($('.data_browser_panel .data_search').is(':visible') & $('.data_browser_panel .data_layer_browser').is(':hidden')){
                      $('.data_browser_panel .data_search').hide();
                      $('.data_browser_panel .data_layer_browser').show();
+                     searchBtn.removeClass('selected');
 
                  }
                  else if ($('.data_browser_panel .data_search').is(':hidden') & $('.data_browser_panel .data_layer_browser').is(':visible')){
@@ -99,7 +107,35 @@ define([
         }
     };
 
-    var build_side_panel = function (main_panel, side_panel, min_rel_width, max_rel_width) {
+    //***
+
+    function checkDateRange(startVal,endVal){
+        //var dFrom = new Date($('#dateFrom.data_browser_input').val());
+        //var dTo = new Date($('#dateTo.data_browser_input').val());
+        var dFrom = new Date(startVal);
+        var dTo = new Date(endVal);
+        var checkResult = 'ok';
+
+        if (dFrom!='Invalid Date'){
+            if(dTo!='Invalid Date'){
+                if (dTo-dFrom<0){
+                    checkResult = 'Start Date can not be later than Completion Date. Please correct.';
+                }
+
+            }
+            else{
+                checkResult='Invalid Completion Date format.';
+            }
+        }
+
+        else {
+         checkResult='Invalid Start Date format.';
+        }
+     return checkResult;
+    };
+
+
+    function build_side_panel (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
         if (max_rel_width === undefined) max_rel_width = 100;
 
@@ -146,13 +182,13 @@ define([
                 side_panel_splitbar.show();
             }
 
-            if (have_bs_tooltips) {
-                side_panel_expand_contract.attr('title', tooltip_text);
-                side_panel_expand_contract.tooltip('hide').tooltip('fixTitle');
-            }
-            else {
-                side_panel_expand_contract.tooltip('option', 'content', tooltip_text);
-            }
+            //if (have_bs_tooltips) {
+            //    side_panel_expand_contract.attr('title', tooltip_text);
+            //    side_panel_expand_contract.tooltip('hide').tooltip('fixTitle');
+            //}
+            //else {
+            //    side_panel_expand_contract.tooltip('option', 'content', tooltip_text);
+           // }
             //dla leafleta - nie działa
             Jupytepide.leafletMap.invalidateSize();
         });
@@ -185,33 +221,88 @@ define([
         });
 
         //** BUTTONS **
-        //search-toggle button
-        var search_button =$('<button/>',{id:'searchBtn',class:"btn btn-default fa fa-search",title:"Search for EO data - show/hide"});
+        //toggle button
+        var toggle_button =$('<button/>',{id:'toggleBtn',class:"btn btn-default fa fa-toggle-down",title:"Toggle search panel"});
+        toggle_button.click(function(){
+            data_browser.slideToggle(function(){
+                if ($('button#searchBtn').hasClass('selected') | $('button#layerBrowseBtn').hasClass('selected')){
+                    $('button#searchBtn').removeClass('selected');
+                    $('button#layerBrowseBtn').removeClass('selected');
+                    toggle_button.removeClass('fa-toggle-up');
+                    toggle_button.addClass('fa-toggle-down');
+                }
+                else if ($('.data_browser_panel .data_layer_browser').is(':visible')){
+                    $('button#searchBtn').removeClass('selected');
+                    $('button#layerBrowseBtn').addClass('selected');
+                    toggle_button.addClass('fa-toggle-up');
+                    toggle_button.removeClass('fa-toggle-down');
+                }
+                else if ($('.data_browser_panel .data_search').is(':visible')) {
+                    $('button#searchBtn').addClass('selected');
+                    $('button#layerBrowseBtn').removeClass('selected');
+                    toggle_button.addClass('fa-toggle-up');
+                    toggle_button.removeClass('fa-toggle-down');
+
+                };
+
+            });
+
+        });
+        map_toolbar.append(toggle_button);
+
+        //search button
+        var search_button =$('<button/>',{id:'searchBtn',class:"btn btn-default fa fa-search",title:"Search for EO data"});
         search_button.click(function(){
-            data_browser.slideToggle();
-            search_button.toggleClass('selected');
-            layer_browser_button.toggleClass('inactive');
-            // if (data_browser.is(':visible')){
-            //     search_button.addClass('selected');
-            // }
-            // else{
-            //     search_button.removeClass('selected');
-            // }
+            //data_browser.slideToggle();
+            search_button.addClass('selected');
 
-
+            if ($('.data_browser_panel').is(':visible')){
+                $('.data_browser_panel .data_layer_browser').hide();
+                $('.data_browser_panel .data_search').show();
+            }
+            else {
+                data_browser.slideToggle();
+                $('.data_browser_panel .data_layer_browser').hide();
+                $('.data_browser_panel .data_search').show();
+            }
+            $('button#toggleBtn').removeClass('fa-toggle-down');
+            $('button#toggleBtn').addClass('fa-toggle-up');
+            $('button#searchBtn').addClass('selected');
+            $('button#layerBrowseBtn').removeClass('selected');
+            $('button#toggleBtn').addClass('fa-toggle-up').removeClass('fa-toggle-down');
         });
         map_toolbar.append(search_button);
 
         //layer_browser_button
-        var layer_browser_button =$('<button/>',{id:'layerBrowseBtn',class:"btn btn-default fa fa-table",title:"Toggle layer data view"});
+        var layer_browser_button =$('<button/>',{id:'layerBrowseBtn',class:"btn btn-default fa fa-table",title:"Layer data view"});
         layer_browser_button.click(function(){
-            if (!layer_browser_button.hasClass('inactive')){
-                data_search_toggle();
-                layer_browser_button.toggleClass('selected');
-            }
+            //if (!layer_browser_button.hasClass('inactive')){
+                //data_search_toggle();
+                if ($('.data_browser_panel').is(':visible')){
+                    $('.data_browser_panel .data_search').hide();
+                    $('.data_browser_panel .data_layer_browser').show();
+                }
+                else{
+                    data_browser.slideToggle();
+                    $('.data_browser_panel .data_search').hide();
+                    $('.data_browser_panel .data_layer_browser').show();
+                }
+
+                $('button#searchBtn').removeClass('selected');
+                $('button#layerBrowseBtn').addClass('selected');
+                $('button#toggleBtn').addClass('fa-toggle-up').removeClass('fa-toggle-down');
+                //layer_browser_button.toggleClass('selected');
+           // }
         });
-        layer_browser_button.addClass('inactive');
+        //layer_browser_button.addClass('inactive');
         map_toolbar.append(layer_browser_button);
+
+        //remove_layers_button
+        var remove_layers_button = $('<button/>',{id:'removeLayersBtn',class:"btn btn-default fa fa-remove",title:"Remove all layers"});
+        remove_layers_button.click(function(){
+            showRemoveAllLayersDialog();
+        });
+        map_toolbar.append(remove_layers_button);
 
 
         //** PANELS **
@@ -222,6 +313,7 @@ define([
             .hide();
         data_browser.append(data_search);
         data_browser.append(data_layer_browser);
+
 
         //busy icon
         // var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/source_UI/img/busy_blue_64_icon.png'})
@@ -284,6 +376,10 @@ define([
                 }
             }
             else $('.data_browser_input[name=maxRecords]').val(1);
+        }).on('focusin',function(){
+            Jupyter.notebook.keyboard_manager.disable();
+        }).on('focusout',function(){
+            Jupyter.notebook.keyboard_manager.enable();
         });
         var maxRecordsLbl = $('<label/>').html('Max');
 
@@ -299,13 +395,21 @@ define([
                 changeMonth:true,
                 changeYear:true,
                 showButtonPanel:true,
+                yearRange:'1970:'+ new Date().getFullYear(),
                 beforeShow: function() {
                     setTimeout(function(){
                         $('.ui-datepicker').css('z-index', 9999999999);
                     }, 0);
                 }
             }).attr("placeholder", "yyyy-mm-dd")
-            .val('1970-01-01');
+            .val('2010-01-01')
+            .on('focusin',function(){
+                Jupyter.notebook.keyboard_manager.disable();
+            })
+            .on('focusout',function(){
+                Jupyter.notebook.keyboard_manager.enable();
+            });
+
         var dateFromLbl = $('<label/>').html('From');
 
         //dateToInput
@@ -318,12 +422,21 @@ define([
             changeMonth:true,
             changeYear:true,
             showButtonPanel:true,
+            yearRange:'1970:'+ new Date().getFullYear(),
             beforeShow: function() {
                 setTimeout(function(){
                     $('.ui-datepicker').css('z-index', 9999999999);
                 }, 0);
             }
-        }).attr("placeholder", "yyyy-mm-dd");
+        }).attr("placeholder", "yyyy-mm-dd")
+            .on('focusin',function(){
+            Jupyter.notebook.keyboard_manager.disable();
+        })
+            .on('focusout',function(){
+                Jupyter.notebook.keyboard_manager.enable();
+
+            });
+
         var dateToLbl = $('<label/>').html('To');
 
         //useDateCheckbox
@@ -341,6 +454,13 @@ define([
         var searchButton = $('<buton/>',{id:'restoSearchBtn', class:'btn btn-default btn-sm btn-primary',title:'Search and display on the map'})
             .html('Search')
             .click(function(){
+                //check if dates are properly inserted
+                var check = checkDateRange($('#dateFrom.data_browser_input').val(),$('#dateTo.data_browser_input').val());
+                if (check!='ok' & $('#useDateCheckbox').is(':checked')){
+                    alert(check);
+                    return //stop and do nothing above
+                }
+
             //prepare query string
             var missionStr = $('.data_browser_combobox#mission').find('option:selected').text()+'/';
             layerName = missionStr.slice(0,-1)+'_';
@@ -374,7 +494,6 @@ define([
             var geometryStr='';
             if (Jupytepide.leafletMap.tmpShapeWKT=='undefined'){
                 geometryStr='';
-                alert('Jest undefined...'+Jupytepide.leafletMap.tmpShapeWKT);
             }
             else{
                 geometryStr='&geometry='+Jupytepide.leafletMap.tmpShapeWKT;
@@ -409,16 +528,20 @@ define([
                      var productID = layer.feature.properties.productIdentifier;
                      var completionDate = layer.feature.properties.completionDate;
                      var thumbnail = layer.feature.properties.thumbnail;
+                     var platform = layer.feature.properties.platform;
+                     var productType = layer.feature.properties.productType;
                      var thumbnailTxt = "No picture";
                      if (thumbnail!=="null") thumbnailTxt="Thumbnail picture";
 
                      //var popup = "<b>"+collection+"</b><br/><textarea style='width:300px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><a href='"+thumbnail+"' target:'_blank'>"+thumbnailTxt+"</a>";
                      //var popup = "<b>"+collection+"</b><br/>Product identifier:<br/><textarea style='width:250px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><img alt='No picture' src='"+thumbnail+"' style='width:250px;'></img>";
-                     var popup = "<b>"+collection+"</b>" +
-                         "<br/>Product identifier:<br/>" +
-                         "<div style='font-size:10px;box-shadow: 0px 0px 1px black;width:250px;height:60px;overflow-y: scroll;word-wrap:break-word;'>"+
-                         productID+"</div><div style='margin-bottom:2px;margin-top:2px;'>Completion date: "+completionDate+"" +
-                         "</div><img alt='No picture' src='"+thumbnail+"' style='width:250px;'></img>";
+                     var popup = "<b>Collection: </b>"+collection+" "+
+                         "<br/>"+"<b>Platform:</b> "+platform+
+                         "<br/><b>Product type:</b> "+productType+
+                         "<br/><b>Product identifier:</b><a href='#' onclick='Jupytepide.copyProductIDToCell("+layer._leaflet_id+")' style='text-decoration: none; background: #0b2283; border-radius: 4px; padding: 1px; color:white;margin-bottom:1px'>Copy</a><br/>" +
+                         "<div style='font-size:10px;box-shadow: 0px 0px 1px black;width:200px;height:60px;overflow-y: scroll;word-wrap:break-word;'>"+
+                         productID+"</div><div style='margin-bottom:2px;margin-top:2px;'><b>Completion date: </b><br/>"+completionDate+"" +
+                         "</div><img alt='No picture' src='"+thumbnail+"' style='width:200px;'></img>";
                      //return layer.feature.properties.description;
                      return popup;
                  });
@@ -436,6 +559,11 @@ define([
                  })
                 }
             });
+
+            //alert('"'+layer_name+'"');
+            Jupytepide.showLayerFeaturesData(layerName);
+            Jupytepide.map_fitToLayer(layerName);
+
         });
 
         //search icon
@@ -460,6 +588,10 @@ define([
                         fillColor: 'f50534',
                     },
                 };
+                //scroll to map view todo: it can be disabled
+                $('.side_panel_inner').scrollTop($('.side_panel_inner').height());
+                //$('.side_panel_inner').animate({scrollTop:$('.side_panel_inner').height()});
+
                 var shpTypeStr = $('.data_browser_combobox#shapeType').find('option:selected').text();
                 if (shpTypeStr=="Point"){
                 leaflet_interface.draw_point_tmp_marker();
@@ -479,7 +611,7 @@ define([
             class:'data_browser_combobox',id:'shapeType',title:'Shape type',
             style:'width:7em'
         });
-        var tmpShapes = ["Point","Polygon","Rectangle"];
+        var tmpShapes = ["Polygon","Rectangle","Point"];
         for (i=0;i<tmpShapes.length;i++){
             selectShapeTypeCombobox.append($('<option/>').html(tmpShapes[i]));
         }
@@ -535,13 +667,14 @@ define([
         map_toolbar.append(data_browser);
         //$('input').checkboxradio();
         data_browser.hide();
+        Jupytepide.emptyLayerBrowser();
 
         //**** end of browser panel
 
         return side_panel;
     };
 
-    var slide_side_panel = function (main_panel, side_panel, desired_width) {
+    function slide_side_panel (main_panel, side_panel, desired_width) {
 
         var anim_opts = {
             step: function (now, tween) {
@@ -577,7 +710,7 @@ define([
     };
 
     //wstawienie danych do panelu
-    var populate_side_panel = function (side_panel) {
+    function populate_side_panel (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
         var qh = IPython.quick_help;
         var strip_modal = function (into) {
@@ -951,6 +1084,91 @@ define([
 
 //***
 
+    //SHOWING DIALOGS
+    function showRemoveAllLayersDialog(){
+        //***
+        var options = {};
+        var dialog_body = $('<div/>').append(
+            $("<p/>").addClass("rename-message")
+                .text('Do you really want to remove all layers from map? Only base layers will not be deleted.')
+        );
+        var d = dialog.modal({
+            title: "Remove all layers confirmation",
+            body: dialog_body,
+            notebook: options.notebook,
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            default_button: "Cancel",
+            buttons : {
+                "Cancel": {},
+                "Remove": {
+                    class: "btn-primary",
+                    click: function () {
+                        Jupytepide.map_removeAllLayers();
+                        d.modal('hide');
+                    }
+                }
+            },
+            open : function () {
+                /**
+                 * Upon ENTER, click the OK button.
+                 */
+                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
+
+                d.find('input[type="text"]').keydown(function (event) {
+                    if (event.which === keyboard.keycodes.enter) {
+                        d.find('.btn-primary').first().click();
+                        return false;
+                    }
+                });
+                d.find('input[type="text"]').focus().select();
+            }
+        });
+        //***
+    };
+
+    function showRemoveLayerDialog(layer_name){
+        //***
+        var options = {};
+        var dialog_body = $('<div/>').append(
+            $("<p/>").addClass("rename-message")
+                .text('Do you really want to remove layer: "'+layer_name+'" from map?')
+        );
+        var d = dialog.modal({
+            title: "Remove layer confirmation",
+            body: dialog_body,
+            notebook: options.notebook,
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            default_button: "Cancel",
+            buttons : {
+                "Cancel": {},
+                "Remove": {
+                    class: "btn-primary",
+                    click: function () {
+                        Jupytepide.map_removeLayer(layer_name);
+                        d.modal('hide');
+                    }
+                }
+            },
+            open : function () {
+                /**
+                 * Upon ENTER, click the OK button.
+                 */
+                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
+
+                d.find('input[type="text"]').keydown(function (event) {
+                    if (event.which === keyboard.keycodes.enter) {
+                        d.find('.btn-primary').first().click();
+                        return false;
+                    }
+                });
+                d.find('input[type="text"]').focus().select();
+            }
+        });
+        //***
+    };
+
 
     function load_ipython_extension() {
 
@@ -996,7 +1214,8 @@ define([
     return {
         load_ipython_extension: load_ipython_extension,
         readDir:readDir,
-        data_search_toggle:data_search_toggle
+        data_search_toggle:data_search_toggle,
+        showRemoveLayerDialog:showRemoveLayerDialog
     };
 });
 
