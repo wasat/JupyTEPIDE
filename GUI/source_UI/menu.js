@@ -217,15 +217,27 @@ define([
         var container = $('<div/>',{class:'container-fluid'});
         var col_1 = $('<div/>',{class:'col-md-6'});
         var col_2 = $('<div/>',{class:'col-md-6'});
-        var position = $('<div/>');
 
-        //even indexes
-        for(var i=0;i<positionsArr.length;i+=2){
+        var col1_length;
+        var col2_length;
+        var length_;
+        if(positionsArr.length%2==0){
+            col1_length = positionsArr.length/2;
+            col2_length = col1_length;
+        }
+        else if(positionsArr.length%2==1){
+            length_=(positionsArr.length-1)/2;
+            col1_length = length_+1;
+            col2_length = length_;
+        }
+
+        //first half - into first column
+        for(var i=0;i<col1_length;i++){
           col_1.append($('<div/>').html(positionsArr[i].text +" ").append($('<a/>',{href:positionsArr[i].url,target:'about:blank'}).html(positionsArr[i].url)));
         }
 
-        //odd indexes
-        for(var i=1;i<positionsArr.length;i+=2){
+        //second half - into second column
+        for(var i=col1_length;i<positionsArr.length;i++){
             col_2.append($('<div/>').html(positionsArr[i].text +" ").append($('<a/>',{href:positionsArr[i].url,target:'about:blank'}).html(positionsArr[i].url)));
         }
 
@@ -251,7 +263,7 @@ define([
                 }
             },
             open : function () {
-                d.find('.modal-body').attr('style','max-height: calc(100vh - 200px);overflow:auto;');
+                d.find('.modal-body').attr('style','max-height: calc(100vh - 200px);overflow:auto;color:white;');
                 d.find('div.modal-content').attr('tabindex','0');
                 /**
                  * Upon ENTER, click the OK button.
