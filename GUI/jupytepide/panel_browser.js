@@ -316,7 +316,7 @@ define([
 
 
         //busy icon
-        // var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/source_UI/img/busy_blue_64_icon.png'})
+        // var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/jupytepide/img/busy_blue_64_icon.png'})
         // busyIcon = $('<div/>',{style:'position:absolute;width:64px;height:64px;margin-left:auto;margin-right:auto'}).append(busyIcon);
         // data_browser.append(busyIcon);
 

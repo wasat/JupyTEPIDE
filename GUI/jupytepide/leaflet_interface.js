@@ -199,7 +199,7 @@ define([
     };
 
     //*** load_imageLayer ***
-    //example: imageUrl = '/nbextensions/source_UI/img/raster-1.jpg', imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
+    //example: imageUrl = '/nbextensions/jupytepide/img/raster-1.jpg', imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
     var load_imageLayer = function(imageUrl,imageBounds,options){
         return L.imageOverlay(imageUrl,imageBounds,options).addTo(Jupytepide.leafletMap);
 
@@ -268,11 +268,11 @@ define([
     //
     //*** markerIcon ***
     var markerIcon = L.icon({
-        iconUrl: utils.url_path_join(Jupyter.notebook.base_url,require.toUrl('/nbextensions/source_UI/img/marker-icon.png')),
+        iconUrl: utils.url_path_join(Jupyter.notebook.base_url,require.toUrl('/nbextensions/jupytepide/img/marker-icon.png')),
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [0, -41],
-        shadowUrl: utils.url_path_join(Jupyter.notebook.base_url,require.toUrl('/nbextensions/source_UI/img/marker-shadow.png')),
+        shadowUrl: utils.url_path_join(Jupyter.notebook.base_url,require.toUrl('/nbextensions/jupytepide/img/marker-shadow.png')),
         shadowSize: [41, 41],
         shadowAnchor: [12, 41]
     });
@@ -417,7 +417,7 @@ define([
 
     //load ownTiles
     var load_madrid = function(){
-        return L.tileLayer('/nbextensions/source_UI/madrid/{z}/{x}/{y}.png', {
+        return L.tileLayer('/nbextensions/jupytepide/madrid/{z}/{x}/{y}.png', {
             tms:true,
             opacity:0.8,
             attribution: ''
@@ -430,12 +430,12 @@ define([
         //todo: można zrobić ładowanie geotiff na podobę: https://github.com/stuartmatthews/leaflet-geotiff
         //todo: albo pociąć na tilesy i czytać przez loadTile(): http://build-failed.blogspot.it/2012/11/zoomable-image-with-leaflet.html
 
-        //nbextensions/source_UI/img/marker-icon.png
+        //nbextensions/jupytepide/img/marker-icon.png
 
         // var imageUrl = 'http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
         //     imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
 
-        var imageUrl = '/nbextensions/source_UI/img/raster-1.jpg',
+        var imageUrl = '/nbextensions/jupytepide/img/raster-1.jpg',
             imageBounds = [[51.712216, 17.22655], [51.773941, 17.12544]];
 
         L.imageOverlay(imageUrl,imageBounds,{opacity:0.5}).addTo(Jupytepide.leafletMap);
@@ -477,11 +477,11 @@ define([
         }).addTo(mymap);
 
         var myIcon = L.icon({
-            iconUrl: require.toUrl('./img/marker-icon.png'),//'/nbextensions/source_UI/img/marker-icon.png',
+            iconUrl: require.toUrl('./img/marker-icon.png'),//'/nbextensions/jupytepide/img/marker-icon.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [0, -41],
-            shadowUrl:require.toUrl('./img/marker-shadow.png'),// '/nbextensions/source_UI/img/marker-shadow.png',
+            shadowUrl:require.toUrl('./img/marker-shadow.png'),// '/nbextensions/jupytepide/img/marker-shadow.png',
             shadowSize: [41, 41],
             shadowAnchor: [12, 41]
         });

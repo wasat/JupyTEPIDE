@@ -1,6 +1,6 @@
 //import {load_leaflet} from '/nbextensions/source_UI/leaflet_interface.js';
 
-// file source_UI/main.js
+// file jupytepide/main.js
 // Edited by: Michał Bednarczyk
 // Copyright (C) 2017 .....
 //

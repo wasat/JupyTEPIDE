@@ -115,7 +115,7 @@ define([
         //handle function passed IN parameter
         var snippet_name = name.data.snippet_name;
 
-        //czytanie jsona "/nbextensions/source_UI/code_snippets.json"
+        //czytanie jsona "/nbextensions/jupytepide/code_snippets.json"
 
         // $.getJSON(snippets_url, function (data) {
         //     // Insert snippet from JSON file named "snippet_name"

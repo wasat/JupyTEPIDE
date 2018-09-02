@@ -184,7 +184,7 @@ define([
     /**
      * Adds a TMS (tiled) layer into the map.
      * @example
-     * //url='/nbextensions/source_UI/madrid/{z}/{x}/{y}.png'
+     * //url='/nbextensions/jupytepide/madrid/{z}/{x}/{y}.png'
      * Jupytepide.map_addTileLayer('http://localhost:8888/tree/aa_notebooks/madrid/{z}/{x}/{y}.png',
      *   {maxZoom:20,attribution:"",tms:true},"madrid");
      * @param url_ - URL of TMS service od catalog.
@@ -196,7 +196,7 @@ define([
     //example:  url_='https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
     //          attrib={maxZoom:18,attribution:"",id:'mapbox.streets'},
     //          layer_name="Layer name"
-    //example2: url='/nbextensions/source_UI/madrid/{z}/{x}/{y}.png' - own (local) tile layer
+    //example2: url='/nbextensions/jupytepide/madrid/{z}/{x}/{y}.png' - own (local) tile layer
     Jupytepide.map_addTileLayer = function(url_,attrib,layer_name){
         // attrib == null ? {} : attrib;
         //tworzy nowy PANE dla warstwy
@@ -459,10 +459,10 @@ define([
      * Adds an image raster layer into the map.
      * It won't work with geotif. For geotif use "map_addTileLayer" method.
      * @example
-     * //imageUrl = '/nbextensions/source_UI/img/raster-1.jpg',
+     * //imageUrl = '/nbextensions/jupytepide/img/raster-1.jpg',
      * //imageBounds = [[51.712216, 17.22655], [51.773941, 17.12544]];
      * Jupytepide.map_addImageLayer(
-     * 		'/nbextensions/source_UI/img/raster-1.jpg',
+     * 		'/nbextensions/jupytepide/img/raster-1.jpg',
      * 		[[51.712216, 17.22655], [51.773941, 17.12544]];
      * 		{opacity: 0.5});
      * @param imageUrl - URL of raster image.

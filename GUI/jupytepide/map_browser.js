@@ -87,11 +87,11 @@ define([
         }).addTo(mymap);
 
         var myIcon = leaflet.icon({
-            iconUrl: '/nbextensions/source_UI/img/marker-ico.png',
+            iconUrl: '/nbextensions/jupytepide/img/marker-ico.png',
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [0, -41],
-            shadowUrl: '/nbextensions/source_UI/img/marker-shadow.png',
+            shadowUrl: '/nbextensions/jupytepide/img/marker-shadow.png',
             shadowSize: [41, 41],
             shadowAnchor: [12, 41]
         });
@@ -129,7 +129,7 @@ define([
         return mymap;
 
         //$.getScript(require.toUrl('./' + 'leaflet_interface' + '.js'));
-        //$.getScript('/nbextensions/source_UI/leaflet_interface.js');
+        //$.getScript('/nbextensions/jupytepide/leaflet_interface.js');
 
     };
 
@@ -173,7 +173,7 @@ define([
         //map_container.append($('<div/>',{class:'leaflet-control-container'}));
 
 // //busy icon
-//         var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/source_UI/img/busy_blue_64_icon.png'})
+//         var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/jupytepide/img/busy_blue_64_icon.png'})
 //         busyIcon = $('<div/>',{class:'leaflet-top', style:'position:relative;width:64px,height:64px;margin-left:auto;margin-right:auto'}).append(busyIcon);
         //busyIcon.hide();
         //busyIcon=$('<div/>',{class:'leaflet-top'}).progressbar({value:false});
