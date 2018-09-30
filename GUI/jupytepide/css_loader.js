@@ -24,7 +24,7 @@ define([
     //CSS style loading for JupyTEPIDE theme
     //all styles stored in ./css/ folder
 
-    var overrideJupyterActions = function(){
+    var overrideJupyterActions = function(themeName){
 
         //Add code mirror style loading to every cell-inserting action
         //this is inserting by mouse clicking on buttons or list elements
@@ -35,15 +35,15 @@ define([
             //override onclick events on paste_cell action li menu positions with code mirror mbo style
             $('li[id="paste_cell_above"]').click(function(){
                 Jupyter.notebook.paste_cell_above();
-                Jupyter.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+                Jupyter.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
             });
             $('li[id="paste_cell_below"]').click(function(){
                 Jupyter.notebook.paste_cell_below();
-                Jupyter.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+                Jupyter.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
             });
             $('li[id="paste_cell_replace"]').click(function(){
                 Jupyter.notebook.paste_cell_replace();
-                Jupyter.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+                Jupyter.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
             });
         });
        //this is inserting by code keys actions
@@ -53,82 +53,82 @@ define([
             env.notebook.insert_cell_above();
             env.notebook.select_prev(true);
             env.notebook.focus_cell();
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:insert-cell-below"].handler = function (env) {
             env.notebook.insert_cell_below();
             env.notebook.select_next(true);
             env.notebook.focus_cell();
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:paste-cell-below"].handler = function (env) {
             env.notebook.paste_cell_below();
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:paste-cell-above"].handler = function (env) {
             env.notebook.paste_cell_above();
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:change-cell-to-code"].handler = function (env) {
             env.notebook.cells_to_code();
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:change-cell-to-markdown"].handler = function (env) {
             env.notebook.cells_to_markdown();
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:change-cell-to-raw"].handler = function (env) {
             env.notebook.cells_to_raw();
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:change-cell-to-heading-1"].handler = function (env) {
             env.notebook.to_heading(undefined, 1);
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:change-cell-to-heading-2"].handler = function (env) {
             env.notebook.to_heading(undefined, 2);
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:change-cell-to-heading-3"].handler = function (env) {
             env.notebook.to_heading(undefined, 3);
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:change-cell-to-heading-4"].handler = function (env) {
             env.notebook.to_heading(undefined, 4);
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:change-cell-to-heading-5"].handler = function (env) {
             env.notebook.to_heading(undefined, 5);
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:change-cell-to-heading-6"].handler = function (env) {
             env.notebook.to_heading(undefined, 6);
-            env.notebook.get_selected_cell().code_mirror.setOption('theme', 'mbo');
+            env.notebook.get_selected_cell().code_mirror.setOption('theme', themeName);
         };
 
         Jupyter_actions._actions["jupyter-notebook:undo-cell-deletion"].handler = function (env) {
             env.notebook.undelete_cell();
-            styleAllCells();
+            styleAllCells(themeName);
         };
     };
 
     //sets code mirror mbo style to all cells in notebook
-    var styleAllCells = function(){
+    var styleAllCells = function(themeName){
         try {
           for (var c in IPython.notebook.get_cells()) {
-              Jupyter.notebook.get_cell(c).code_mirror.setOption('theme', 'mbo')
+              Jupyter.notebook.get_cell(c).code_mirror.setOption('theme', themeName)
           }
         }
         catch(e){}
@@ -145,12 +145,12 @@ define([
             $tlink.attr('href', require.toUrl('../../components/codemirror/theme/' + 'mbo' + '.css'))
                 .attr('rel', 'stylesheet')
                 .attr('type', 'text/css'); //monokai
-            styleAllCells();
+            styleAllCells('mbo');
         } catch (e) {
         }
 
         //Add code mirror style loading to every cell-inserting action
-        overrideJupyterActions();
+        overrideJupyterActions('mbo');
 
         //Jupyter theme style (look at folder ./css/)
         var $link = $('<link/>');
