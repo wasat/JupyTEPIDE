@@ -714,6 +714,10 @@ define([
         return require.toUrl('./'+fname);
     };
 
+    Jupytepide.delete = function(fname){
+       return content_access.deleteFile(fname);
+    };
+
 
 
     //Jupytepide.addGroup = function(){

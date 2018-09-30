@@ -30,8 +30,15 @@ define([
         contents.new_untitled('', {type: 'file', ext: '.txt'});
     }
 
+    //*** delete2 ***
+    //Additional method added to Contents.prototype class contained in Jupyter's "content.js" module
+    //deleting files and folders recursively
+    contents_service.Contents.prototype.delete2 = function(path){
+        contents_service.delete(path);
+    };
+
     //*** save2 ***
-    //Additional method added to Contents.prototyme class contained in Jupyter's "content.js" module
+    //Additional method added to Contents.prototype class contained in Jupyter's "content.js" module
     //UWAGA:PUT (HTTP) nie jest obsługiwany przez wszystkie przeglądarki - może być, że nie zapiszemy snippetów - pomyśleć o PHP - ale najpierw testować
     //trzeba zrobić tak: każde dodanie snippeta wymaga pobrania całej zawartości pliku, modyfikacji i ponownego zapisu, z tego jak działa AJAX inaczej się nie da, chyba, że będziemy używać bazy danych...
     contents_service.Contents.prototype.save2 = function (path, model) {
@@ -165,6 +172,14 @@ define([
         contents.save2(fname, {path: '', type: 'file', format: 'text', content: JSON.stringify(data)});
     }
 
+    //** deleteFile ***
+    function deleteFile(fname){
+        var contents = new contents_service.Contents({
+            base_url: base_url
+        });
+        return contents.delete(fname);
+    };
+
     //** readFile **
     function readFile(fname, option_fn) {
         var contents = new contents_service.Contents({
@@ -220,7 +235,8 @@ define([
         getFiles: getFiles,
         getFilesList: getFilesList,
         get_FilesListDir: get_FilesListDir,
-        readJupytepideJSONFile:readJupytepideJSONFile
+        readJupytepideJSONFile:readJupytepideJSONFile,
+        deleteFile:deleteFile
     };
 
 });
