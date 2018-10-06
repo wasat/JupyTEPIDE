@@ -76,17 +76,18 @@
     position:relative;
     margin-left:auto;
     margin-right:auto;
-    background:#1c1c1c;
-    border: 1px solid black;
     width:450px;
     height:200px;
-    border-radius:5px;
-    box-shadow:0 4px 8px 0 black, 0 6px 20px 0 black;
     background-image: url("");
     background-repeat: no-repeat;
     background-position:center;
   }
   img.jupy_logo {
+   width:100%;
+   color:black;
+   box-shadow:0 4px 8px 0 black, 0 6px 20px 0 black;
+   border-radius:5px;
+   border:1px solid black;
     position:absolute;
     margin:auto;
     top:0;
@@ -96,11 +97,32 @@
   }
   body {
     background:#3c3f41;
+    color:white;
   }
   .spacer {
    height:40px;
   }
+  #login-main {
+   height:0px;
+}
   </style>
+<script type="text/javascript">
+  $(document).ready(function(){
+    var logoWidth = $('div.jupy_logo').width();
+
+     if ($(window).width()<=logoWidth){
+       $('div.jupy_logo').width($(window).width()-10);
+       };
+   
+    $(window).resize(function(){
+     if ($(window).width()<=logoWidth){
+       $('div.jupy_logo').width($(window).width()-10);
+       }
+       else {$('div.jupy_logo').width(450)}
+    
+    });
+});
+</script>
 </head>
 
 <body>
