@@ -304,6 +304,14 @@ define([
         });
         map_toolbar.append(remove_layers_button);
 
+        // //recursive_delete_button
+         var recursive_delete_button = $('<button/>',{id:'recursiveDeleteBtn',class:"btn btn-danger fa fa-trash",title:"Recursively delete selected files and folders"});
+         recursive_delete_button.click(function(){
+
+             showRecursiveDeleteDialog();
+         });
+         map_toolbar.append(recursive_delete_button);
+
 
         //** PANELS **
      //**** browser panel - preliminary version
@@ -795,18 +803,25 @@ define([
         if (itemType==='notebook'){iconName='notebook_icon'}
          else if(itemType==='directory'){iconName='folder_icon'};
 
-        colDiv.append(
-            $('<input>',
-                {
-                    title: 'Click here to rename, delete, etc.',
-                    type: 'checkbox'
-                }));
+        var checkbox = $('<input>',
+            {
+                title: 'Click here to rename, delete, etc.',
+                type: 'checkbox'
+            });
+
+        if (row_item.name!='...'){
+            colDiv.append(checkbox);
+        }
+        else {colDiv.append(checkbox.attr('style','visibility: hidden;'))};
+
         colDiv.append(
 
             $('<i/>').addClass('item_icon ' + iconName +' icon-fixed-width')
         );
-        var itemName = $('<span/>').addClass('item_name').html(row_item.name);
-
+        var itemName = $('<span/>',{path:row_item.path}).addClass('item_name').html(row_item.name);
+        //if (row_item.pathThis){
+            //itemName.attr('paththis',row_item.paththis);
+        //}
         var a_link = $('<a/>',
             {
                 href: row_item.link  //'/tree/anaconda3/bin',
@@ -876,6 +891,7 @@ define([
         //"goto previous directory" element - first element of the list
         //prepare path to previous directory
         var path_previous=options.path;
+        var path_this = path_previous;
         if (path_previous.search("/")!=-1){
             path_previous = path_previous.slice(0,path_previous.lastIndexOf("/"))
         }
@@ -887,6 +903,7 @@ define([
             type: 'directory',
             onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+path_previous+'",contents:"'+options.contents+'"})'
             //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"/",contents:"'+options.contents+'"})'
+            //paththis: path_this
         };
 
         //console.log(notebooksList);
@@ -900,10 +917,13 @@ define([
                  time: timeStr,
                  type: elementsList[i].type,
                  mimetype: elementsList[i].mimetype
+                 //paththis: path_this
                  //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})'
                  //onclick:removeTabContent,
                  //DOMelement: options.DOMelement
              };
+
+             rowItemArray[n].path = elementsList[i].path;
 
              if (rowItemArray[n].type==='file'){
 
@@ -1085,6 +1105,48 @@ define([
 //***
 
     //SHOWING DIALOGS
+    function showRecursiveDeleteDialog(){
+        //***
+        var options = {};
+        var dialog_body = $('<div/>').append(
+            $("<p/>").addClass("rename-message")
+                .text('All selected files and folders will be deleted recursively. Do you want to proceed?')
+        );
+        var d = dialog.modal({
+            title: "Delete selected files and folders",
+            body: dialog_body,
+            notebook: options.notebook,
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            default_button: "Cancel",
+            buttons : {
+                "Cancel": {},
+                "Delete": {
+                    class: "btn-primary",
+                    click: function () {
+                        Jupytepide.recursiveDeleteSelected();
+                        d.modal('hide');
+                    }
+                }
+            },
+            open : function () {
+                /**
+                 * Upon ENTER, click the OK button.
+                 */
+                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
+
+                d.find('input[type="text"]').keydown(function (event) {
+                    if (event.which === keyboard.keycodes.enter) {
+                        d.find('.btn-primary').first().click();
+                        return false;
+                    }
+                });
+                d.find('input[type="text"]').focus().select();
+            }
+        });
+        //***
+    };
+
     function showRemoveAllLayersDialog(){
         //***
         var options = {};

@@ -109,6 +109,30 @@ define([
         return utils.ajax(url + '?' + $.param(params), settings);
     };
 
+    /**
+     * **/
+    contents_service.Contents.prototype.delete2 = function(path) {
+        var settings = {
+            processData : false,
+            type : "DELETE",
+            dataType : "json",
+        };
+        var url = this.api_url(path);
+        //return utils.promising_ajax(url, settings).catch(
+        return utils.ajax(url, settings);
+        // .catch(
+        //     // Translate certain errors to more specific ones.
+        //     function(error) {
+        //         // TODO: update IPEP27 to specify errors more precisely, so
+        //         // that error types can be detected here with certainty.
+        //         if (error.xhr.status === 400) {
+        //             throw new Contents.DirectoryNotEmptyError();
+        //         }
+        //         throw error;
+        //     }
+        // );
+    };
+
     //** getFiles ***
     //The simplest: getFiles("",{}) will return objest containig all files and dirs from base_url dir
     //it can be used to read file contents or to list any dir
@@ -177,7 +201,31 @@ define([
         var contents = new contents_service.Contents({
             base_url: base_url
         });
-        return contents.delete(fname);
+        return contents.delete2(fname);
+    };
+
+    function deleteFolderContent(fname){
+
+    };
+
+    //** recursiveDelete ***
+    function recursiveDelete(fname){
+
+        var dirname = fname;
+        var filesList = getFilesList(fname,{});
+        //var paths=[];
+        for (var i=0;i<filesList.length;i++){
+            //paths.push(filesList[i].path);
+            if (filesList[i].type=='file'||filesList[i].type=='notebook') deleteFile(filesList[i].path);
+            if (filesList[i].type=='directory') {
+                var fname1 = fname+'/'+filesList[i].name;
+                console.log(fname1);
+                recursiveDelete(fname1);
+                deleteFile(filesList[i].path);
+            }
+        }
+        return deleteFile(dirname);
+
     };
 
     //** readFile **
@@ -236,7 +284,8 @@ define([
         getFilesList: getFilesList,
         get_FilesListDir: get_FilesListDir,
         readJupytepideJSONFile:readJupytepideJSONFile,
-        deleteFile:deleteFile
+        deleteFile:deleteFile,
+        recursiveDelete:recursiveDelete
     };
 
 });

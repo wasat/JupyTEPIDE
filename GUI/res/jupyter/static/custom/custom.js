@@ -97,8 +97,11 @@ There is also CSS rule for better performance in: ../custom/jupytepide.css:
 */
 //
  define([
- 	'jquery'
- ],function($){
+ 	'jquery',
+    'base/js/namespace',
+    'base/js/events',
+    'nbextensions/jupytepide/jupytepide'
+ ],function($,IPython,events,jupytepide){
 
 $(function() {
     if (typeof(terminal) === 'undefined')   return;
@@ -108,10 +111,8 @@ $(function() {
         else
             setTimeout(handler, 1000);
     }
-    setTimeout(handler, 1000);
-
+     setTimeout(handler, 1000);
 	});
-
-
  });
+
 
