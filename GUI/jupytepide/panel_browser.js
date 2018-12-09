@@ -304,6 +304,13 @@ define([
         });
         map_toolbar.append(remove_layers_button);
 
+        //geojson_to_map_button
+        var geojson_to_map_button = $('<button/>',{id:'geojsonToMapBtn',class:"btn btn-default fa fa-file-image-o",title:"Add GEOJSON layer file to map"});
+        geojson_to_map_button.click(function(){
+            showAddGeojsonFromSelectedFilesDialog();
+        });
+        map_toolbar.append(geojson_to_map_button);
+
         // //recursive_delete_button
          var recursive_delete_button = $('<button/>',{id:'recursiveDeleteBtn',class:"btn btn-danger fa fa-trash",title:"Recursively delete selected files and folders"});
          recursive_delete_button.click(function(){
@@ -518,6 +525,7 @@ define([
 
             $('#restoSearchBtnIcon').show();
             var geoJSON = leaflet_interface.getRestoGeoJSON(queryStr);
+            console.log(queryStr);
 
             Jupytepide.marker.remove();
             leaflet_interface.remove_tmp_shape();
@@ -1105,6 +1113,48 @@ define([
 //***
 
     //SHOWING DIALOGS
+    function showAddGeojsonFromSelectedFilesDialog(){
+        //***
+        var options = {};
+        var dialog_body = $('<div/>').append(
+            $("<p/>").addClass("rename-message")
+                .text('Do you want to add selected GEOJSON files to map as separate layers?')
+        );
+        var d = dialog.modal({
+            title: "Add selected GEOJSON files to map",
+            body: dialog_body,
+            notebook: options.notebook,
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            default_button: "Cancel",
+            buttons : {
+                "Cancel": {},
+                "Add": {
+                    class: "btn-primary",
+                    click: function () {
+                        Jupytepide.map_addGeoJsonFromSelectedFiles();
+                        d.modal('hide');
+                    }
+                }
+            },
+            open : function () {
+                /**
+                 * Upon ENTER, click the OK button.
+                 */
+                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
+
+                d.find('input[type="text"]').keydown(function (event) {
+                    if (event.which === keyboard.keycodes.enter) {
+                        d.find('.btn-primary').first().click();
+                        return false;
+                    }
+                });
+                d.find('input[type="text"]').focus().select();
+            }
+        });
+        //***
+    };
+
     function showRecursiveDeleteDialog(){
         //***
         var options = {};

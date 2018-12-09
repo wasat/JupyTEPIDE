@@ -153,7 +153,8 @@ define([
         }
         catch (err) {
             console.log(err);
-            return false;
+            filesList=[];
+            return filesList;
         }
 
         if (options.filter) {
@@ -228,6 +229,44 @@ define([
 
     };
 
+    //** recursiveDeleteSelected ***
+    function recursiveDeleteSelected() {
+        var i=0,count=0;
+        var path_this="";
+        //go through all elements on files (and folders) list
+        $('div.list_item.row').each(function(){
+            var checked = $($('div.list_item.row div input[type=checkbox]')[i]).is(':checked');
+            if (checked){
+                //var fname = $(this).text();
+                var fname = $('.item_name')[i].attributes['path'].value; //read the "path" attribute value which is first in element (index 0)
+                console.log("fname: "+fname);
+                recursiveDelete(fname);
+                count++
+
+                if (fname.search("/")!=-1){
+                    path_this=fname.slice(0,fname.lastIndexOf("/"));
+                }
+                else path_this="";
+            }
+            i++
+        });
+
+        console.log(path_this);
+
+        //Refresh tab contents
+        if ($('li.active').text()=="Files"){
+            Jupytepide.readDir({DOMelement:"#4karta",path:path_this,contents:"files"});
+        }
+
+        if($('li.active').text()=="Notebooks"){
+            Jupytepide.readDir({DOMelement:"#3karta",path:path_this,contents:"notebooks"});
+        }
+        if(count==0){
+            alert("Nothing deleted, probably no items selected.");
+        }
+
+    };
+
     //** readFile **
     function readFile(fname, option_fn) {
         var contents = new contents_service.Contents({
@@ -285,7 +324,8 @@ define([
         get_FilesListDir: get_FilesListDir,
         readJupytepideJSONFile:readJupytepideJSONFile,
         deleteFile:deleteFile,
-        recursiveDelete:recursiveDelete
+        recursiveDelete:recursiveDelete,
+        recursiveDeleteSelected:recursiveDeleteSelected
     };
 
 });

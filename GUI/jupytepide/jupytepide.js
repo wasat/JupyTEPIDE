@@ -362,6 +362,58 @@ define([
     };
 
     /**
+     * Adds GEOJSON layer from file *.geojson. It can be any gojsn file, simply created even in QGIS.
+     * Coordinates should be in WGS4. File should be selected (checked) in Jupytepide's filebrowser.
+     * @example
+     *
+     * @param .
+     * @memberof: class:Jupytepide
+     */
+    Jupytepide.map_addGeoJsonFromSelectedFiles = function() {
+        var i=0,count=0;
+        var path_this="";
+        //go through all elements on files (and folders) list
+        $('div.list_item.row').each(function(){
+            var checked = $($('div.list_item.row div input[type=checkbox]')[i]).is(':checked');
+            if (checked){
+                //var fname = $(this).text();
+                var fname = $('.item_name')[i].attributes['path'].value; //read the "path" attribute value which is first in element (index 0)
+                var link = $('.item_link')[i].attributes['href'].value;
+
+                if (fname.indexOf('.geojson')!=-1){
+                   console.log("fname: "+fname);
+                   console.log("link: "+link);
+                   var geoFile = $.getJSON(link).responseJSON;
+                   Jupytepide.map_addGeoJsonLayer(geoFile,fname,{/*style:myStyle*/});
+                   count++;
+
+                   if (fname.search("/")!=-1){
+                     path_this=fname.slice(0,fname.lastIndexOf("/"));
+                   }
+                   else path_this="";
+                }
+                else alert(fname+' is not a GEOJSON file');
+            }
+            i++
+        });
+
+        console.log(path_this);
+
+        //Refresh tab contents
+        if ($('li.active').text()=="Files"){
+            panel_browser.readDir({DOMelement:"#4karta",path:path_this,contents:"files"});
+        }
+
+        if($('li.active').text()=="Notebooks"){
+            panel_browser.readDir({DOMelement:"#3karta",path:path_this,contents:"notebooks"});
+        }
+        if(count==0){
+            alert("Nothing loaded, probably no items selected.");
+        }
+
+    };
+
+    /**
      * */
     function setSelectedFeatureColor(fID){
         Jupytepide.leafletMap._layers[fID.data.fID].setStyle({color:'red'});
@@ -601,40 +653,7 @@ define([
      * @memberof: class:Jupytepide
      */
     Jupytepide.recursiveDeleteSelected = function(){
-        var i=0,count=0;
-        var path_this="";
-        //go through all elements on files (and folders) list
-        $('div.list_item.row').each(function(){
-            var checked = $($('div.list_item.row div input[type=checkbox]')[i]).is(':checked');
-            if (checked){
-                //var fname = $(this).text();
-                var fname = $('.item_name')[i].attributes['path'].value; //read the "path" attribute value which is first in element (index 0)
-                console.log("fname: "+fname);
-                content_access.recursiveDelete(fname);
-                count++
-
-                if (fname.search("/")!=-1){
-                    path_this=fname.slice(0,fname.lastIndexOf("/"));
-                }
-                else path_this="";
-            }
-            i++
-        });
-
-        console.log(path_this);
-
-        //Refresh tab contents
-        if ($('li.active').text()=="Files"){
-            Jupytepide.readDir({DOMelement:"#4karta",path:path_this,contents:"files"});
-        }
-
-        if($('li.active').text()=="Notebooks"){
-            Jupytepide.readDir({DOMelement:"#3karta",path:path_this,contents:"notebooks"});
-        }
-        if(count==0){
-            alert("Nothing deleted, probably no items selected.");
-        }
-
+        content_access.recursiveDeleteSelected();
     };
 
     //.:*** testing area ***:.
