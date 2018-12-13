@@ -528,7 +528,23 @@ define([
         //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_imageLayer(imageUrl,imageBounds,options);
         //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+        //Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
+
+        //remove layer click
+        var removeClick = $('<a/>',{href:'#',
+            id:'optLayer_'+layer_name,
+            onclick:'Jupytepide.map_removeLayerDlg("'+layer_name+'")'
+        }).append($('<i/>',{class:"fa fa-remove",title:'Remove layer'}));
+
+
+        //zoom (fit) to layer view click
+        var fitClick = $('<a/>',{href:'#',
+            id:'optLayer_'+layer_name,
+            onclick:'Jupytepide.map_fitToLayer("'+layer_name+'")'
+        }).append($('<i/>',{class:"fa fa-arrows-alt",title:'Fit to layer'}));
+
+        var displayedLayerName = layer_name+" "+removeClick[0].outerHTML+fitClick[0].outerHTML;
+        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],displayedLayerName);
     };
 
     /**
