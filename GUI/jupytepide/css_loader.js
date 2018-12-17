@@ -184,9 +184,9 @@ define([
 
         ///drag-arrange.min.js script
         //rozszerzenie jquery do przesuwania elementów drag/drop - do wykorzystania - patrz przykład w /jquery_arrange_plugin/
-        $('body').append($('<script/>',{
-            src: require.toUrl('./drag-arrange.min.js')
-        }));
+        //#$('body').append($('<script/>',{
+        //#    src: require.toUrl('./drag-arrange.min.js')
+        //#}));
 
 
         //new combobox in bootstrap style
