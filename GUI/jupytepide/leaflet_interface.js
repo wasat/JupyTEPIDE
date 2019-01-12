@@ -1,17 +1,15 @@
-// File source_UI/leaflet_interface.js
+// File jupytepide/leaflet_interface.js
 // Edited by: Michał Bednarczyk
-// Copyright (C) 2017 .....
+// Copyright (C) 2017-2019 .....
 //
 //  Distributed under the terms of the BSD License.
 // ---------------------------------------------------------------------------
 // Interface for leaflet.js map component library
-//todo: podpiąć jak najwięcej funkcji leafleta i przekazać do obiektu Jupytepide (jupytepide.js)
 
 define([
     'base/js/namespace',
     'jquery',
     'require',
-    './ol',
     './code_snippets',
     './leaflet',
     'base/js/utils'
@@ -19,11 +17,9 @@ define([
 ], function (Jupyter,
              $,
              require,
-             ol,
              code_snippets,
              L,
              utils
-
 ) {
 
     //Adding this method to String.prototype to implement string formatting
@@ -38,8 +34,6 @@ define([
     };
 
     var mymap;
-    //var mapClick;
-    //var mapAddPoint;
 
     //*** load_map ***
     //Used for initial map loading (not for notebook users)
@@ -53,13 +47,8 @@ define([
         Jupytepide.leafletMap.tmpShapeVertexArray = [];
         Jupytepide.leafletMap.tmpShapeWKT = 'undefined';
 
-
-        //Jupytepide.leafletMap.on('resize',function(){Jupytepide.leafletMap.invalidateSize();});
-        //Jupytepide.leafletMap.whenReady(function(){alert("gggggggd")});
         Jupytepide.leafletMap.setView([0,0], 1).on('click', onMapClick);
-        //Jupytepide.leafletMap.fire('resize');
         L.control.scale().addTo(Jupytepide.leafletMap);
-        //L.control.toolb.addTo(Jupytepide.leafletMap);
 
         //this enables all tools from leaflet.pm plugin - can be used in near future
         //todo:leaflet pm controls adding
@@ -96,18 +85,13 @@ define([
             if (e.shape=='Rectangle'){
                 Jupytepide.leafletMap.tmpShapeVertexArray=[];
                 toggle_map_action('mapAddRectangle');
-
-
             }
-
-
         });
 
         //remember WKT of entered shape (to create RESTO data query)
         Jupytepide.leafletMap.on('pm:drawend',function(e){
             if (e.shape=='Poly'|e.shape=='Rectangle'){
                 toggle_map_action('mapClick');
-
 
                 if (e.shape=='Rectangle' & typeof Jupytepide.leafletMap.tmpShapeVertexArray != 'undefined'
                     & Jupytepide.leafletMap.tmpShapeVertexArray.length>0 ){
@@ -139,14 +123,11 @@ define([
 
                 var WKTstr = 'POLYGON((';
                 var vertexStr='';
-                //var tmpShapeID = Jupytepide.leafletMap.tmpShapeID;
-                //console.log('toto:'+tmpShapeID);
                 var numVertex = Jupytepide.leafletMap.tmpShapeVertexArray.length;
                  for(var i=0;i<numVertex;i++){
                      vertexStr = Jupytepide.leafletMap.tmpShapeVertexArray[i].lng +' '+ Jupytepide.leafletMap.tmpShapeVertexArray[i].lat;
 
                      if(i==numVertex-1){
-
                          WKTstr=WKTstr+ vertexStr+','+Jupytepide.leafletMap.tmpShapeVertexArray[0].lng +' '+ Jupytepide.leafletMap.tmpShapeVertexArray[0].lat+'))';
                      }
                      else WKTstr=WKTstr+ vertexStr+',';
@@ -155,15 +136,11 @@ define([
              Jupytepide.leafletMap.tmpShapeWKT = WKTstr;
             $('#insertSearchShapeButton').removeClass('selected');
         });
-
     };
 
     var map_invalidateSize = function(){
-        //Jupytepide.leafletMap.invalidateSize();
         mymap.invalidateSize();
     };
-
-
 
     //*** load_layer ***
     //call example - look at load_mapboxLayer
@@ -184,8 +161,6 @@ define([
     var load_geoJsonLayer = function(data,options){
         return L.geoJSON(data,options
         ).addTo(Jupytepide.leafletMap);
-
-        //return L.geoJSON(data).addTo(Jupytepide.leafletMap);
     };
 
     //*** getRestoGeoJSON ***
@@ -236,17 +211,14 @@ define([
             attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
         });
 
-
+        //Base layers ****
         var baseLayers = {
-
             "Mapbox:streets":Jupytepide.leafletMap.layers.mapbox,
             "OSM":Jupytepide.leafletMap.layers.osm
         };
 
         var overlays ={};
-
         Jupytepide.leafletMap.control = add_layerControls(baseLayers,overlays);
-
         set_view([52,21],3);
     };
 
@@ -303,14 +275,11 @@ define([
 
         //point marker for RESTO searching - "click" mode disabled
         else if (Jupytepide.mapAddPoint){
-
             Jupytepide.marker = new L.Marker(e.latlng,{draggable:true,icon:markerIcon});
             Jupytepide.leafletMap.addLayer(Jupytepide.marker);
             Jupytepide.leafletMap.tmpShapeWKT='MULTIPOINT(('+Jupytepide.marker._latlng.lng+' '+Jupytepide.marker._latlng.lat+'))';
             toggle_map_action('mapClick');
-
             $('#insertSearchShapeButton').removeClass('selected');
-
         }
 
         //polygon shape for RESTO searching - "click" mode disabled - look at load_map()
@@ -371,7 +340,7 @@ define([
     var draw_poly_tmp_marker = function(options){
         Jupytepide.leafletMap.pm.enableDraw('Poly',options);
     };
-    //end of temp shapes as markesr for RESTO searching
+    //end of temp shapes as markers for RESTO searching
 
     //*** add_circle ***
     //center=[52.407, 21.33], radius=500, popup_="Some text", parameters_={color: 'red', fillColor: '#f03', fillOpacity: 0.5}
@@ -414,15 +383,6 @@ define([
     };
 
     //****** testing area **********************************************************************************************
-
-    //load ownTiles
-    var load_madrid = function(){
-        return L.tileLayer('/nbextensions/jupytepide/madrid/{z}/{x}/{y}.png', {
-            tms:true,
-            opacity:0.8,
-            attribution: ''
-        }).addTo(Jupytepide.leafletMap)
-    };
 
     //load IMAGE
     var load_image = function(){
@@ -515,7 +475,6 @@ define([
         }
 
         mymap.on('click', onMapClick);
-
     };
 
     var load_test_polygon = function(popupText){
@@ -536,20 +495,13 @@ define([
         load_wmsLayer:load_wmsLayer,
         load_geoJsonLayer:load_geoJsonLayer,
         load_imageLayer:load_imageLayer,
-        load_mapboxLayer:load_mapboxLayer,
         set_view:set_view,
         add_marker:add_marker,
         add_circle:add_circle,
         add_polygon:add_polygon,
         add_polyline:add_polyline,
         add_layerControls:add_layerControls,
-        add_controlBaseLayer:add_controlBaseLayer,
-        add_controlOverlayLayer:add_controlOverlayLayer,
-        remove_controlLayer:remove_controlLayer,
-        load_geojson:load_geojson,
         load_image:load_image,
-        load_madrid:load_madrid,
-        map_invalidateSize:map_invalidateSize,
         getRestoGeoJSON:getRestoGeoJSON,
         remove_tmp_shape:remove_tmp_shape,
         draw_point_tmp_marker:draw_point_tmp_marker,

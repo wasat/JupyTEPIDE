@@ -1,6 +1,6 @@
 // file source_UI/menu.js
 // Edited by: Michał Bednarczyk
-// Copyright (C) 2017 .....
+// Copyright (C) 2017-2019 .....
 //
 //  Distributed under the terms of the BSD License.
 //  To see where are all extensions loaded use:
@@ -8,12 +8,7 @@
 // look also (example dir):
 // '/home/michal/.local/share/jupyter/nbextensions/'
 // ---------------------------------------------------------------------------
-
-// Main menu positions adding
-//
-// - Przykład tworzenia menu głównego
-// - Przyklad otwierania pliku
-// TODO: Udoskonalic funkcje ladujaca menu, tak, zeby mozna bylo zdefiniowac elementy menu w tablicy tekstowej i podac jako argument wejsciowy
+// Adding Jupytepide into Jupyter Main menu
 
 define([
     'base/js/namespace',
@@ -45,14 +40,6 @@ define([
             , IPython._target);
     }
 
-
-//albo zrobić sobie menu item definiowany w ten sposób jako obiekt - może on być parametrem wejściowym dla funkcji tworzącej menu:
-    function menu_item(klasa, href, text) {
-        this.CSSclass = klasa;
-        this.itemHref = href;
-        this.itemText = text;
-    }
-
     //*** add_menu ***
     // Adds new position in main menu. Creates empty dropdown list for it.
     //In:
@@ -77,10 +64,8 @@ define([
         var menu = $('<ul/>',{id:options_.menu_id})
             .addClass('dropdown-menu')
             .appendTo($(main_menu_item)); //id elementu w istniejacym menu glownym
-
         return menu;
     }
-
 
     //*** add_submenu ***
     // Creates and adds a submenu item in existing menu.
@@ -90,23 +75,20 @@ define([
     //                           into which the submenu is added.
     //Out:
     //Jquery DOM object to which the menu items will be added
-    function add_submenu(name, appendToItemName) {
+    function add_submenu(name, appendToItemName, onClickFn) {
         //new expandable menu item (submenu) in existing 'appendToItemName' dropdown main menu
         var menu_item = $('<li/>')
             .addClass('dropdown-submenu')
             .append(
                 $('<a href="#">')
                     .text(name)
-                    .on('click', function (evt) {
-                        evt.preventDefault();
-                    })
+                    .on('click', onClickFn)
             )
             .appendTo($(appendToItemName));
         //empty dropdown list for new submenu
         var submenu = $('<ul/>')
             .addClass('dropdown-menu')
             .appendTo(menu_item);
-
         return submenu;
     }
 
@@ -118,7 +100,7 @@ define([
     // href_:string - URL string. When empty, use:"#"
     // appendToMenu: Jquery DOM object representing menu or submenu dropdown list, into which the menu item is added
     function add_menu_item(name, desc, href_, appendToMenu, onClickFn) {
-        $('<li/>')
+       return $('<li/>')
             .attr('title', desc)
             .append(
                 $('<a href=' + href_ + '>')
@@ -135,79 +117,105 @@ define([
             .appendTo(appendToMenu);
     };
 
-    //***
-    //tworzenie pozycji w menu głownym, przypisanie akcji
-
+    //*** create_menu ***
+    //Adding  positions in maimn menu, actions assignment
     function create_menu() {
-        //elementy dodane do istniejacej pozycji w main menu - "Help"
-        // moje_submenu = add_submenu('Moje menu 1', '#help_menu');
-        // add_menu_item('Element 1', 'Opis elementu 1', '#', moje_submenu, function (evt) {
-        //     evt.preventDefault();
-        //     open_notebook('moj_probny.ipynb');
-        // });
-        //
-        // add_menu_item('Element 2', 'Opis elementu 2', '#', moje_submenu, function (evt) {
-        //     evt.preventDefault();
-        // });
-        //
-        // add_menu_item('Element 3', 'Opis elementu 3', '#', moje_submenu, function (evt) {
-        //     evt.preventDefault();
-        // });
-        //
-        // add_menu_item('Element 4', 'Opis elementu 4', '#', moje_submenu, function (evt) {
-        //     evt.preventDefault();
-        // });
-        //
-        // add_menu_item('www.wp.pl', 'Idz do wp.pl', 'http://www.wp.pl', moje_submenu, function (evt) {
-        //     //jak chcemy odpalić href, to onclick musi być pusty, jak tu;
-        // });
+        //New Menu position named "Jupytepide"
+        jupytepide_menu = add_menu({name:'Jupytepide',menu_id:'jupytepide_menu'});
 
-
-
-        //Nowa pozycja na pasku Menu o nazwie "Jupytepide"
-        moje_menu = add_menu({name:'Jupytepide',menu_id:'jupytepide_menu'});
+        //Map
+        map_submenu = add_submenu('Map', '#jupytepide_menu',function(evt){
+            evt.preventDefault();
+            $('a[href="#1karta"]').click();
+        });
+        //Map-->Add GEOJSON layer
+        add_menu_item('Add GEOJSON layer', 'Add new GEOJSON layer to map', '#', map_submenu, function (evt) {
+            evt.preventDefault();
+            $('a[href="#1karta"]').click();
+            $('button[title="Add GEOJSON layer file to map"]').click();
+        });
+        //Map-->Remove all layers
+        add_menu_item('Remove all layers', 'Remove all layers, except base ones', '#', map_submenu, function (evt) {
+            evt.preventDefault();
+            $('a[href="#1karta"]').click();
+            $('button[title="Remove all layers"]').click();
+        });
 
         //Snippets
-        snippets_submenu = add_submenu('Snippets', '#jupytepide_menu');
+        snippets_submenu = add_submenu('Snippets', '#jupytepide_menu',function(evt){
+            evt.preventDefault();
+            $('a[href="#2karta"]').click();
+        });
+
+        //Snippets-->Add group
         add_menu_item('Add Group', 'Add new menu group', '#', snippets_submenu, function (evt) {
             evt.preventDefault();
             code_snippets.showAddGroupWindow();
+            $('a[href="#2karta"]').click();
         });
 
         //Notebooks
-        add_menu_item('Notebooks', 'Choose notebooks', '#', moje_menu, function (evt) {
+        add_menu_item('Notebooks', 'Choose notebooks', '#', jupytepide_menu, function (evt) {
+            evt.preventDefault();
+            $('a[href="#3karta"]').click();
+        });
+
+        //Files
+        add_menu_item('Files', 'Choose files', '#', jupytepide_menu, function (evt) {
+            evt.preventDefault();
+            $('a[href="#4karta"]').click();
+        });
+
+        //---
+        add_divider(jupytepide_menu);
+
+        //Search EO data
+        add_menu_item('Search EO data', 'Search for  Earth Observation data', '#', jupytepide_menu, function (evt) {
+            evt.preventDefault();
+            $('a[href="#1karta"]').click();
+            $('button[title="Search for EO data"]').click();
+        });
+
+        //---
+        add_divider(jupytepide_menu);
+
+        //Panel browser
+        panel_browser_submenu = add_submenu('Panel browser', '#jupytepide_menu',function(evt){
             evt.preventDefault();
         });
 
-        //Map
-        moje_submenu = add_submenu('Map', '#jupytepide_menu');
-        //Add layer
-        add_menu_item('Add layer', 'Add new layer', '#', moje_submenu, function (evt) {
+        //Panel browser-->Toggle
+        var toggle_menu_item = add_menu_item('Toggle', 'Toggle panel browser', '#', panel_browser_submenu, function (evt) {
             evt.preventDefault();
+            Jupyter.toolbar.actions.call('panel_browser:toggle-panel')
         });
-        //Settings
-        add_menu_item('Settings', 'Map settings', '#', moje_submenu, function (evt) {
+        toggle_menu_item.attr('data-jupyter-action','panel_browser:toggle-panel');
+
+        //Panel browser-->Maximize
+        add_menu_item('Maximize', 'Maximize panel browser', '#', panel_browser_submenu, function (evt) {
             evt.preventDefault();
+            $('button[title="expand/contract panel"]').click()
+            //zrobić tu submenu i dodać: maximize i toggle
         });
 
-        add_divider(moje_menu);
+        //---
+        add_divider(jupytepide_menu);
 
         //Help
-        add_menu_item('Help', 'Show help in modal', '#', moje_menu, function (evt) {
+        add_menu_item('Help', 'Show help in modal', '#', jupytepide_menu, function (evt) {
             evt.preventDefault();
             showHelpDialog();
         });
 
         //About Jupytepide
-        add_menu_item('About Jupytepide', 'About Jupytepide', '#', moje_menu, function (evt) {
+        add_menu_item('About Jupytepide', 'About Jupytepide', '#', jupytepide_menu, function (evt) {
             evt.preventDefault();
             window.open('https://wasat.github.io/JupyTEPIDE/');
         });
     }
 
-
+    //*** showHelpDialog ***
     function showHelpDialog(){
-        //***
         var options = {};
         var dialog_body = $('<div/>');
         var introStr = Jupytepide.getJupytepideHelpJSON().intro;
@@ -240,18 +248,15 @@ define([
         for(var i=col1_length;i<positionsArr.length;i++){
             col_2.append($('<div/>').html(positionsArr[i].text +" ").append($('<a/>',{href:positionsArr[i].url,target:'about:blank'}).html(positionsArr[i].url)));
         }
-
         container.append(col_1).append(col_2);
-
         dialog_body.append(intro);
         dialog_body.append($('<div/>').append(container));
-
 
         var d = dialog.modal({
             title: "Jupytepide Help",
             body: dialog_body,
             notebook: options.notebook,
-            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            keyboard_manager: Jupyter.notebook.keyboard_manager,
             default_button: "Close",
             buttons : {
                 "Close": {
@@ -268,9 +273,6 @@ define([
                 /**
                  * Upon ENTER, click the OK button.
                  */
-                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
-                //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
-
                  d.find('div.modal-content').keydown(function (event) {
                      if (event.which === keyboard.keycodes.escape) {
                          d.find('.btn-primary').first().click();
@@ -280,9 +282,9 @@ define([
                 d.find('.btn-primary').focus().select();
             }
         });
-        //***
     }
 
+    //*** load_ipython_extension ***
     function load_ipython_extension() {
         // try to load jquery-ui
         if ($.ui === undefined && options.highlight.use) {
@@ -295,11 +297,8 @@ define([
                 });
             });
         }
-
         create_menu();
-
     }
-
     return {
         load_ipython_extension: load_ipython_extension
     };

@@ -1,25 +1,10 @@
-// File source_UI/panel_browser.js
+// File jupytepide/panel_browser.js
 // Edited by: Michał Bednarczyk
-// Copyright (C) 2017 .....
+// Copyright (C) 2017-2019 .....
 //
 //  Distributed under the terms of the BSD License.
 // ---------------------------------------------------------------------------
 //Side panel for file/notebook/etc. browser displaying
-//
-//Przyklad zaladowania panelu bocznego
-//przyklad podlinkowania stylu CSS
-//przykład tworzenia linków do dokumentów Jupytera
-//TODO: zrobic ladowanie danych konfiguracyjnych z uzyciem 'config'
-//TODO: zrobic ladowanie stylu
-//TODO: zrobic panel z filemanagerem
-//TODO: spr. oprzeć panel na właściwościach jquery, może wyjść prostszy w implementacji
-//TODO: zrobić z każdego elementu wizualnego (menu, panel itp.) obiekt, uprości sie kod w pliku głównym
-//TODO: poprawić ładowanie do klasy list_container, tak, żeby razem był nagłówek i row_items'y. Najlepiej zbudować ten nagłówek od początku, zamiast do ładować
-//<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-//wczytanie filebrowsera Jupytera w ten sposób:
-//$('#1karta').load('http://localhost:8888/tree #notebooks');
-//nic nie daje, bo nie odpala się skrypt odpowiedzialny za załadowanie zawartości katalogu
-//
 
 define([
     'require',
@@ -33,7 +18,6 @@ define([
     'contents',
     'base/js/page',
     './code_snippets',
-    './jupytepide_notebooks',
     './map_browser',
     './leaflet_interface',
     './content_access',
@@ -51,7 +35,6 @@ define([
              contents_service,
              page,
              code_snippets,
-             jupytepide_notebooks,
              map_browser,
              leaflet_interface,
              content_access,
@@ -92,26 +75,19 @@ define([
                      layerBrowseBtn.removeClass('inactive').addClass('selected');
                      searchBtn.removeClass('selected');
                      toggleBtn.addClass('fa-toggle-up').removeClass('fa-toggle-down');
-
                  }
                  else if($('.data_browser_panel .data_search').is(':visible') & $('.data_browser_panel .data_layer_browser').is(':hidden')){
                      $('.data_browser_panel .data_search').hide();
                      $('.data_browser_panel .data_layer_browser').show();
                      searchBtn.removeClass('selected');
-
                  }
                  else if ($('.data_browser_panel .data_search').is(':hidden') & $('.data_browser_panel .data_layer_browser').is(':visible')){
-
                  }
-            //}
         }
     };
 
-    //***
-
+    //*** checkDateRange ***
     function checkDateRange(startVal,endVal){
-        //var dFrom = new Date($('#dateFrom.data_browser_input').val());
-        //var dTo = new Date($('#dateTo.data_browser_input').val());
         var dFrom = new Date(startVal);
         var dTo = new Date(endVal);
         var checkResult = 'ok';
@@ -121,27 +97,24 @@ define([
                 if (dTo-dFrom<0){
                     checkResult = 'Start Date can not be later than Completion Date. Please correct.';
                 }
-
             }
             else{
                 checkResult='Invalid Completion Date format.';
             }
         }
-
         else {
          checkResult='Invalid Start Date format.';
         }
      return checkResult;
     };
 
-
+    //*** build_side_panel ***
     function build_side_panel (main_panel, side_panel, min_rel_width, max_rel_width) {
         if (min_rel_width === undefined) min_rel_width = 0;
         if (max_rel_width === undefined) max_rel_width = 100;
 
         side_panel.css('display', 'none');
 
-        //W tym miejscu decyduje się czy panel będzie z lewej czy z prawej - jest jeszcze parę takich miejsc i należy odwrócic animację
         side_panel.insertAfter(main_panel);
 
         var side_panel_splitbar = $('<div class="side_panel_splitbar"/>');
@@ -181,18 +154,9 @@ define([
                 side_panel_inner.css({'margin-left': ''});
                 side_panel_splitbar.show();
             }
-
-            //if (have_bs_tooltips) {
-            //    side_panel_expand_contract.attr('title', tooltip_text);
-            //    side_panel_expand_contract.tooltip('hide').tooltip('fixTitle');
-            //}
-            //else {
-            //    side_panel_expand_contract.tooltip('option', 'content', tooltip_text);
-           // }
-            //dla leafleta - nie działa
+            //for display improvement
             Jupytepide.leafletMap.invalidateSize();
         });
-
 
         // bind events for resizing side panel
         side_panel_splitbar.mousedown(function (md_evt) {
@@ -210,13 +174,6 @@ define([
         });
         $(document).mouseup(function (mu_evt) {
             $(document).unbind('mousemove');
-
-
-            //   $( document ).ready(function() {
-            //
-            //       Jupytepide.leafletMap.invalidateSize();
-            //});
-
             Jupytepide.leafletMap.invalidateSize(); //to resize leaflet map
         });
 
@@ -244,16 +201,13 @@ define([
                     toggle_button.removeClass('fa-toggle-down');
 
                 };
-
             });
-
         });
         map_toolbar.append(toggle_button);
 
         //search button
         var search_button =$('<button/>',{id:'searchBtn',class:"btn btn-default fa fa-search",title:"Search for EO data"});
         search_button.click(function(){
-            //data_browser.slideToggle();
             search_button.addClass('selected');
 
             if ($('.data_browser_panel').is(':visible')){
@@ -276,8 +230,6 @@ define([
         //layer_browser_button
         var layer_browser_button =$('<button/>',{id:'layerBrowseBtn',class:"btn btn-default fa fa-table",title:"Layer data view"});
         layer_browser_button.click(function(){
-            //if (!layer_browser_button.hasClass('inactive')){
-                //data_search_toggle();
                 if ($('.data_browser_panel').is(':visible')){
                     $('.data_browser_panel .data_search').hide();
                     $('.data_browser_panel .data_layer_browser').show();
@@ -291,10 +243,7 @@ define([
                 $('button#searchBtn').removeClass('selected');
                 $('button#layerBrowseBtn').addClass('selected');
                 $('button#toggleBtn').addClass('fa-toggle-up').removeClass('fa-toggle-down');
-                //layer_browser_button.toggleClass('selected');
-           // }
         });
-        //layer_browser_button.addClass('inactive');
         map_toolbar.append(layer_browser_button);
 
         //remove_layers_button
@@ -311,7 +260,7 @@ define([
         });
         map_toolbar.append(geojson_to_map_button);
 
-        // //recursive_delete_button
+         //recursive_delete_button
          var recursive_delete_button = $('<button/>',{id:'recursiveDeleteBtn',class:"btn btn-danger fa fa-trash",title:"Recursively delete selected files and folders"});
          recursive_delete_button.click(function(){
 
@@ -321,19 +270,13 @@ define([
 
 
         //** PANELS **
-     //**** browser panel - preliminary version
+        //**** browser panel
         var data_browser = $('<div/>',{class:'data_browser_panel'});
         var data_search = $('<div/>',{class:'data_browser_panel data_search'});
         var data_layer_browser = $('<div/>',{class:'data_browser_panel data_layer_browser'})
             .hide();
         data_browser.append(data_search);
         data_browser.append(data_layer_browser);
-
-
-        //busy icon
-        // var busyIcon = $('<img/>',{id:'map_busy_icon',src:'/nbextensions/jupytepide/img/busy_blue_64_icon.png'})
-        // busyIcon = $('<div/>',{style:'position:absolute;width:64px;height:64px;margin-left:auto;margin-right:auto'}).append(busyIcon);
-        // data_browser.append(busyIcon);
 
         //set data
         var missions = [
@@ -346,7 +289,6 @@ define([
             {name:"Sentinel2",instrument:['MSI']},
             {name:"Sentinel3",instrument:['All','OL','SL','SR']}
             ];
-
 
         //set controls
         //missionComboBOx
@@ -462,7 +404,6 @@ define([
             class:'data_browser_checkbox'
         });
         useDateCheckbox = $('<label/>').html('Use date').prepend(useDateCheckbox);
-        //var useDateCheckboxLbl = $('<label/>',{for:'useDateCheckbox'}).html('Use date');
 
         //send query, load result to map
         //searchButton
@@ -549,8 +490,6 @@ define([
                      var thumbnailTxt = "No picture";
                      if (thumbnail!=="null") thumbnailTxt="Thumbnail picture";
 
-                     //var popup = "<b>"+collection+"</b><br/><textarea style='width:300px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><a href='"+thumbnail+"' target:'_blank'>"+thumbnailTxt+"</a>";
-                     //var popup = "<b>"+collection+"</b><br/>Product identifier:<br/><textarea style='width:250px;resize:none;'>"+productID+"</textarea><br/>Completion date: "+completionDate+"<br/><img alt='No picture' src='"+thumbnail+"' style='width:250px;'></img>";
                      var popup = "<b>Collection: </b>"+collection+" "+
                          "<br/>"+"<b>Platform:</b> "+platform+
                          "<br/><b>Product type:</b> "+productType+
@@ -569,17 +508,12 @@ define([
                          layer.setStyle({color:'#161ce9'});
                      },
                      load: function(){
-
                      }
-
                  })
                 }
             });
-
-            //alert('"'+layer_name+'"');
             Jupytepide.showLayerFeaturesData(layerName);
             Jupytepide.map_fitToLayer(layerName);
-
         });
 
         //search icon
@@ -606,7 +540,6 @@ define([
                 };
                 //scroll to map view todo: it can be disabled
                 $('.side_panel_inner').scrollTop($('.side_panel_inner').height());
-                //$('.side_panel_inner').animate({scrollTop:$('.side_panel_inner').height()});
 
                 var shpTypeStr = $('.data_browser_combobox#shapeType').find('option:selected').text();
                 if (shpTypeStr=="Point"){
@@ -622,7 +555,6 @@ define([
             });
 
         //select marking shape type combobox - for resto searching shape type marker
-
         var selectShapeTypeCombobox = $('<select/>',{
             class:'data_browser_combobox',id:'shapeType',title:'Shape type',
             style:'width:7em'
@@ -675,13 +607,7 @@ define([
             .append(copyShpWKTBtn);
         data_search.append(missionControlGroup);
 
-
-        // data_browser.append(missionComboBox).append(instrumentComboBox)
-        //     .append(maxRecordsInput).append(dateFromInput)
-        //     .append(dateToInput).append(useDateCheckbox).append(searchButton);
-        //data_browser.attr('style','color: red;');
         map_toolbar.append(data_browser);
-        //$('input').checkboxradio();
         data_browser.hide();
         Jupytepide.emptyLayerBrowser();
 
@@ -723,57 +649,6 @@ define([
 
 
         return visible;
-    };
-
-    //wstawienie danych do panelu
-    function populate_side_panel (side_panel) {
-        var side_panel_inner = side_panel.find('.side_panel_inner');
-        var qh = IPython.quick_help;
-        var strip_modal = function (into) {
-            // strip qh modal, insert content into element 'into'
-            $('.quickhelp').closest('.modal-body').children().children().appendTo(into);
-        };
-
-        if ($('.quickhelp').length > 0) {
-            strip_modal(side_panel_inner);
-        }
-        else {
-            // ensure quickhelp shortcuts modal won't show
-            $('body').addClass('help_panel_hide');
-            // get quickhelp to show shortcuts
-            qh.show_keyboard_shortcuts();
-            // attach handler for qh showing shortcuts
-            var qh_dia = $(qh.shortcut_dialog);
-            qh_dia.on('shown.bs.modal', function (evt) {
-                strip_modal(side_panel_inner);
-                // delicately pretend that it was never shown, unbind handlers
-                qh_dia.on('hidden.bs.modal', function () {
-                    $('body').removeClass('help_panel_hide');
-                    qh_dia.off('hidden.bs.modal');
-                }).off('shown.bs.modal').modal("hide");
-            });
-        }
-        // make sure content we stripped will be rebuilt
-        qh.force_rebuild = true;
-    };
-
-    //tworzy dowolny link w podanym elemencie
-    //zwraca obiekt skonfigurowany link <a> jako obiekt jquery
-    var make_link = function (element, href_, text_) {
-        var elA = $('<a/>', {href: href_}).html(text_);
-        $(element).append(elA);
-        $(element).append($('<br/>'));
-        return elA;
-    };
-
-    //tworzy link w podanym elemencie, relatywny do katalogu roboczego
-    var make_parent_link = function (element, document_, text_) {
-        var parent = utils.url_path_split(Jupyter.notebook.notebook_path)[0];
-        $(element).append(
-            $('<a/>', {
-                href: utils.url_path_join(Jupyter.notebook.base_url, 'tree', utils.encode_uri_components(parent), document_)
-            }).html(text_).attr('target', '#notebook').append($('<br>')) //target niekoniecznie potrzebny....
-        );
     };
 
     //makes only <a> element
@@ -827,9 +702,7 @@ define([
             $('<i/>').addClass('item_icon ' + iconName +' icon-fixed-width')
         );
         var itemName = $('<span/>',{path:row_item.path}).addClass('item_name').html(row_item.name);
-        //if (row_item.pathThis){
-            //itemName.attr('paththis',row_item.paththis);
-        //}
+
         var a_link = $('<a/>',
             {
                 href: row_item.link  //'/tree/anaconda3/bin',
@@ -867,7 +740,6 @@ define([
     function removeTabContent(options){
         //#karta - files, #3karta - notebooks
         $(options.DOMelement+' .list_item').remove();
-        //alert(options.DOMelement);
     };
 
     function readDir(options){
@@ -890,13 +762,13 @@ define([
 
         //removeTabContent(options.DOMelement);
         if (options.contents==="notebooks") {
-            elementsList = jupytepide_notebooks.get_NotebooksListDir(options.path);
+            elementsList = content_access.get_NotebooksListDir(options.path);
         }
         if (options.contents==="files") {
             elementsList = content_access.get_FilesListDir(options.path);
         }
 
-        //"goto previous directory" element - first element of the list
+        //"go to previous directory" element - first element of the list
         //prepare path to previous directory
         var path_previous=options.path;
         var path_this = path_previous;
@@ -910,31 +782,22 @@ define([
             link:'#',
             type: 'directory',
             onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+path_previous+'",contents:"'+options.contents+'"})'
-            //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"/",contents:"'+options.contents+'"})'
-            //paththis: path_this
         };
 
-        //console.log(notebooksList);
         for (i = 0; i < elementsList.length; i++) {
             var timeStr=elementsList[i].last_modified;
             timeStr=timeStr.substring(0,timeStr.search("T"));
             n = i+1;
              rowItemArray[n] = {
                  name: elementsList[i].name,
-                 //link: '#',//utils.url_path_join(homePath, elementsList[i].path),
                  time: timeStr,
                  type: elementsList[i].type,
                  mimetype: elementsList[i].mimetype
-                 //paththis: path_this
-                 //onclick: 'Jupytepide.readDir({DOMelement:"'+options.DOMelement+'",path:"'+elementsList[i].path+'",contents:"'+options.contents+'"})'
-                 //onclick:removeTabContent,
-                 //DOMelement: options.DOMelement
              };
 
              rowItemArray[n].path = elementsList[i].path;
 
              if (rowItemArray[n].type==='file'){
-
                  if (rowItemArray[n].mimetype==='text/plain'){
                      rowItemArray[n].link=utils.url_path_join(editPath, elementsList[i].path);
                  }
@@ -942,7 +805,6 @@ define([
                      rowItemArray[n].link=utils.url_path_join(viewPath, elementsList[i].path);
                  }
                  else rowItemArray[n].link=utils.url_path_join(homePath, elementsList[i].path);
-
              }
              if (rowItemArray[n].type==='directory'){
                  rowItemArray[n].link='#';
@@ -951,24 +813,16 @@ define([
              if (rowItemArray[n].type==='notebook'){
                 rowItemArray[n].link=utils.url_path_join(homePath, elementsList[i].path);
              }
-
         }
 
         for (var i = 0; i < rowItemArray.length; i++) {
-            //$('#3karta').append(make_row_item(rowItemArray[i]));
-
             $(options.DOMelement).append(make_row_item(rowItemArray[i]));
         }
-        //$(document).ready(function() {
-        //    $('.item_link').attr('onclick','Jupytepide.removeTabContent({DOMelement:"'+options.DOMelement+'"})');
-        //});
     }
 
-
-    //simple inserting into panel
+    // Inserting into panel
     // This method stands for panel content loading - Tabs here
-    var insert_into_side_panel;
-    insert_into_side_panel = function (side_panel) {
+    var insert_into_side_panel = function (side_panel) {
         var side_panel_inner = side_panel.find('.side_panel_inner');
 
         //**Tabs in bootstrap
@@ -976,142 +830,85 @@ define([
         var tabsUl = $('<ul/>', {id: 'tabs'}).addClass('nav nav-tabs'); //mozna dodac 'nav-justified'
         var tabsLiActive = $('<li/>').addClass('active');
 
-
         tabsUl.append(tabsLiActive.append(make_tab_a('#1karta', 'Map', 'true')));
         tabsUl.append(make_tab_li().append(make_tab_a('#2karta', 'Snippets', 'false')));
         tabsUl.append(make_tab_li().append(make_tab_a('#3karta', 'Notebooks', 'false')));
         tabsUl.append(make_tab_li().append(make_tab_a('#4karta', 'Files', 'false')));
-        //tabsUl.append(make_tab_li().append(make_tab_a('#4karta','karta 4','false')));
 
-        //tabsUl=$('<div/>').append(tabsUl);
-        //side_panel_inner.append(tabsUl);
         $('.map_browser_toolbar').append(tabsUl);
-        // zawartość zakładek
+        // Tabs content
         var tabContDiv = $('<div/>').addClass('tab-content').css({height:'85%'});
-        //make_tab_div('tab-pane active', '1karta').append($('<p/>').html('Tresc zakladki 1')).appendTo(tabContDiv);
-        //make_tab_div('tab-pane', '2karta').append($('<p/>').html('Tresc zakladki 2')).appendTo(tabContDiv);
-        //make_tab_div('tab-pane', '3karta').append($('<p/>').html('Tresc zakladki 3')).appendTo(tabContDiv);
 
         make_tab_div('tab-pane active', '1karta').appendTo(tabContDiv);
         make_tab_div('tab-pane', '2karta').appendTo(tabContDiv);
         make_tab_div('tab-pane', '3karta').appendTo(tabContDiv);
         make_tab_div('tab-pane', '4karta').appendTo(tabContDiv);
 
-        //make_tab_div('tab-pane','4karta').append($('<p/>').html('Tresc zakladki 4')).appendTo(tabContDiv);
         side_panel_inner.append(tabContDiv);
 
-        //**koniec zakładek w bootstrap
+        //**End of tabs in bootstrap
 
-        //** treść zakładek - przygotować w oparciu o filemanagera jupytera. Niech to będzie lista / tabelka
-        //a tu własne stylowanie bootstrapa:
-        //https://kursbootstrap.pl/examples/navs.html
-        //https://kursbootstrap.pl/zakladki-nav-tabs/
-        //$('#1karta').load("readme.md");
-
-
-        //dla leafleta - odswiezanie mapy
+        //for Leaflet - map refresh
         $('.nav-tabs a').on('shown.bs.tab', function(event){Jupytepide.leafletMap.invalidateSize()});
-
 
         var rowItemArray = [];
         var i;
 //Files Tab
-
         loadTabContent({path:'',contents:'files',DOMelement:'#4karta'});
 
 //Notebooks Tab
-
         loadTabContent({path:'notebooks',contents:'notebooks',DOMelement:'#3karta'});
 
 //Snippets Tab
-
         var menu_snippets = $('<div/>').addClass('menu_snippets');
-
         var menu_item;
         var menu_groupsList = code_snippets.getSnippetsGroups();
 
         //loading snippets groups from JSON, making headers and empty content DOM elements
         //creating empty menu with groups headers
         if (menu_groupsList){
-            for (i=0;i<menu_groupsList.length;i++){
+          for (i=0;i<menu_groupsList.length;i++){
              var group_name = menu_groupsList[i].group_name;
              var group_id = menu_groupsList[i].group_id;
              menu_item = code_snippets.make_snippets_menu_group({group_name:group_name,id:group_id});
              menu_snippets.append(menu_item.header).append(menu_item.content);
              menu_item={};
-            };
-
-
-        $('#2karta').append(menu_snippets);
-
-        //Load snippets from JSON
-        //loading menu snippets items content (snippets names) into appropriate groups
-        //creating menu with groups headers and grouped items
-        var snippetsList = [];
-        snippetsList = code_snippets.getSnippetsList1();
-        for (i = 0; i < snippetsList.length; i++) {
-            //var id=snippetsList[i].group;
-
+           };
+          $('#2karta').append(menu_snippets);
+          //Load snippets from JSON
+          // loading menu snippets items content (snippets names) into appropriate groups
+          //creating menu with groups headers and grouped items
+          var snippetsList = [];
+          snippetsList = code_snippets.getSnippetsList1();
+          for (i = 0; i < snippetsList.length; i++) {
             code_snippets.addSnippetToUI(snippetsList[i].group,snippetsList[i].name);
-
-        }
+           }
         }
         else {
             $('#2karta').append($('<div/>').html('Falied to load snippets. Check console log.'));
         }
 
-
 //Map Tab
-        //var map_panel = map_browser.build_map_panel();
-
         $('#1karta').append(map_panel).css({height:'100%'});
-
-        //map_panel.show();
-        //map_panel.slideToggle('medium');
-        //map_panel.slideToggle('medium');
         leaflet_interface.load_map("map_container");
         leaflet_interface.load_initialBaseLayers();
-        //Jupytepide.leafletMap.invalidateSize();
-
-
-//kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
-
-
-
     };
 
-    var togglePanel = function () {
+    function togglePanel() {
         var main_panel = $('#notebook_panel');
         var side_panel = $('#side_panel');
-
-
         if (side_panel.length < 1) {
             side_panel = $('<div id="side_panel"/>');
             build_side_panel(main_panel, side_panel,
                 side_panel_min_rel_width, side_panel_max_rel_width);
-            //populate_side_panel(side_panel);
             insert_into_side_panel(side_panel);
-
         }
 
         var visible = slide_side_panel(main_panel, side_panel);
-        //side_panel.finish();
-        //alert("sdfdsds");
-        // Jupytepide.leafletMap.invalidateSize();
-
-        //todo:poniższe odkomentowałem - wywalało błędy
-        //if (params.help_panel_add_toolbar_button) {
-        //    $('#btn_help_panel').toggleClass('active', visible);
-
-        //};
-
-
-
         return visible;
     };
 
 //***
-
     //SHOWING DIALOGS
     function showAddGeojsonFromSelectedFilesDialog(){
         //***
@@ -1124,7 +921,7 @@ define([
             title: "Add selected GEOJSON files to map",
             body: dialog_body,
             notebook: options.notebook,
-            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//if this is not set, keyboard input will be impossible
             default_button: "Cancel",
             buttons : {
                 "Cancel": {},
@@ -1140,7 +937,8 @@ define([
                 /**
                  * Upon ENTER, click the OK button.
                  */
-                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //if keyboard_manager is not defined, each textbox (input[type="text"]) should has registered keyboard
+                // events like below:
                 //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
 
                 d.find('input[type="text"]').keydown(function (event) {
@@ -1166,7 +964,7 @@ define([
             title: "Delete selected files and folders",
             body: dialog_body,
             notebook: options.notebook,
-            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//if this is not set, keyboard input will be impossible
             default_button: "Cancel",
             buttons : {
                 "Cancel": {},
@@ -1182,7 +980,8 @@ define([
                 /**
                  * Upon ENTER, click the OK button.
                  */
-                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //if keyboard_manager is not defined, each textbox (input[type="text"]) should has registered keyboard
+                // events like below:
                 //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
 
                 d.find('input[type="text"]').keydown(function (event) {
@@ -1208,7 +1007,7 @@ define([
             title: "Remove all layers confirmation",
             body: dialog_body,
             notebook: options.notebook,
-            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//if this is not set, keyboard input will be impossible
             default_button: "Cancel",
             buttons : {
                 "Cancel": {},
@@ -1224,7 +1023,8 @@ define([
                 /**
                  * Upon ENTER, click the OK button.
                  */
-                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //if keyboard_manager is not defined, each textbox (input[type="text"]) should has registered keyboard
+                // events like below:
                 //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
 
                 d.find('input[type="text"]').keydown(function (event) {
@@ -1250,7 +1050,7 @@ define([
             title: "Remove layer confirmation",
             body: dialog_body,
             notebook: options.notebook,
-            keyboard_manager: Jupyter.notebook.keyboard_manager,//jeżeli to jest nieprzypisane to nie da się nic wprowadzić z klawiatury
+            keyboard_manager: Jupyter.notebook.keyboard_manager,//if this is not set, keyboard input will be impossible
             default_button: "Cancel",
             buttons : {
                 "Cancel": {},
@@ -1266,7 +1066,8 @@ define([
                 /**
                  * Upon ENTER, click the OK button.
                  */
-                //Jeżeli nie podany jest keyboard_manager powyżej, to trzeba każde pole edycyjne potraktować tak:
+                //if keyboard_manager is not defined, each textbox (input[type="text"]) should has registered keyboard
+                // events like below:
                 //Jupyter.notebook.keyboard_manager.register_events(d.find('input[type="text"]'));
 
                 d.find('input[type="text"]').keydown(function (event) {
@@ -1284,7 +1085,7 @@ define([
 
     function load_ipython_extension() {
 
-        //podlinkowanie stylu wlasnego panelu
+        //link css for own panel
         $('head').append(
             $('<link/>', {
                 rel: 'stylesheet',
@@ -1293,34 +1094,18 @@ define([
             })
         );
 
-        //bootstrap style linkage
-        //  $('head').append(
-        //      $('<link/>', {
-        //          rel: 'stylesheet',
-        //          type:'text/css',
-        //          href: require.toUrl('https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
-        //      })
-        //  );
-
-
         var action = {
-            icon: 'fa-film', // a font-awesome class used on buttons, etc
+            icon: 'fa-film', //font-awesome
             help: 'Toggle side panel',
-            help_index: 'to by mogla byc pomoc',
+            help_index: 'this could be help',
             handler: togglePanel
         };
-        var prefix = 'moj_panel';
-        var action_name = 'pokaz-panel';
+        var prefix = 'panel_browser';
+        var action_name = 'toggle-panel';
         var full_action_name = Jupyter.actions.register(action, action_name, prefix);
         Jupyter.toolbar.add_buttons_group([full_action_name]);
 
         togglePanel();
-
-        //$( document ).ready(function() {
-        //leaflet_interface.map_invalidateSize();
-        //Jupytepide.leafletMap.invalidateSize();
-        //});
-
     }
 
     return {

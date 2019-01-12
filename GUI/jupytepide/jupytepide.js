@@ -1,19 +1,13 @@
-// /** Module file source_UI/jupytepide.js
+// /** Module file jupytepide/jupytepide.js
 //  * Edited by: Michał Bednarczyk
-//  * Copyright (C) 2017 .....
+//  * Copyright (C) 2017-2019 .....
 //  * Distributed under the terms of the BSD License.
 //  * ---------------------------------------------------------------------------
 //  * Jupytepide main object
 //  * /
 
-//Generowanie dokumentacji:  jsdoc -d=doc jupytepide.js
+//Documentation generating:  jsdoc -d=doc jupytepide.js
 
-//TODO: dać tu zawartość modułu jupytepide_notebooks
-//TODO: pospinać jak najwięcej uniwersalnych funkcji z metodami tego obiektu
-
-//todo:dorobić funkcję deleteAllLAyers - do usuwania wszystkich za pomocą each_Layer (leafleta) - przydatne gdy ktoś nie nada nazw tworzonym warstwom  i nie będzie mógł wywalić...
-//todo:zrobić, żeby warstwy, które nie dostaną nazwy zostały ponumerowane, np.: Layer 1, itp.
-//todo:nie pozwalać na wielokrotne dodawanie warstw o tej samej nazwie, bo potem nie chca się dać usunąć
 
 /**
  * Jupytepide main object.
@@ -31,10 +25,9 @@ define([
     './code_snippets',
     'base/js/keyboard',
     './content_access',
-    './jupytepide_notebooks',
     './panel_browser',
     'require'
-], function ($, Jupyter, dialog, utils, configmod, leaflet_interface, code_snippets, keyboard, content_access, jupytepide_notebooks, panel_browser,require) {
+], function ($, Jupyter, dialog, utils, configmod, leaflet_interface, code_snippets, keyboard, content_access, panel_browser,require) {
     "use strict";
 
     /**
@@ -78,7 +71,8 @@ define([
     Jupytepide.map_addMarker = function(center,popup_){
         //todo: zrobić numerowanie markerów (innych elementów też, żeby je można było usuwać
         var layer_name = 'tmpMarker';
-        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+        //Adds new "property" (object) named "name" to leafletMap object
+        //this way new layer is related to leafletMap as an object
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_marker(center,popup_);
     };
 
@@ -97,10 +91,12 @@ define([
      * @param parameters_ - Display parameters.
      * @memberof: class:Jupytepide
      */
+    //sample values
     //center=[52.407, 21.33], radius=500, popup_="Some text", parameters_={color: 'red', fillColor: '#f03', fillOpacity: 0.5}
     Jupytepide.map_addCircle = function(center,radius,popup_,parameters_){
         var layer_name = 'tmpCircle';
-        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+        //Adds new "property" (object) named "name" to leafletMap object
+        //this way new layer is related to leafletMap as an object
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_circle(center,radius,popup_,parameters_);
 
     };
@@ -123,7 +119,8 @@ define([
 
     Jupytepide.map_addPolygon = function(points,popup_,parameters_){
         var layer_name = 'tmpPolygon';
-        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+        //Adds new "property" (object) named "name" to leafletMap object
+        //this way new layer is related to leafletMap as an object
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_polygon(points,popup_,parameters_);
 
     };
@@ -140,10 +137,11 @@ define([
      * @param popup_ - Content of the popup.
      * @memberof: class:Jupytepide
      */
-    //nazwa warstwy, do której dodana jest polilinia to 'tmpPolyline'. Podana jest na stałe i do tej nazwy należy się odwoływac podczas usuwania
+    //The layer's name into which polyline is added is "tmpPolyline". It is fixed and this name should be used while removing the layer.
     Jupytepide.map_addPolyline = function(latlngs,options,popup_){
         var layer_name='tmpPolyline';
-        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+        //Adds new "property" (object) named "name" to leafletMap object
+        //this way new layer is related to leafletMap as an object
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_polyline(latlngs,options,popup_);
 
     };
@@ -165,11 +163,17 @@ define([
      * @memberof: class:Jupytepide
      */
 
-    //example: url='https://demo.boundlessgeo.com/geoserver/ows?', atrib={layers:'ne:ne'}, more options: http://leafletjs.com/reference-1.3.0.html#tilelayer-wms
+    //example:
+    // url='https://demo.boundlessgeo.com/geoserver/ows?', atrib={layers:'ne:ne'}, more options: http://leafletjs.com/reference-1.3.0.html#tilelayer-wms
     Jupytepide.map_addWmsLayer = function(url_,attrib,layer_name){
-        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+        if (Jupytepide.leafletMap.layers[layer_name]) {
+            alert('A layer named: "'+layer_name+'" is already loaded. Please change layer name.');
+            return
+        }
+        //Adds new "property" (object) named "name" to leafletMap object
+        //this way new layer is related to leafletMap as an object
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_wmsLayer(url_,attrib);
-        //dodaje do control.layers (do menu z checkboxem)
+        //Adds tocontrol.layers (menu with checkbox)
         //remove layer click
         var removeClick = $('<a/>',{href:'#',
             id:'optLayer_'+layer_name,
@@ -198,14 +202,20 @@ define([
     //          layer_name="Layer name"
     //example2: url='/nbextensions/jupytepide/madrid/{z}/{x}/{y}.png' - own (local) tile layer
     Jupytepide.map_addTileLayer = function(url_,attrib,layer_name){
-        // attrib == null ? {} : attrib;
-        //tworzy nowy PANE dla warstwy
-        //attrib.pane = layer_name; //gdy ta opcja jest ustawiona, warstwa zostanie dodana do tego pane, zamiast do domyślnego
+        //Creates new PANE for the layer
+        //attrib.pane = layer_name; //when this attribute is set, layer will be added to this PANE instead of default one
         //Jupytepide.leafletMap.createPane(attrib.pane);
-        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+
+        //Adds new "property" (object) named "name" to leafletMap object
+        //this way new layer is related to leafletMap as an object
+        if (Jupytepide.leafletMap.layers[layer_name]) {
+            alert('A layer named: "'+layer_name+'" is already loaded. Please change layer name.');
+            return
+        }
+
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_tileLayer(url_,attrib);
 
-        //dodaje do control.layers (do menu z checkboxem)
+        //Adds to control.layers (menu with checkbox)
         //remove layer click
         var removeClick = $('<a/>',{href:'#',
             id:'optLayer_'+layer_name,
@@ -215,12 +225,10 @@ define([
         var displayedLayerName = layer_name+" "+removeClick[0].outerHTML;
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],displayedLayerName);
 
-        //oznacz element listy klasą
+        //mark element list with class name
         $( document ).ready(function() {
             $('.leaflet-control-layers-overlays label div').addClass('l-layer');
         });
-
-
     };
     /**
      * Adds a GEOJSON vector layer into the map.
@@ -257,19 +265,24 @@ define([
 
     Jupytepide.map_addGeoJsonLayer = function(data,layer_name,options){
         options == null ? {} : options;
-        //tworzy nowy PANE dla warstwy - to sprawia, że dodanie i usunięcie warstwy powoduje, że za kolejnym razem załaduje się pusta....(tylko geojson tak robi)
-        //options.pane = layer_name; //gdy ta opcja jest ustawiona, warstwa zostanie dodana do tego pane, zamiast do domyślnego
+        if (Jupytepide.leafletMap.layers[layer_name]) {
+            alert('A layer named: "'+layer_name+'" is already loaded. Please change layer name.');
+            return
+        }
+        //Creates new PANE for the layer - it makes that adding and deleting layer results in loading empty layer every next time (this appears with geojson only)
+        //options.pane = layer_name; //when this attribute is set, layer will be added to this PANE instead of default one
         //Jupytepide.leafletMap.createPane(options.pane);
-        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+        //Adds new "property" (object) named "name" to leafletMap object
+        //this way new layer is related to leafletMap as an object
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_geoJsonLayer(data,options);
 
-        //dodaje do control.layers (do menu z checkboxem)
+        //Adds to control.layers (to menu with checkbox)
         //these are icons appearing in layers list (for every loaded layer)
         //Browse layer attributes click
         var browseClick = $('<a/>',{href:'#',
             id:'optLayer_'+layer_name,
             onclick:'Jupytepide.showLayerFeaturesData("'+layer_name+'")'
-        }).append($('<i/>',{class:"fa fa-table",title:'Browse layer'}));//trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
+        }).append($('<i/>',{class:"fa fa-table",title:'Browse layer'}));
 
         //remove layer click
         var removeClick = $('<a/>',{href:'#',
@@ -288,7 +301,6 @@ define([
         Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],displayedLayerName);
 
     };
-    //************************************************************
     /**
      * Used by Jupytepide to load features data (bound to GeoJSON properties) from vector layer [layer_name] into UI.
      * @example
@@ -320,18 +332,6 @@ define([
             row.bind('mouseenter',{fID:featuresData[i].leafletID},setSelectedFeatureColor);
             row.bind('mouseleave',{fID:featuresData[i].leafletID},setUnselectedFeatureColor);
             featureTable.append(row);
-             // var featureRow = $('<div/>').html(featuresData[i].featureID)
-             //     .append($('<a/>',{href:featuresData[i].featureHref,target:'about:blank'}).html(' more'));
-             //
-             // featureRow.bind('mouseenter',{fID:featuresData[i].leafletID},setSelectedFeatureColor);
-             // featureRow.bind('mouseleave',{fID:featuresData[i].leafletID},setUnselectedFeatureColor);
-
-            // featureRow.on('mouseenter',function(){
-            //     //console.log('entered');
-            //     Jupytepide.leafletMap._layers[featuresData[i].leafletID].setStyle({color:'red'});
-            // });
-
-              //$('.data_browser_panel.data_layer_browser').append(featureRow);
         }
         $('.data_browser_panel.data_layer_browser').append(featureTable);
         var check_visibility = true;
@@ -474,37 +474,6 @@ define([
             }
         }
         return featuresData;
-        //console.log(featuresData);
-    };
-
-    Jupytepide.layersTest = function (){
-        //var optClick = $('<a/>',{href:'#',id:'optLayer_'+layer_name}).html('opcje'); //trzeba dać tekst - czyli outerHTML, bo leaflet control.layers obiektu nie przyjmie..
-        var optBody = $('<div/>',{id:'optBody'}).html('Tu będą opcje');
-
-        //$('#optLayer_GEOJSON_MADRID1').append(optBody);
-//optBody i optLayer muszą mieć suffix z nazwy warstwy, wtedy połaczę je w pary i onclick zadziała tylko na jedną na raz
-// zatem do tej funkcji musi wejśc nazwa warstwy, a warstwy trzeba przejść w pętli i zaaplikować to na wszystkich.
-//dodawać optBody zaraz po elemencie $('.leaflet-control-layers-overlays label #lbl_'+layer_name)
-        $( document ).ready(function() {
-            //$('.leaflet-control-layers-overlays label div').addClass('l-layer');
-
-            $('#lbl_GEOJSON_MADRID1').append(optBody);
-
-
-            $('#optLayer_GEOJSON_MADRID1').click(function(){
-                $('#optBody').slideToggle('medium');
-            });
-
-            //optBody.hide();
-
-        });
-    };
-
-    //To wszystko nie działa.... on sobie jakoś to odświeża i wychodzi lipa.
-    //Spróbować dać taką funkcję onClick, żeby dawała wartość klikniętego elementu (niech da nazwę warstwy)
-
-    Jupytepide.alertTest = function (){
-        alert("Działa");
     };
 
     /**
@@ -525,9 +494,15 @@ define([
      */
     Jupytepide.map_addImageLayer = function(imageUrl,imageBounds,layer_name,options){
         options == null ? {} : options;
-        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
+        if (Jupytepide.leafletMap.layers[layer_name]) {
+            alert('A layer named: "'+layer_name+'" is already loaded. Please change layer name.');
+            return
+        }
+
+        //Adds new "property" (object) named "name" to leafletMap object
+        //this way new layer is related to leafletMap as an object
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_imageLayer(imageUrl,imageBounds,options);
-        //dodaje do control.layers (do menu z checkboxem)
+        //adds into control.layers (to menu with checkbox)
         //Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
 
         //remove layer click
@@ -558,7 +533,7 @@ define([
     //*** map_removeLayer ***
     Jupytepide.map_removeLayer = function(layer_name){
         //remove layer from leaflet component
-        Jupytepide.leafletMap.layers[layer_name].remove();
+        if (Jupytepide.leafletMap.layers[layer_name]) Jupytepide.leafletMap.layers[layer_name].remove();
         //remove layer from control.layers
         Jupytepide.leafletMap.control.removeLayer(Jupytepide.leafletMap.layers[layer_name]);
         //remove layer from Jupytepide
@@ -573,7 +548,6 @@ define([
         {
             Jupytepide.emptyLayerBrowser();
         }
-        // todo: but first check whether a layer exists
     };
 
     /**
@@ -618,8 +592,7 @@ define([
         zIndex = zIndex+1;
         Jupytepide.leafletMap.layers[layer_name].setZIndex(zIndex);
 
-        //todo: to może nie działać dla warstw wektorowych, wtedy można wypróbować dodawanie warstw wektorowych do grupy i przekładanie ich wtedy jako grup
-
+        //todo: the above might not work with vector layers, then we can try grouping them and moving up/down as groups of layers
     };
 
     //*** map_layerMoveUp ***
@@ -628,7 +601,7 @@ define([
         zIndex = zIndex-1;
         Jupytepide.leafletMap.layers[layer_name].setZIndex(zIndex);
 
-        //todo: to może nie działać dla warstw wektorowych, wtedy można wypróbować dodawanie warstw wektorowych do grupy i przekładanie ich wtedy jako grup
+        //todo: the above might not work with vector layers, then we can try grouping them and moving up/down as groups of layers
 
     };
 
@@ -641,7 +614,6 @@ define([
     Jupytepide.map_addLayerControls = function(baseLayers,overlays){
         Jupytepide.leafletMap.control = leaflet_interface.add_layerControls(baseLayers,overlays);
     };
-
 
     Jupytepide.map_addControlBaseLayer = function(Layer,name){
         //Jupytepide.leafletMap.control.addBaseLayer(Layer,name);
@@ -656,7 +628,7 @@ define([
     };
 
     Jupytepide.getJupytepideHelpJSON = function() {
-        var fName = require.toUrl('./help.json')
+        var fName = require.toUrl('./help.json');
         return content_access.readJupytepideJSONFile(fName);
     };
 
@@ -681,14 +653,6 @@ define([
         return code_snippets.getSnippetsGroups();
     };
 
-    Jupytepide.load_madrid = function(){
-        var layer_name = "Madryt";
-        //dodaje nową property (object) o nazwie "name" do obiektu leafletMap - w ten sposób warstwa zostaje związana z leafletMap jako obiekt
-        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.load_madrid();
-        //dodaje do control.layers (do menu z checkboxem)
-        Jupytepide.leafletMap.control.addOverlay(Jupytepide.leafletMap.layers[layer_name],layer_name);
-    };
-
      Jupytepide.disableKeycodes = function(event){
 
          if (event.which === keyboard.keycodes.enter) {
@@ -696,20 +660,12 @@ define([
              $('.btn-primary').click();
              return false;
          }
-
      };
 
-
-
-
-    //method for testing
+    //methods for testing
     Jupytepide.map_LoadPolygon = function(popupText){
         leaflet_interface.load_test_polygon(popupText);
     };
-
-    //Jupytepide.createFile = function(){
-    //    code_snippets.createFile();
-    //};
 
     Jupytepide.getFiles = function (path, options) {
         return content_access.getFiles(path, options);
@@ -720,7 +676,7 @@ define([
     };
 
     Jupytepide.getNotebooks = function (path) {
-        return jupytepide_notebooks.get_NotebooksListDir(path);
+        return content_access.get_NotebooksListDir(path);
     };
 
     Jupytepide.saveFile = function(fname,data){
@@ -728,20 +684,8 @@ define([
     };
 
     Jupytepide.readFile = function(fname,options){
-         // $.ajaxSetup({
-         //     async: false
-         // });
-        // var val=[];
-        // var promise1=code_snippets.readFile(fname,options);
-        // promise1.then(function(value){val.push(value.content);},function(reject_reason){alert(reject_reason)});
-        // //return promise1;
-        // //var val1 = val[0];
-        // return val;
-        // //alert(val[0]);
-
         var a = content_access.readFile(fname, options);
         return a;
-
     };
 
     Jupytepide.addSnippet = function(codeSnippet){
@@ -759,10 +703,6 @@ define([
     Jupytepide.baseUrl = function(){
         return code_snippets.getBaseUrl();
     };
-
-    //Jupytepide.getMaxGroupId = function(){
-    //    return code_snippets.getMaxGroupId();
-    //};
 
     Jupytepide.makeMenuItem = function(){
         return code_snippets.make_snippets_menu_item({group_name:'NAZWA_GRUPY',id:12});
@@ -803,11 +743,6 @@ define([
     Jupytepide.recursiveDelete = function(fname){
         return content_access.recursiveDelete(fname);
     };
-
-
-    //Jupytepide.addGroup = function(){
-    //    code_snippets.showAddGroupWindow();
-    //};
 
     // return public object
     return Jupytepide
