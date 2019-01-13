@@ -103,7 +103,7 @@ define([
 
     /**
      * Adds a polygon into the map.
-     * The layer name, into which polylane is added is set as "tmpPolygon" by default and is not shown in layers list.
+     * The layer name, into which polygon is added is set as "tmpPolygon" by default and is not shown in layers list.
      * Refer to this name when you want to delete a polygon from map.
      * @example
      * //points=[[51.1092, 17.06108],[51.10734, 17.06698],[51.10697, 17.06587]],
@@ -123,6 +123,68 @@ define([
         //this way new layer is related to leafletMap as an object
         Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_polygon(points,popup_,parameters_);
 
+    };
+
+    /**
+     * Adds a temporary polygon from WKT into the map.
+     * The layer name, into which polygon is added is set as "tmpPolygon" by default and is not shown in layers list.
+     * Refer to this name when you want to delete a polygon from map.
+     * @example
+     * Jupytepide.map_addPolygonWKT('POLYGON((14.24 54.58,14.24 49.96,22.68 48.24,25.23 50.47,24.97 54.68,14.24 54.58))',
+     *      "tekst",{color: 'red', fillColor: '#f03', fillOpacity: 0.5});
+     * @param WKTPolygon - Polygon shape in WKT format.
+     * @param popup_ - Content of the popup.
+     * @param parameters_ - Display parameters.
+     * @memberof: class:Jupytepide
+     */
+
+    Jupytepide.map_addTmpPolygonWKT = function(WKTPolygon,popup_,parameters_){
+        var layer_name = 'tmpPolygon';
+        if (Jupytepide.leafletMap.layers.tmpPolygon){
+            Jupytepide.map_removeLayer(layer_name);
+        }
+
+        //convert WKT to array of points
+        var points=[];
+        var tmpPoints = WKTPolygon.slice('POLYGON'.length+2,WKTPolygon.length-2).split(',');
+        tmpPoints.pop();
+        var Vertex = [];
+        var tmpVertex = [];
+        for (var i=0;i<tmpPoints.length;i++){
+            tmpVertex = tmpPoints[i].split(' ');
+            for (var j=0;j<tmpVertex.length;j++){
+                tmpVertex[j]=parseFloat(tmpVertex[j]);
+            }
+            Vertex.push(tmpVertex[1]);
+            Vertex.push(tmpVertex[0]);
+            points.push(Vertex);
+            Vertex=[];
+        }
+
+        //Adds new "property" (object) named "name" to leafletMap object
+        //this way new layer is related to leafletMap as an object
+        Jupytepide.leafletMap.layers[layer_name] = leaflet_interface.add_polygon(points,popup_,parameters_);
+
+    };
+
+    /**
+     * Adds WKT polygon to the map as a search mask.
+     * The layer name, into which polygon is added is set as "tmpPolygon" by default and is not shown in layers list.
+     * Refer to this name when you want to delete a polygon from map.
+     * @example
+     * Jupytepide.addSearchPolygonWKT('POLYGON((14.24 54.58,14.24 49.96,22.68 48.24,25.23 50.47,24.97 54.68,14.24 54.58))');
+     * @param WKTPolygon - Polygon shape in WKT format.
+     * @memberof: class:Jupytepide
+     */
+    Jupytepide.addSearchPolygonWKT = function(WKTPolygon){
+        var popup = 'Search temporary shape';
+        var parameters = {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5
+        };
+        Jupytepide.map_addTmpPolygonWKT(WKTPolygon,popup,parameters);
+        Jupytepide.leafletMap.tmpShapeWKT=WKTPolygon;
     };
 
     /**
