@@ -1,0 +1,30 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+ARG JUPYTERHUB_VERSION
+FROM jupyterhub/jupyterhub-onbuild:$JUPYTERHUB_VERSION
+
+# Install dockerspawner, oauth, postgres
+RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
+    /opt/conda/bin/conda clean -tipsy && \
+    /opt/conda/bin/pip install --no-cache-dir \
+        oauthenticator==0.8.* \
+        dockerspawner==0.9.*
+
+# Copy TLS certificate and key
+ENV SSL_CERT /srv/jupyterhub/secrets/jupyterhub.crt
+ENV SSL_KEY /srv/jupyterhub/secrets/jupyterhub.key
+COPY ./secrets_tmp/jupyterhub.crt $SSL_CERT
+COPY ./secrets_tmp/jupyterhub.key $SSL_KEY
+RUN chmod 700 /srv/jupyterhub/secrets && \
+    chmod 600 /srv/jupyterhub/secrets/*
+COPY ./secrets_tmp/userlist /srv/jupyterhub/userlist
+
+COPY ./img/logo_jupytepide.png /opt/conda/share/jupyter/hub/static/images/jupyterhub-80.png
+COPY ./img/logo_jupytepide.png /opt/conda/share/jupyter/hub/static/images/jupyter.png
+COPY ./img/logo_jupytepide.png /opt/conda/share/jupyter/hub/static/images/logo_jupytepide_dark.png
+COPY ./jupyterhub_config.py /srv/jupyterhub/jupyterhub_config.py
+
+RUN cd /tmp && \
+   git clone -b dev --single-branch https://github.com/wasat/JupyTEPIDE.git && \
+   cp -rf /tmp/JupyTEPIDE/GUI/res/hub/* /opt/conda/share/jupyter/hub &&\
+   find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf

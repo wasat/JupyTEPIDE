@@ -1,0 +1,44 @@
+<html>
+<head>
+    <script src="jquery/jquery.min.js"></script>
+    <script src="openlayers/ol.js"></script>
+</head>
+<body>
+
+<div id="map" class="map"></div>
+
+<script>
+
+    var osm_layer = new ol.layer.Tile
+    ({
+        name: 'osm',
+        source: new ol.source.OSM(),
+        opacity: 1
+    });
+
+    var own_lyr = new ol.layer.Image
+    ({
+        source: new ol.source.ImageWMS({
+            url: "https://89.250.194.14:9443",
+            params: {'LAYERS': "RGB", 'PATH': '/opt/mapnik/mapnik-test.tif'},
+            ratio: 1,
+            serverType: 'geoserver'
+        }),
+    });
+
+    var layers = [osm_layer, own_lyr];
+
+
+    var map = new ol.Map({
+        layers: layers,
+        target: 'map',
+        view: new ol.View
+        ({
+            center: ol.proj.transform([19, 52], 'EPSG:4326', 'EPSG:3857'),
+            zoom: 9
+        })
+    });
+</script>
+
+</body>
+</html>

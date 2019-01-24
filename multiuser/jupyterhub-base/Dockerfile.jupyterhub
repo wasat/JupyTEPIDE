@@ -1,0 +1,17 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+FROM jupyterhub/jupyterhub-onbuild:0.8.1
+
+# apt-get installs
+RUN apt-get update -qq && \
+    apt-get install -qqy mc nano && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install dockerspawner, oauth, postgres
+RUN /opt/conda/bin/conda install -yq psycopg2=2.7 && \
+    /opt/conda/bin/pip install -q --upgrade --no-cache-dir \
+        oauthenticator==0.7.* \
+        dockerspawner==0.9.* && \
+    /opt/conda/bin/conda clean -tipsy && \
+    find /tmp -mindepth 1 -maxdepth 1 -print0 | xargs -0 rm -rf

@@ -1,0 +1,137 @@
+version: "2.1"
+
+services:
+  hub-db:
+    image: postgres:9.5
+    container_name: jupytepide-hub-db
+    restart: always
+    networks:
+      default:
+        ipv4_address: ${POSTGRES_HOST}
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: ${DB_VOLUME_CONTAINER}
+    env_file:
+      - secrets/postgres.env
+    volumes:
+      - "db:${DB_VOLUME_CONTAINER}"
+
+  hub:
+    depends_on:
+      - hub-db
+    build:
+      context: .
+      dockerfile: Dockerfile.jupytepidehub
+      args:
+        JUPYTERHUB_VERSION: ${JUPYTERHUB_VERSION}
+    restart: always
+    image: jupytepide-hub
+    container_name: jupytepide-hub
+    networks:
+      default:
+        ipv4_address: "172.18.0.4"
+    volumes:
+      # Bind Docker socket on the host so we can connect to the daemon from
+      # within the container
+      - "/var/run/docker.sock:/var/run/docker.sock:rw"
+      # Bind Docker volume on host for JupyterHub database and cookie secrets
+      - "data:${DATA_VOLUME_CONTAINER}"
+      - ./jupyterhub_config.py:/tmp/jupyterhub_config.py
+      - ./run-from-compose.sh:/run-from-compose.sh
+    ports:
+      - "443:443"
+    links:
+      - hub-db
+    environment:
+      # All containers will join this network
+      DOCKER_NETWORK_NAME: ${DOCKER_NETWORK_NAME}
+      # JupyterHub will spawn this Notebook image for users
+      DOCKER_NOTEBOOK_IMAGE: ${LOCAL_NOTEBOOK_IMAGE}
+      # JupyterHub will spawn this Notebook image for users
+      # DOCKER_NOTEBOOK_IMAGE: ${DOCKER_NOTEBOOK_IMAGE}
+      # Notebook directory inside user image
+      DOCKER_NOTEBOOK_DIR: ${DOCKER_NOTEBOOK_DIR}
+      # Using this run command (optional)
+      DOCKER_SPAWN_CMD: ${DOCKER_SPAWN_CMD}
+      # Postgres db info
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+    env_file:
+      - secrets/postgres.env
+      - secrets/oauth.env
+    command: sh /run-from-compose.sh
+
+  postgis:
+    image: kartoza/postgis:9.6-2.4
+    container_name: jupytepide-postgis
+    networks:
+      default:
+        ipv4_address: "172.18.0.3"
+    volumes:
+       - geo-db-data:/var/lib/postgresql
+    ports:
+      - "25432:5432"
+    env_file:
+    - postgis.env
+    restart: on-failure
+    healthcheck:
+      test: "exit 0"
+
+  geoserver:
+    image: jupytepide/geoserver:2.13.0-1.0
+    container_name: jupytepide-geoserver
+    networks:
+      default:
+        ipv4_address: "172.18.0.5"
+    volumes:
+    - geoserver-data:/opt/geoserver/data_dir
+    ports:
+    - "8090:8080"
+    restart: on-failure
+    env_file:
+    - geoserver.env
+    depends_on:
+      postgis:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail -s http://localhost:8080/ || exit 1
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+
+  mapnik:
+    image: "jupytepide/mapnik-flask:1.2"
+    container_name: jupytepide-mapnik
+    networks:
+      default:
+        ipv4_address: "172.18.0.6"
+    ports:
+    - "9443:443"
+    volumes:
+    - /opt/pub/mapnik:/opt/mapnik
+
+  pywps:
+    image: "pywps/flask-ubuntu:16.0.4"
+    container_name: jupytepide-pywps
+    networks:
+      default:
+        ipv4_address: "172.18.0.7"
+    ports:
+    - "5000:5000"
+
+
+volumes:
+  data:
+    external:
+      name: ${DATA_VOLUME_HOST}
+  db:
+    external:
+      name: ${DB_VOLUME_HOST}
+  geoserver-data:
+  geo-db-data:
+
+
+networks:
+  default:
+    external:
+      name: jupyterhub-network

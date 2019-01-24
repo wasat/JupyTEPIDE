@@ -1,0 +1,48 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Oct 17 11:39:31 2018
+
+@author: janek
+"""
+
+from IPython.display import Javascript
+import uuid
+import os
+#import gdal
+from shutil import copyfile
+
+class RenderMap():
+    
+    def __init__(self, file_path, name="RenderMap", style="rb", nodata="-9999"):
+        self.name = name
+        self.uniqnam = uuid.uuid4()
+        self.destfile = "/opt/var/mapnik/%s" % (self.uniqnam)
+        copyfile(file_path,  self.destfile)
+        self.style = style
+        self.nodata = nodata       
+        
+    def get_stats():
+        im = gdal.Open(self.destfile)
+        im_arr = im.ReadAsArray()
+        print(im_arr.GetStatistic(0,1))
+
+    def print(self):
+        ret = Javascript("""
+            try{
+                Jupytepide.map_removeLayer('Map Renderer');
+            }
+            catch(err){ //if there is nothing to remove do nothing         
+            }
+            
+            Jupytepide.map_addWmsLayer('http://jupytepide.ga:9443/',
+            {layers:'renderer',format:'image/png',transparent:true, path:'%s', style:'%s', delta:'1|15769', nodata:
+            '%s'},'Map Renderer');
+            """ % (self.destfile, self.style, self.nodata))
+        return ret
+    
+    def __del__(self):
+        os.remove(self.destfile)
+
+
+map = RenderMap('/opt/var/mapnik/3857_sentinel_band.TIF','mapa')
+map.print()
