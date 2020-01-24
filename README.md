@@ -1,5 +1,5 @@
 # JupyTEP IDE (now Jupyteo)
-JupyTEP IDE / Jupyteo project description
+[JupyTEP IDE / Jupyteo](https://www.jupyteo.com) project description
 
 The main objective of building [Jupyter](http://jupyter.org/) notebook IDE for EO data processing scripts and services is the extension of Jupyter software ecosystem and customization of existing components for the needs of EO scientists and other professional and non-professional users. The general approach is based on configuration, customisation, adaptation and mostly extension of Jupyter, Docker and Spark components on EO data cloud infrastructure - the first candidate is [IPT: Innovative Platform Testbed Poland](http://eocloud.cloudferro.com/) in most flexible way, and on integration with accessible libraries and EO data tools (SNAP, GDAL, etc.). 
 
